@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>SHREE BALAJEE AUTO SPARES</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#09090b;--surface:#111116;--card:#18181f;--border:#27272f;
+  --accent:#f59e0b;--accent2:#fcd34d;--green:#34d399;--red:#f87171;--blue:#60a5fa;
+  --text:#f0f0f5;--muted:#6b7280;--muted2:#9ca3af;
+  --fh:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace;
+  --hh:58px;--nw:210px;--mnh:60px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 15% 0%,rgba(245,158,11,.07),transparent 60%),
+             radial-gradient(ellipse 50% 30% at 85% 100%,rgba(245,158,11,.04),transparent 60%)}
+header{height:var(--hh);flex-shrink:0;z-index:20;position:relative;display:flex;align-items:center;
+  justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);
+  background:rgba(9,9,11,.92);backdrop-filter:blur(12px)}
+.logo-name{font-family:var(--fh);font-size:26px;letter-spacing:2px;color:var(--accent);line-height:1}
+.logo-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.hbtns{display:flex;gap:6px}
+.btn{font-family:var(--fb);font-weight:600;font-size:12px;padding:8px 14px;border-radius:7px;
+  border:none;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-accent{background:var(--accent);color:#09090b;font-weight:700}
+.btn-accent:hover{background:var(--accent2)}
+.btn-green{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--green)}
+.btn-green:hover{background:rgba(52,211,153,.22)}
+.btn-blue{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.35);color:var(--blue)}
+.btn-blue:hover{background:rgba(96,165,250,.22)}
+.btn-red{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red)}
+.btn-red:hover{background:rgba(248,113,113,.2)}
+.btn-sm{padding:5px 10px;font-size:11px}
+#fileInput{display:none}
+.shell{display:flex;flex:1;overflow:hidden;position:relative;z-index:1;height:calc(100vh - var(--hh))}
+nav.sidebar{width:var(--nw);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+  padding:16px 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-section{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);padding:10px 20px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:500;
+  color:var(--muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s;white-space:nowrap}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.025)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(245,158,11,.06)}
+.nav-icon{font-size:15px;width:20px;text-align:center}
+.nav-div{height:1px;background:var(--border);margin:8px 20px}
+main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.page{display:none;flex:1;overflow-y:auto;padding:20px 26px;flex-direction:column}
+.page.active{display:flex;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page::-webkit-scrollbar{width:4px}
+.page::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.page-title{font-family:var(--fh);font-size:30px;letter-spacing:1.5px;margin-bottom:2px;flex-shrink:0}
+.page-sub{font-size:12px;color:var(--muted);margin-bottom:16px;flex-shrink:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;flex-shrink:0}
+.card-head{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.fg{display:flex;flex-direction:column;gap:5px}
+label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+input,select,textarea{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  font-family:var(--fb);font-size:13px;padding:9px 11px;border-radius:7px;outline:none;
+  transition:border-color .15s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+select option{background:var(--surface)}
+/* payment badge */
+.pay-cash{color:var(--green);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);
+  font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.pay-credit{color:var(--accent);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
+  font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.pay-partial{color:var(--blue);background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);
+  font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;white-space:nowrap}
+/* TABLE */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex-shrink:0;margin-bottom:16px}
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);gap:8px;flex-wrap:wrap}
+.ttl{display:flex;align-items:center;gap:8px}
+.ttitle{font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
+.badge{font-family:var(--fm);font-size:10px;color:var(--muted);background:var(--surface);padding:3px 9px;border-radius:20px;border:1px solid var(--border)}
+.tbl-scroll{overflow:auto;max-height:320px}
+.tbl-scroll::-webkit-scrollbar{height:3px;width:3px}
+.tbl-scroll::-webkit-scrollbar-thumb{background:var(--border)}
+table{width:100%;border-collapse:collapse;min-width:600px}
+thead th{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+  padding:9px 12px;text-align:left;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+tbody tr{border-bottom:1px solid rgba(39,39,47,.6);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(245,158,11,.025)}
+tbody td{padding:8px 12px;font-size:12px;vertical-align:middle}
+.td-amt{font-family:var(--fm);color:var(--green);font-weight:500}
+.td-date{font-family:var(--fm);font-size:11px;color:var(--muted2)}
+.td-muted{font-family:var(--fm);font-size:11px;color:var(--muted2)}
+.td-act{display:flex;gap:4px;align-items:center}
+.ic-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;
+  width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:12px;transition:all .15s}
+.ic-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ic-btn.del:hover{border-color:var(--red);color:var(--red)}
+.empty-row td{text-align:center;color:var(--muted);padding:32px;font-style:italic}
+/* SEARCH */
+.sb-wrap{position:relative;margin-bottom:12px;flex-shrink:0}
+.sb-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--muted);pointer-events:none}
+#searchInput{width:100%;padding:12px 14px 12px 42px;font-size:13px;border-radius:10px;background:var(--card);border:1px solid var(--border)}
+#searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
+.filter-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end;flex-shrink:0}
+.filter-row .fg{min-width:120px}
+mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padding:0 2px}
+/* DASHBOARD */
+#pgDash{padding:14px 20px;overflow:hidden}
+.dash-inner{display:grid;grid-template-rows:auto auto 1fr;height:100%;gap:11px}
+.d-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.d-filters .fg{min-width:105px}
+.d-filters input,.d-filters select{font-size:12px;padding:7px 9px}
+.d-filters label{font-size:9px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.kpi-val{font-family:var(--fh);font-size:26px;letter-spacing:1px;line-height:1}
+.kpi-meta{font-size:10px;color:var(--muted);margin-top:3px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr;gap:10px;min-height:0}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;min-height:0}
+.chart-title{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;flex-shrink:0}
+.chart-canvas-wrap{flex:1;min-height:0;position:relative}
+.chart-canvas-wrap canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+/* DATE PICKER */
+.date-field{position:relative}
+.date-display{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  font-family:var(--fb);font-size:13px;padding:9px 11px;border-radius:7px;
+  cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  transition:border-color .15s;user-select:none;width:100%}
+.date-display:hover,.date-display.open{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
+.date-display .ci{font-size:14px;opacity:.6}
+.cal-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:400;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:16px;width:272px;box-shadow:0 20px 60px rgba(0,0,0,.7);display:none;animation:fadeUp .15s ease}
+.cal-popup.open{display:block}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-nav{background:none;border:1px solid var(--border);color:var(--muted2);border-radius:6px;
+  width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cal-nav:hover{border-color:var(--accent);color:var(--accent)}
+.cal-ml{font-family:var(--fh);font-size:19px;letter-spacing:1px;color:var(--text);cursor:pointer}
+.cal-ml:hover{color:var(--accent)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--muted);text-align:center;padding:4px 0}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:6px;cursor:pointer;transition:all .12s;color:var(--text)}
+.cal-day:hover{background:rgba(245,158,11,.15);color:var(--accent)}
+.cal-day.today{color:var(--accent);font-weight:700}
+.cal-day.selected{background:var(--accent)!important;color:#09090b!important;font-weight:700}
+.cal-day.empty{cursor:default;pointer-events:none}
+.cal-ym-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cal-ym-item{padding:8px 4px;text-align:center;font-size:12px;border-radius:6px;cursor:pointer;transition:all .12s;color:var(--text)}
+.cal-ym-item:hover{background:rgba(245,158,11,.15);color:var(--accent)}
+.cal-ym-item.selected{background:var(--accent);color:#09090b;font-weight:700}
+.cal-back{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:4px 8px;border-radius:5px;margin-top:8px;width:100%;text-align:center}
+.cal-back:hover{color:var(--accent)}
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--border)}
+.modal-title{font-family:var(--fh);font-size:26px;letter-spacing:1px;margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.modal-footer{display:flex;gap:8px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap}
+/* MULTI-ENTRY rows */
+.multi-row{display:grid;grid-template-columns:2fr 1fr 1fr 24px;gap:8px;align-items:end;margin-bottom:8px}
+.multi-add-btn{background:none;border:1px dashed var(--border);color:var(--muted);border-radius:7px;
+  padding:8px;cursor:pointer;width:100%;font-size:12px;transition:all .15s;margin-top:4px}
+.multi-add-btn:hover{border-color:var(--accent);color:var(--accent)}
+.row-del-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;
+  width:24px;height:36px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.row-del-btn:hover{border-color:var(--red);color:var(--red)}
+/* PDF preview */
+#pdf-preview{display:none}
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--green);color:#09090b;
+  font-weight:600;font-size:13px;padding:11px 20px;border-radius:9px;
+  transform:translateY(70px);opacity:0;transition:all .28s;pointer-events:none;max-width:320px}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.err{background:var(--red);color:#fff}
+/* MOBILE */
+@media(max-width:768px){
+  :root{--hh:52px}
+  nav.sidebar{display:none}
+  .mob-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;
+    background:var(--surface);border-top:1px solid var(--border);height:var(--mnh)}
+  .mn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:500;
+    transition:color .15s;padding:6px 0;border:none;background:none}
+  .mn-item .mni{font-size:19px;line-height:1}
+  .mn-item.active{color:var(--accent)}
+  .shell{height:calc(100vh - var(--hh) - var(--mnh))}
+  header{padding:0 14px}.logo-name{font-size:20px;letter-spacing:1px}.logo-tag{display:none}
+  .hbtns .btn span{display:none}.hbtns .btn{padding:7px 10px}
+  .page{padding:14px}#pgDash{padding:10px}
+  .form-grid{grid-template-columns:1fr}.card{padding:14px}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi-val{font-size:20px}
+  #pgDash{overflow-y:auto}
+  .charts-grid{grid-template-columns:1fr;grid-template-rows:200px 200px 200px;gap:8px}
+  .chart-canvas-wrap canvas{position:static!important;width:100%!important;height:100%!important}
+  .d-filters .fg,.filter-row .fg{min-width:calc(50% - 6px)}
+  .tbl-scroll{max-height:220px}
+  #toast{bottom:70px;right:10px;left:10px;text-align:center}
+  .multi-row{grid-template-columns:1fr 80px 80px 24px}
+}
+@media(min-width:769px){.mob-nav{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo-name">🔧 SHREE BALAJEE AUTO SPARES</div>
+    <div class="logo-tag">Automotive Parts &amp; Sales Management</div>
+  </div>
+  <div class="hbtns">
+    <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">⬆ <span>Import Excel</span></button>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="importExcel(event)"/>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="nav-section">Stock</div>
+    <div class="nav-item active" onclick="showPage('pgInventory',this)"><span class="nav-icon">📦</span>Inventory</div>
+    <div class="nav-item" onclick="showPage('pgSale',this)"><span class="nav-icon">🛒</span>Record Sale</div>
+    <div class="nav-div"></div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="showPage('pgSalesLog',this)"><span class="nav-icon">📋</span>Sales Log</div>
+    <div class="nav-item" onclick="showPage('pgSearch',this)"><span class="nav-icon">🔎</span>Search</div>
+    <div class="nav-item" onclick="showPage('pgDash',this)"><span class="nav-icon">📊</span>Dashboard</div>
+  </nav>
+
+  <main>
+
+    <!-- ══════════ INVENTORY ══════════ -->
+    <div id="pgInventory" class="page active">
+      <div class="page-title">Master Inventory</div>
+      <div class="page-sub">Add stock · track brand · mark paid / credit · add multiple items per supplier in one go.</div>
+
+      <div class="card">
+        <div class="card-head">➕ Add Stock Entry</div>
+        <div class="form-grid">
+          <div class="fg"><label>Purchase Date</label>
+            <div class="date-field">
+              <div class="date-display" onclick="toggleCal('inv')" id="dd-inv"><span id="dl-inv">Select date</span><span class="ci">📅</span></div>
+              <div class="cal-popup" id="cp-inv"></div>
+            </div>
+          </div>
+          <div class="fg"><label>Supplier Name</label><input type="text" id="inv-name" placeholder="Supplier / source name"/></div>
+          <div class="fg"><label>P. No (Supplier Phone)</label><input type="text" id="inv-pno" placeholder="Phone number"/></div>
+          <div class="fg"><label>Brand Name</label><input type="text" id="inv-brand" placeholder="e.g. Bosch, MRF, OEM"/></div>
+          <div class="fg"><label>Payment Mode</label>
+            <select id="inv-pay">
+              <option value="Cash">Cash — Paid in Full</option>
+              <option value="Credit">Credit — Not Yet Paid</option>
+              <option value="Partial">Partial — Part Paid</option>
+            </select>
+          </div>
+          <div class="fg"><label>Credit Due Date <span style="font-size:9px;color:var(--muted);text-transform:none;letter-spacing:0">(if credit)</span></label>
+            <div class="date-field">
+              <div class="date-display" onclick="toggleCal('invdue')" id="dd-invdue"><span id="dl-invdue">Select due date</span><span class="ci">📅</span></div>
+              <div class="cal-popup" id="cp-invdue"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-item rows -->
+        <div class="card-head" style="margin-top:4px">Items from this supplier</div>
+        <div id="inv-rows-container"></div>
+        <button class="multi-add-btn" onclick="addInvRow()">＋ Add another item</button>
+        <div style="margin-top:16px"><button class="btn btn-accent" onclick="addInventory()">＋ Save All Items to Stock</button></div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div class="ttl"><span class="ttitle">All Stock</span><span class="badge" id="inv-count">0 items</span></div>
+          <button class="btn btn-ghost btn-sm" onclick="exportInventoryExcel()">⬇ Export</button>
+        </div>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>BRAND</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th><th>PAYMENT</th><th>DUE DATE</th><th>ACTIONS</th></tr></thead>
+            <tbody id="inv-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ RECORD SALE ══════════ -->
+    <div id="pgSale" class="page">
+      <div class="page-title">Record Sale</div>
+      <div class="page-sub">Choose item from inventory dropdown — qty is deducted automatically.</div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="fg"><label>Date</label>
+            <div class="date-field">
+              <div class="date-display" onclick="toggleCal('sale')" id="dd-sale"><span id="dl-sale">Select date</span><span class="ci">📅</span></div>
+              <div class="cal-popup" id="cp-sale"></div>
+            </div>
+          </div>
+          <div class="fg"><label>Customer Name</label><input type="text" id="sale-name" placeholder="Customer name"/></div>
+          <div class="fg"><label>P. No</label><input type="text" id="sale-pno" placeholder="Customer phone"/></div>
+          <div class="fg"><label>Item <span id="sale-avail" style="color:var(--muted);font-size:10px;letter-spacing:0;text-transform:none;font-weight:400;margin-left:4px"></span></label>
+            <select id="sale-item-sel" onchange="onSaleItemChange()">
+              <option value="">— Select from inventory —</option>
+            </select>
+          </div>
+          <div class="fg"><label>QTY to Sell</label><input type="number" id="sale-qty" min="1" value="1" oninput="checkSaleStock()"/></div>
+          <div class="fg"><label>Amount (₹)</label><input type="number" id="sale-amount" min="0" step="0.01" value="0"/></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-accent" onclick="recordSale()">✓ Confirm Sale</button>
+          <span id="sale-stock-msg" style="font-size:12px"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ SALES LOG ══════════ -->
+    <div id="pgSalesLog" class="page">
+      <div class="page-title">Sales Log</div>
+      <div class="page-sub">All completed sales — edit entries or void to restore stock.</div>
+      <div class="filter-row">
+        <div class="fg"><label>From Date</label><input type="date" id="sl-from" onchange="renderSalesLog()"/></div>
+        <div class="fg"><label>To Date</label><input type="date" id="sl-to" onchange="renderSalesLog()"/></div>
+        <div class="fg"><label>Customer</label><input type="text" id="sl-cust" placeholder="Filter by name…" oninput="renderSalesLog()"/></div>
+        <div class="fg"><label>Item</label>
+          <select id="sl-item" onchange="renderSalesLog()"><option value="">All Items</option></select>
+        </div>
+        <div style="align-self:flex-end;display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="clearSalesFilters()">Clear</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportSalesExcel()">⬇ Export</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div class="ttl"><span class="ttitle">Sales History</span><span class="badge" id="sl-count">0</span></div>
+        </div>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th><th>ACTIONS</th></tr></thead>
+            <tbody id="sl-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ SEARCH ══════════ -->
+    <div id="pgSearch" class="page">
+      <div class="page-title">Search</div>
+      <div class="page-sub">Search inventory and sales separately with independent filters.</div>
+
+      <!-- Inventory search -->
+      <div class="card" style="padding:14px 16px">
+        <div class="card-head">📦 Inventory Search</div>
+        <div class="filter-row">
+          <div class="fg" style="flex:2;min-width:160px">
+            <label>Search</label>
+            <input type="text" id="si-q" placeholder="Name, item, brand, phone…" oninput="runInvSearch()"/>
+          </div>
+          <div class="fg"><label>Payment</label>
+            <select id="si-pay" onchange="runInvSearch()">
+              <option value="">All</option><option value="Cash">Cash</option>
+              <option value="Credit">Credit</option><option value="Partial">Partial</option>
+            </select>
+          </div>
+          <div class="fg"><label>From</label><input type="date" id="si-from" onchange="runInvSearch()"/></div>
+          <div class="fg"><label>To</label><input type="date" id="si-to" onchange="runInvSearch()"/></div>
+          <div style="align-self:flex-end;display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="clearInvSearch()">Clear</button>
+            <button class="btn btn-blue btn-sm" onclick="exportCustomerPDF('inv')">📄 PDF</button>
+          </div>
+        </div>
+        <div class="table-wrap" style="margin-bottom:0">
+          <div class="table-toolbar"><div class="ttl"><span class="ttitle">Results</span><span class="badge" id="si-count">0</span></div></div>
+          <div class="tbl-scroll"><table>
+            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>BRAND</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th><th>PAYMENT</th></tr></thead>
+            <tbody id="si-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- Sales search -->
+      <div class="card" style="padding:14px 16px">
+        <div class="card-head">🛒 Sales Search</div>
+        <div class="filter-row">
+          <div class="fg" style="flex:2;min-width:160px">
+            <label>Search</label>
+            <input type="text" id="ss-q" placeholder="Customer name, item, phone…" oninput="runSalesSearch()"/>
+          </div>
+          <div class="fg"><label>From</label><input type="date" id="ss-from" onchange="runSalesSearch()"/></div>
+          <div class="fg"><label>To</label><input type="date" id="ss-to" onchange="runSalesSearch()"/></div>
+          <div style="align-self:flex-end;display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="clearSalesSearch()">Clear</button>
+            <button class="btn btn-blue btn-sm" onclick="exportCustomerPDF('sales')">📄 PDF</button>
+          </div>
+        </div>
+        <div class="table-wrap" style="margin-bottom:0">
+          <div class="table-toolbar"><div class="ttl"><span class="ttitle">Results</span><span class="badge" id="ss-count">0</span></div></div>
+          <div class="tbl-scroll"><table>
+            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th></tr></thead>
+            <tbody id="ss-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <div id="pgDash" class="page">
+      <div class="dash-inner">
+        <div class="d-filters">
+          <div class="fg"><label>From</label><input type="date" id="d-from" onchange="renderDash()"/></div>
+          <div class="fg"><label>To</label><input type="date" id="d-to" onchange="renderDash()"/></div>
+          <div class="fg"><label>Month</label><select id="d-month" onchange="renderDash()"><option value="">All Months</option></select></div>
+          <div class="fg"><label>Show Top</label>
+            <select id="d-top" onchange="renderDash()">
+              <option value="0">All</option><option value="5" selected>Top 5</option>
+              <option value="10">Top 10</option><option value="20">Top 20</option>
+            </select>
+          </div>
+          <div style="align-self:flex-end;display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="resetDash()">Reset</button>
+            <button class="btn btn-green btn-sm" onclick="downloadMonthReport()">⬇ Month Report</button>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="k-rev">₹0</div><div class="kpi-meta">from sales</div></div>
+          <div class="kpi"><div class="kpi-lbl">Units Sold</div><div class="kpi-val" id="k-qty">0</div><div class="kpi-meta">total qty</div></div>
+          <div class="kpi"><div class="kpi-lbl">Transactions</div><div class="kpi-val" id="k-tx">0</div><div class="kpi-meta">sales</div></div>
+          <div class="kpi"><div class="kpi-lbl">Avg Sale Value</div><div class="kpi-val" id="k-avg">₹0</div><div class="kpi-meta">per sale</div></div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card"><div class="chart-title">Top Items by Qty Sold</div><div class="chart-canvas-wrap"><canvas id="cItems"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title">Top Customers by Revenue</div><div class="chart-canvas-wrap"><canvas id="cCust"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title">Revenue Over Time</div><div class="chart-canvas-wrap"><canvas id="cRev"></canvas></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ MOBILE NAV ══ -->
+<nav class="mob-nav">
+  <button class="mn-item active" onclick="showPage('pgInventory',this)"><span class="mni">📦</span>Stock</button>
+  <button class="mn-item" onclick="showPage('pgSale',this)"><span class="mni">🛒</span>Sale</button>
+  <button class="mn-item" onclick="showPage('pgSalesLog',this)"><span class="mni">📋</span>Log</button>
+  <button class="mn-item" onclick="showPage('pgSearch',this)"><span class="mni">🔎</span>Search</button>
+  <button class="mn-item" onclick="showPage('pgDash',this)"><span class="mni">📊</span>Dash</button>
+</nav>
+
+<!-- ══ EDIT SALE MODAL ══ -->
+<div class="modal-bg" id="editSaleModal">
+  <div class="modal">
+    <div class="modal-title">Edit Sale</div>
+    <div class="modal-sub">Modify any field. Amount and qty changes will update inventory.</div>
+    <input type="hidden" id="edit-sale-id"/>
+    <input type="hidden" id="edit-sale-orig-qty"/>
+    <input type="hidden" id="edit-sale-orig-item"/>
+    <div class="form-grid">
+      <div class="fg"><label>Date</label>
+        <div class="date-field">
+          <div class="date-display" onclick="toggleCal('esale')" id="dd-esale"><span id="dl-esale">Select date</span><span class="ci">📅</span></div>
+          <div class="cal-popup" id="cp-esale"></div>
+        </div>
+      </div>
+      <div class="fg"><label>Customer Name</label><input type="text" id="edit-sale-name" placeholder="Customer name"/></div>
+      <div class="fg"><label>P. No</label><input type="text" id="edit-sale-pno" placeholder="Phone"/></div>
+      <div class="fg"><label>Item</label><input type="text" id="edit-sale-item" readonly style="opacity:.6;cursor:not-allowed" title="Cannot change item — void and re-enter"/></div>
+      <div class="fg"><label>QTY</label><input type="number" id="edit-sale-qty" min="1" value="1"/></div>
+      <div class="fg"><label>Amount (₹)</label><input type="number" id="edit-sale-amount" min="0" step="0.01" value="0"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editSaleModal')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveSaleEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT INVENTORY MODAL ══ -->
+<div class="modal-bg" id="editInvModal">
+  <div class="modal">
+    <div class="modal-title">Edit Inventory Item</div>
+    <div class="modal-sub">Update any field for this stock entry.</div>
+    <input type="hidden" id="edit-inv-id"/>
+    <div class="form-grid">
+      <div class="fg"><label>Date</label>
+        <div class="date-field">
+          <div class="date-display" onclick="toggleCal('einv')" id="dd-einv"><span id="dl-einv">Select date</span><span class="ci">📅</span></div>
+          <div class="cal-popup" id="cp-einv"></div>
+        </div>
+      </div>
+      <div class="fg"><label>Supplier Name</label><input type="text" id="edit-inv-name"/></div>
+      <div class="fg"><label>P. No</label><input type="text" id="edit-inv-pno"/></div>
+      <div class="fg"><label>Brand</label><input type="text" id="edit-inv-brand"/></div>
+      <div class="fg"><label>Item</label><input type="text" id="edit-inv-item"/></div>
+      <div class="fg"><label>QTY</label><input type="number" id="edit-inv-qty" min="0"/></div>
+      <div class="fg"><label>Amount (₹)</label><input type="number" id="edit-inv-amount" min="0" step="0.01"/></div>
+      <div class="fg"><label>Payment Mode</label>
+        <select id="edit-inv-pay">
+          <option value="Cash">Cash — Paid in Full</option>
+          <option value="Credit">Credit — Not Yet Paid</option>
+          <option value="Partial">Partial — Part Paid</option>
+        </select>
+      </div>
+      <div class="fg"><label>Credit Due Date</label>
+        <div class="date-field">
+          <div class="date-display" onclick="toggleCal('einvdue')" id="dd-einvdue"><span id="dl-einvdue">Select due date</span><span class="ci">📅</span></div>
+          <div class="cal-popup" id="cp-einvdue"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editInvModal')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveInvEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA
+// inventory: {_id,date,name,pno,brand,item,qty,amount,payment,dueDate}
+// sales:     {_id,date,name,pno,item,qty,amount}
+// ══════════════════════════════════════════════════════
+let inventory=[], sales=[];
+try{inventory=JSON.parse(localStorage.getItem('sbas_inv')||'[]');}catch(e){}
+try{sales=JSON.parse(localStorage.getItem('sbas_sal')||'[]');}catch(e){}
+
+// ── Session keep-alive: re-save every 4 minutes to prevent browser clearing ──
+setInterval(()=>{ try{ saveAll(); } catch(e){} }, 4*60*1000);
+
+function saveAll(){
+  localStorage.setItem('sbas_inv',JSON.stringify(inventory));
+  localStorage.setItem('sbas_sal',JSON.stringify(sales));
+}
+
+// ── Date helpers ──
+function toISO(s){
+  if(!s) return '';
+  s=String(s).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if(m){ let[,mo,d,y]=m; if(y.length===2)y='20'+y; return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`; }
+  const dt=new Date(s); return isNaN(dt)?'':dt.toISOString().slice(0,10);
+}
+function fmtDate(iso){ if(!iso)return ''; const p=iso.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso; }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function fmtAmt(n){ return `₹${Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}`; }
+function payBadge(p){ return p==='Cash'?`<span class="pay-cash">CASH</span>`:p==='Credit'?`<span class="pay-credit">CREDIT</span>`:`<span class="pay-partial">PARTIAL</span>`; }
+function hl(t,q){ if(!q||!t)return t||''; return String(t).replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark>$1</mark>'); }
+
+// ── NAV ──
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item,.mn-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item,.mn-item').forEach(n=>{ if(n.getAttribute('onclick')?.includes(`'${id}'`))n.classList.add('active'); });
+  if(id==='pgDash'){populateDashFilters();renderDash();}
+  if(id==='pgSale'){populateSaleDropdown();}
+  if(id==='pgSalesLog'){populateSalesLogFilters();renderSalesLog();}
+}
+
+// ── Modal ──
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ══════════════════════════════════════════════════════
+// MULTI-ITEM INVENTORY FORM
+// ══════════════════════════════════════════════════════
+let invRowCount=0;
+function addInvRow(){
+  invRowCount++;
+  const c=document.getElementById('inv-rows-container');
+  const d=document.createElement('div');
+  d.className='multi-row'; d.id='irow-'+invRowCount;
+  d.innerHTML=`
+    <div class="fg"><label>Item Name</label><input type="text" id="ir-item-${invRowCount}" placeholder="Part name"/></div>
+    <div class="fg"><label>QTY</label><input type="number" id="ir-qty-${invRowCount}" min="1" value="1"/></div>
+    <div class="fg"><label>Amount (₹)</label><input type="number" id="ir-amt-${invRowCount}" min="0" step="0.01" value="0"/></div>
+    <button class="row-del-btn" onclick="removeInvRow(${invRowCount})" title="Remove row">✕</button>`;
+  c.appendChild(d);
+}
+function removeInvRow(n){
+  const el=document.getElementById('irow-'+n); if(el) el.remove();
+}
+function resetInvRows(){
+  document.getElementById('inv-rows-container').innerHTML='';
+  invRowCount=0; addInvRow();
+}
+
+function addInventory(){
+  const date    = calState.inv.selected||todayISO();
+  const name    = document.getElementById('inv-name').value.trim();
+  const pno     = document.getElementById('inv-pno').value.trim();
+  const brand   = document.getElementById('inv-brand').value.trim();
+  const payment = document.getElementById('inv-pay').value;
+  const dueDate = calState.invdue.selected||'';
+
+  // collect all item rows
+  const rows=document.querySelectorAll('#inv-rows-container .multi-row');
+  const items=[];
+  for(const row of rows){
+    const n=row.id.replace('irow-','');
+    const item=document.getElementById('ir-item-'+n)?.value.trim()||'';
+    const qty=parseFloat(document.getElementById('ir-qty-'+n)?.value)||0;
+    const amount=parseFloat(document.getElementById('ir-amt-'+n)?.value)||0;
+    if(item&&qty>0) items.push({item,qty,amount});
+  }
+  if(!items.length){ toast('Add at least one item with name and qty > 0',true); return; }
+
+  items.forEach(it=>{
+    inventory.push({_id:Date.now()+Math.random(), date, name, pno, brand, item:it.item, qty:it.qty, amount:it.amount, payment, dueDate});
+  });
+  saveAll();
+  renderInventoryTable();
+  populateSaleDropdown();
+  toast(`${items.length} item(s) added to inventory!`);
+
+  document.getElementById('inv-name').value='';
+  document.getElementById('inv-pno').value='';
+  document.getElementById('inv-brand').value='';
+  document.getElementById('inv-pay').value='Cash';
+  setCal('inv',todayISO()); setCal('invdue','');
+  resetInvRows();
+}
+
+function renderInventoryTable(){
+  const tb=document.getElementById('inv-tbody');
+  const sorted=[...inventory].sort((a,b)=>b._id-a._id);
+  document.getElementById('inv-count').textContent=`${inventory.length} items`;
+  if(!sorted.length){ tb.innerHTML=`<tr class="empty-row"><td colspan="11">No stock yet. Add items above.</td></tr>`; return; }
+  tb.innerHTML=sorted.map((r,i)=>`<tr>
+    <td style="color:var(--muted);font-family:var(--fm);font-size:10px">${i+1}</td>
+    <td class="td-date">${fmtDate(r.date)}</td>
+    <td>${r.name||'—'}</td>
+    <td class="td-muted">${r.pno||'—'}</td>
+    <td style="color:var(--accent2);font-size:11px">${r.brand||'—'}</td>
+    <td style="font-weight:500">${r.item}</td>
+    <td style="font-family:var(--fm);font-weight:600;${r.qty<=0?'color:var(--red)':'color:var(--green)'}">${r.qty}</td>
+    <td class="td-amt">${fmtAmt(r.amount)}</td>
+    <td>${payBadge(r.payment||'Cash')}</td>
+    <td class="td-date">${r.dueDate?fmtDate(r.dueDate):'—'}</td>
+    <td><div class="td-act">
+      <button class="ic-btn" onclick="openEditInv(${r._id})" title="Edit">✏</button>
+      <button class="ic-btn del" onclick="deleteInvItem(${r._id})" title="Delete">✕</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function deleteInvItem(id){
+  const r=inventory.find(x=>x._id===id); if(!r)return;
+  if(!confirm(`Delete "${r.item}" from inventory?`))return;
+  inventory=inventory.filter(x=>x._id!==id);
+  saveAll(); renderInventoryTable(); populateSaleDropdown();
+  toast('Item deleted');
+}
+
+function openEditInv(id){
+  const r=inventory.find(x=>x._id===id); if(!r)return;
+  document.getElementById('edit-inv-id').value=id;
+  setCal('einv',r.date||todayISO()); setCal('einvdue',r.dueDate||'');
+  document.getElementById('edit-inv-name').value=r.name||'';
+  document.getElementById('edit-inv-pno').value=r.pno||'';
+  document.getElementById('edit-inv-brand').value=r.brand||'';
+  document.getElementById('edit-inv-item').value=r.item||'';
+  document.getElementById('edit-inv-qty').value=r.qty||0;
+  document.getElementById('edit-inv-amount').value=r.amount||0;
+  document.getElementById('edit-inv-pay').value=r.payment||'Cash';
+  openModal('editInvModal');
+}
+
+function saveInvEdit(){
+  const id=parseFloat(document.getElementById('edit-inv-id').value);
+  const r=inventory.find(x=>x._id===id); if(!r)return;
+  r.date=calState.einv.selected||todayISO();
+  r.name=document.getElementById('edit-inv-name').value.trim();
+  r.pno=document.getElementById('edit-inv-pno').value.trim();
+  r.brand=document.getElementById('edit-inv-brand').value.trim();
+  r.item=document.getElementById('edit-inv-item').value.trim();
+  r.qty=parseFloat(document.getElementById('edit-inv-qty').value)||0;
+  r.amount=parseFloat(document.getElementById('edit-inv-amount').value)||0;
+  r.payment=document.getElementById('edit-inv-pay').value;
+  r.dueDate=calState.einvdue.selected||'';
+  saveAll(); renderInventoryTable(); populateSaleDropdown();
+  closeModal('editInvModal'); toast('Inventory updated!');
+}
+
+function exportInventoryExcel(){
+  if(!inventory.length){toast('No inventory to export',true);return;}
+  const rows=[...inventory].sort((a,b)=>a.date?.localeCompare(b.date)).map((r,i)=>({
+    'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,
+    'BRAND':r.brand,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount,
+    'PAYMENT':r.payment,'DUE DATE':fmtDate(r.dueDate)
+  }));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  ws['!cols']=[4,12,18,13,14,22,6,13,10,12].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Inventory');
+  XLSX.writeFile(wb,'SBAutoSpares_Inventory.xlsx'); toast('Inventory exported!');
+}
+
+// ══════════════════════════════════════════════════════
+// RECORD SALE
+// ══════════════════════════════════════════════════════
+function populateSaleDropdown(){
+  const sel=document.getElementById('sale-item-sel');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Select from inventory —</option>';
+  [...inventory].filter(r=>r.qty>0).sort((a,b)=>a.item.localeCompare(b.item)).forEach(r=>{
+    const o=document.createElement('option');
+    o.value=r._id;
+    o.textContent=`${r.item}${r.brand?' ['+r.brand+']':''} — ${r.qty} in stock`;
+    sel.appendChild(o);
+  });
+  if(inventory.some(r=>r._id===parseFloat(cur))) sel.value=cur;
+  onSaleItemChange();
+}
+
+function onSaleItemChange(){
+  const id=parseFloat(document.getElementById('sale-item-sel').value);
+  const r=inventory.find(x=>x._id===id);
+  const avail=document.getElementById('sale-avail');
+  if(r){
+    avail.textContent=`(${r.qty} in stock)`;
+    avail.style.color=r.qty<=5?'var(--red)':'var(--green)';
+    document.getElementById('sale-amount').value=r.amount||0;
+  } else { avail.textContent=''; }
+  checkSaleStock();
+}
+
+function checkSaleStock(){
+  const id=parseFloat(document.getElementById('sale-item-sel').value);
+  const r=inventory.find(x=>x._id===id);
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const msg=document.getElementById('sale-stock-msg');
+  if(r&&qty>r.qty){ msg.textContent=`⚠ Only ${r.qty} available`; msg.style.color='var(--red)'; }
+  else { msg.textContent=''; }
+}
+
+function recordSale(){
+  const date  =calState.sale.selected;
+  const invId =parseFloat(document.getElementById('sale-item-sel').value);
+  const name  =document.getElementById('sale-name').value.trim();
+  const pno   =document.getElementById('sale-pno').value.trim();
+  const qty   =parseFloat(document.getElementById('sale-qty').value)||0;
+  const amount=parseFloat(document.getElementById('sale-amount').value)||0;
+  if(!date){toast('Please select a date',true);return;}
+  if(!name){toast('Customer name is required',true);return;}
+  if(!invId){toast('Please select an item from stock',true);return;}
+  if(qty<=0){toast('QTY must be > 0',true);return;}
+  const inv=inventory.find(x=>x._id===invId);
+  if(!inv){toast('Item not found',true);return;}
+  if(qty>inv.qty){toast(`Only ${inv.qty} units in stock!`,true);return;}
+  inv.qty-=qty;
+  sales.push({_id:Date.now(), date, name, pno, item:inv.item, qty, amount, invId});
+  saveAll(); renderInventoryTable(); renderSalesLog(); populateSaleDropdown(); populateSalesLogFilters();
+  toast(`Sale done! "${inv.item}" ×${qty} — ${inv.qty} left`);
+  document.getElementById('sale-name').value=''; document.getElementById('sale-pno').value='';
+  document.getElementById('sale-item-sel').value=''; document.getElementById('sale-qty').value=1;
+  document.getElementById('sale-amount').value=0; document.getElementById('sale-avail').textContent='';
+  document.getElementById('sale-stock-msg').textContent=''; setCal('sale',todayISO());
+}
+
+// ══════════════════════════════════════════════════════
+// SALES LOG
+// ══════════════════════════════════════════════════════
+function populateSalesLogFilters(){
+  const items=[...new Set(sales.map(s=>s.item).filter(Boolean))].sort();
+  const sel=document.getElementById('sl-item'); const cur=sel.value;
+  sel.innerHTML='<option value="">All Items</option>'+items.map(i=>`<option value="${i}">${i}</option>`).join('');
+  sel.value=cur;
+}
+
+function renderSalesLog(){
+  const from=document.getElementById('sl-from').value;
+  const to=document.getElementById('sl-to').value;
+  const cust=document.getElementById('sl-cust').value.toLowerCase().trim();
+  const item=document.getElementById('sl-item').value;
+  let data=[...sales].filter(s=>
+    (!from||s.date>=from)&&(!to||s.date<=to)&&
+    (!cust||s.name?.toLowerCase().includes(cust)||s.pno?.includes(cust))&&
+    (!item||s.item===item)
+  ).sort((a,b)=>b._id-a._id);
+  document.getElementById('sl-count').textContent=`${data.length} of ${sales.length}`;
+  const tb=document.getElementById('sl-tbody');
+  if(!data.length){tb.innerHTML=`<tr class="empty-row"><td colspan="8">No sales match filter.</td></tr>`;return;}
+  tb.innerHTML=data.map((r,i)=>`<tr>
+    <td style="color:var(--muted);font-family:var(--fm);font-size:10px">${i+1}</td>
+    <td class="td-date">${fmtDate(r.date)}</td>
+    <td style="font-weight:500">${r.name}</td>
+    <td class="td-muted">${r.pno||'—'}</td>
+    <td>${r.item}</td>
+    <td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
+    <td class="td-amt">${fmtAmt(r.amount)}</td>
+    <td><div class="td-act">
+      <button class="ic-btn" onclick="openEditSale(${r._id})" title="Edit">✏</button>
+      <button class="ic-btn del" onclick="deleteSale(${r._id})" title="Void sale">✕</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function clearSalesFilters(){
+  ['sl-from','sl-to','sl-cust'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sl-item').value=''; renderSalesLog();
+}
+
+function openEditSale(id){
+  const s=sales.find(x=>x._id===id); if(!s)return;
+  document.getElementById('edit-sale-id').value=id;
+  document.getElementById('edit-sale-orig-qty').value=s.qty;
+  document.getElementById('edit-sale-orig-item').value=s.item;
+  setCal('esale',s.date||todayISO());
+  document.getElementById('edit-sale-name').value=s.name||'';
+  document.getElementById('edit-sale-pno').value=s.pno||'';
+  document.getElementById('edit-sale-item').value=s.item||'';
+  document.getElementById('edit-sale-qty').value=s.qty||1;
+  document.getElementById('edit-sale-amount').value=s.amount||0;
+  openModal('editSaleModal');
+}
+
+function saveSaleEdit(){
+  const id=parseFloat(document.getElementById('edit-sale-id').value);
+  const s=sales.find(x=>x._id===id); if(!s)return;
+  const origQty=parseFloat(document.getElementById('edit-sale-orig-qty').value)||0;
+  const newQty=parseFloat(document.getElementById('edit-sale-qty').value)||0;
+  if(newQty<=0){toast('QTY must be > 0',true);return;}
+  // adjust inventory: return origQty, deduct newQty
+  const inv=inventory.find(x=>x._id===s.invId);
+  if(inv){
+    inv.qty+=origQty;
+    if(newQty>inv.qty){toast(`Only ${inv.qty} available`,true); inv.qty-=origQty; return;}
+    inv.qty-=newQty;
+  }
+  s.date=calState.esale.selected||s.date;
+  s.name=document.getElementById('edit-sale-name').value.trim();
+  s.pno=document.getElementById('edit-sale-pno').value.trim();
+  s.qty=newQty;
+  s.amount=parseFloat(document.getElementById('edit-sale-amount').value)||0;
+  saveAll(); renderInventoryTable(); renderSalesLog(); populateSaleDropdown();
+  closeModal('editSaleModal'); toast('Sale updated!');
+}
+
+function deleteSale(id){
+  const s=sales.find(x=>x._id===id); if(!s)return;
+  if(!confirm(`Void sale of "${s.item}" ×${s.qty}? Stock will be restored.`))return;
+  const inv=inventory.find(x=>x._id===s.invId);
+  if(inv) inv.qty+=s.qty;
+  sales=sales.filter(x=>x._id!==id);
+  saveAll(); renderInventoryTable(); renderSalesLog(); populateSaleDropdown();
+  toast('Sale voided. Stock restored.');
+}
+
+function exportSalesExcel(){
+  const from=document.getElementById('sl-from').value;
+  const to=document.getElementById('sl-to').value;
+  const cust=document.getElementById('sl-cust').value.toLowerCase().trim();
+  const item=document.getElementById('sl-item').value;
+  let data=[...sales].filter(s=>
+    (!from||s.date>=from)&&(!to||s.date<=to)&&
+    (!cust||s.name?.toLowerCase().includes(cust))&&(!item||s.item===item)
+  ).sort((a,b)=>a.date?.localeCompare(b.date));
+  if(!data.length){toast('No sales to export',true);return;}
+  const rows=data.map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount}));
+  const ws=XLSX.utils.json_to_sheet(rows); ws['!cols']=[4,12,20,14,24,8,14].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Sales');
+  XLSX.writeFile(wb,'SBAutoSpares_Sales.xlsx'); toast('Sales exported!');
+}
+
+// ══════════════════════════════════════════════════════
+// SEARCH — separate inventory + sales with own filters
+// ══════════════════════════════════════════════════════
+function runInvSearch(){
+  const q=document.getElementById('si-q').value.toLowerCase().trim();
+  const pay=document.getElementById('si-pay').value;
+  const from=document.getElementById('si-from').value;
+  const to=document.getElementById('si-to').value;
+  let res=inventory.filter(r=>
+    (!q||[r.name,r.item,r.brand,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&
+    (!pay||r.payment===pay)&&(!from||r.date>=from)&&(!to||r.date<=to)
+  );
+  document.getElementById('si-count').textContent=res.length;
+  const tb=document.getElementById('si-tbody');
+  tb.innerHTML=res.length?[...res].reverse().map((r,i)=>`<tr>
+    <td style="color:var(--muted);font-size:10px;font-family:var(--fm)">${i+1}</td>
+    <td class="td-date">${fmtDate(r.date)}</td>
+    <td>${hl(r.name,q)||'—'}</td>
+    <td class="td-muted">${hl(r.pno,q)||'—'}</td>
+    <td style="color:var(--accent2);font-size:11px">${hl(r.brand,q)||'—'}</td>
+    <td>${hl(r.item,q)}</td>
+    <td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
+    <td class="td-amt">${fmtAmt(r.amount)}</td>
+    <td>${payBadge(r.payment||'Cash')}</td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="9">No inventory matches</td></tr>`;
+}
+function clearInvSearch(){['si-q','si-from','si-to'].forEach(id=>document.getElementById(id).value='');document.getElementById('si-pay').value='';runInvSearch();}
+
+function runSalesSearch(){
+  const q=document.getElementById('ss-q').value.toLowerCase().trim();
+  const from=document.getElementById('ss-from').value;
+  const to=document.getElementById('ss-to').value;
+  let res=sales.filter(r=>
+    (!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&
+    (!from||r.date>=from)&&(!to||r.date<=to)
+  );
+  document.getElementById('ss-count').textContent=res.length;
+  const tb=document.getElementById('ss-tbody');
+  tb.innerHTML=res.length?[...res].reverse().map((r,i)=>`<tr>
+    <td style="color:var(--muted);font-size:10px;font-family:var(--fm)">${i+1}</td>
+    <td class="td-date">${fmtDate(r.date)}</td>
+    <td>${hl(r.name,q)}</td>
+    <td class="td-muted">${hl(r.pno,q)||'—'}</td>
+    <td>${hl(r.item,q)}</td>
+    <td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
+    <td class="td-amt">${fmtAmt(r.amount)}</td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="7">No sales matches</td></tr>`;
+}
+function clearSalesSearch(){['ss-q','ss-from','ss-to'].forEach(id=>document.getElementById(id).value='');runSalesSearch();}
+
+// ── Customer PDF Export ──
+function exportCustomerPDF(scope){
+  const q=scope==='inv'?document.getElementById('si-q').value.trim():document.getElementById('ss-q').value.trim();
+  const data=scope==='inv'
+    ? inventory.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())))
+    : sales.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())));
+  if(!data.length){toast('No results to export as PDF',true);return;}
+
+  const title=scope==='inv'?'Inventory Report':'Sales Report';
+  const customer=q||'All Records';
+  const totalAmt=data.reduce((s,r)=>s+Number(r.amount||0),0);
+  const date=fmtDate(todayISO());
+
+  const headerRow=scope==='inv'
+    ?`<tr><th>#</th><th>Date</th><th>Name</th><th>P.No</th><th>Brand</th><th>Item</th><th>Qty</th><th>Amount</th><th>Payment</th></tr>`
+    :`<tr><th>#</th><th>Date</th><th>Name</th><th>P.No</th><th>Item</th><th>Qty</th><th>Amount</th></tr>`;
+
+  const bodyRows=data.map((r,i)=>scope==='inv'
+    ?`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name||'—'}</td><td>${r.pno||'—'}</td><td>${r.brand||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${fmtAmt(r.amount)}</td><td>${r.payment||'Cash'}</td></tr>`
+    :`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name}</td><td>${r.pno||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${fmtAmt(r.amount)}</td></tr>`
+  ).join('');
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+  <title>${title}</title>
+  <style>
+    body{font-family:Arial,sans-serif;padding:28px;color:#1a1a1a;font-size:12px}
+    .hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #f59e0b}
+    .co{font-size:20px;font-weight:700;letter-spacing:1px;color:#b45309}
+    .co-tag{font-size:9px;color:#888;letter-spacing:2px;text-transform:uppercase}
+    .meta{font-size:11px;color:#555;text-align:right}
+    h2{font-size:15px;margin:0 0 4px;color:#333}
+    .summary{background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:10px 16px;margin-bottom:18px;display:flex;gap:32px}
+    .sum-item{font-size:11px;color:#555} .sum-val{font-size:15px;font-weight:700;color:#92400e}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    thead{background:#f59e0b;color:#09090b}
+    thead th{padding:7px 10px;text-align:left;font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase}
+    tbody tr:nth-child(even){background:#fffbeb} tbody tr:hover{background:#fef3c7}
+    tbody td{padding:6px 10px;border-bottom:1px solid #e5e7eb}
+    .footer{margin-top:20px;font-size:10px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:10px}
+    @media print{body{padding:12px}.no-print{display:none}}
+  </style></head><body>
+  <div class="hdr">
+    <div><div class="co">🔧 SHREE BALAJEE AUTO SPARES</div><div class="co-tag">Automotive Parts &amp; Sales</div></div>
+    <div class="meta"><h2>${title}</h2><div>Customer / Filter: <b>${customer}</b></div><div>Generated: ${date}</div></div>
+  </div>
+  <div class="summary">
+    <div class="sum-item">Total Records<div class="sum-val">${data.length}</div></div>
+    <div class="sum-item">Total Amount<div class="sum-val">${fmtAmt(totalAmt)}</div></div>
+    ${scope==='inv'?`<div class="sum-item">Total Qty<div class="sum-val">${data.reduce((s,r)=>s+r.qty,0)}</div></div>`:''}
+  </div>
+  <table><thead>${headerRow}</thead><tbody>${bodyRows}</tbody></table>
+  <div class="footer">Shree Balajee Auto Spares — Generated on ${date}</div>
+  <script>window.onload=()=>window.print();<\/script>
+  </body></html>`;
+
+  const w=window.open('','_blank','width=900,height=700');
+  w.document.write(html); w.document.close();
+}
+
+// ══════════════════════════════════════════════════════
+// IMPORT EXCEL
+// ══════════════════════════════════════════════════════
+function importExcel(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=evt=>{
+    try{
+      const wb=XLSX.read(evt.target.result,{type:'binary',cellDates:true});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{raw:false});
+      let n=0;
+      rows.forEach(row=>{
+        const rawDate=String(row['DATE']||row['Date']||'');
+        inventory.push({
+          _id:Date.now()+Math.random(), date:toISO(rawDate)||todayISO(),
+          name:String(row['NAME']||row['Name']||'').trim(),
+          pno:String(row['P. NO']||row['P.NO']||row['Phone']||'').trim(),
+          brand:String(row['BRAND']||row['Brand']||'').trim(),
+          item:String(row['ITEM']||row['Item']||'').trim(),
+          qty:parseFloat(row['QTY']||row['Qty']||0)||0,
+          amount:parseFloat(row['AMOUNT']||row['Amount']||0)||0,
+          payment:String(row['PAYMENT']||row['Payment']||'Cash').trim(),
+          dueDate:toISO(String(row['DUE DATE']||row['Due Date']||'')),
+        });
+        n++;
+      });
+      saveAll(); renderInventoryTable(); populateSaleDropdown();
+      toast(`Imported ${n} items!`);
+    }catch(err){toast('Import failed: '+err.message,true);}
+    e.target.value='';
+  };
+  reader.readAsBinaryString(file);
+}
+
+// ══════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════
+let cItems,cCust,cRev;
+function populateDashFilters(){
+  const months=[...new Set(sales.map(s=>s.date?s.date.slice(0,7):null).filter(Boolean))].sort().reverse();
+  const mSel=document.getElementById('d-month'); const mCur=mSel.value;
+  mSel.innerHTML='<option value="">All Months</option>'+months.map(m=>{
+    const[y,mo]=m.split('-'); return `<option value="${m}">${new Date(y,mo-1,1).toLocaleString('en-IN',{month:'long',year:'numeric'})}</option>`;
+  }).join(''); mSel.value=mCur;
+}
+function getDashData(){
+  const from=document.getElementById('d-from').value,to=document.getElementById('d-to').value,month=document.getElementById('d-month').value;
+  return sales.filter(s=>(!from||s.date>=from)&&(!to||s.date<=to)&&(!month||(s.date&&s.date.slice(0,7)===month)));
+}
+function renderDash(){
+  populateDashFilters();
+  const data=getDashData(); const topN=parseInt(document.getElementById('d-top').value)||0;
+  const rev=data.reduce((s,r)=>s+Number(r.amount||0),0);
+  const qty=data.reduce((s,r)=>s+Number(r.qty||0),0);
+  const tx=data.length;
+  document.getElementById('k-rev').textContent=`₹${Math.round(rev).toLocaleString('en-IN')}`;
+  document.getElementById('k-qty').textContent=qty.toLocaleString('en-IN');
+  document.getElementById('k-tx').textContent=tx;
+  document.getElementById('k-avg').textContent=`₹${Math.round(tx?rev/tx:0).toLocaleString('en-IN')}`;
+  const CO={responsive:true,maintainAspectRatio:false,animation:{duration:400},plugins:{legend:{display:false}},
+    scales:{x:{ticks:{color:'#6b7280',font:{size:10},maxRotation:30},grid:{color:'rgba(39,39,47,.5)'}},
+            y:{ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(39,39,47,.5)'}}}};
+  const iMap={}; data.forEach(r=>{iMap[r.item]=(iMap[r.item]||0)+Number(r.qty||0)});
+  let iE=Object.entries(iMap).sort((a,b)=>b[1]-a[1]); if(topN)iE=iE.slice(0,topN);
+  if(cItems)cItems.destroy();
+  cItems=new Chart(document.getElementById('cItems'),{type:'bar',data:{labels:iE.map(e=>e[0]),datasets:[{data:iE.map(e=>e[1]),backgroundColor:'rgba(245,158,11,.75)',borderColor:'rgba(245,158,11,1)',borderWidth:1,borderRadius:5}]},options:{...CO}});
+  const cMap={}; data.forEach(r=>{cMap[r.name]=(cMap[r.name]||0)+Number(r.amount||0)});
+  let cE=Object.entries(cMap).sort((a,b)=>b[1]-a[1]); if(topN)cE=cE.slice(0,topN);
+  if(cCust)cCust.destroy();
+  cCust=new Chart(document.getElementById('cCust'),{type:'bar',data:{labels:cE.map(e=>e[0]),datasets:[{data:cE.map(e=>e[1]),backgroundColor:'rgba(52,211,153,.75)',borderColor:'rgba(52,211,153,1)',borderWidth:1,borderRadius:5}]},options:{...CO,scales:{...CO.scales,y:{...CO.scales.y,ticks:{...CO.scales.y.ticks,callback:v=>`₹${Number(v).toLocaleString('en-IN')}`}}}}});
+  const dMap={}; data.forEach(r=>{dMap[r.date]=(dMap[r.date]||0)+Number(r.amount||0)});
+  const dE=Object.entries(dMap).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(cRev)cRev.destroy();
+  cRev=new Chart(document.getElementById('cRev'),{type:'line',data:{labels:dE.map(e=>fmtDate(e[0])),datasets:[{data:dE.map(e=>e[1]),borderColor:'rgba(245,158,11,1)',backgroundColor:'rgba(245,158,11,.08)',pointBackgroundColor:'rgba(245,158,11,1)',fill:true,tension:0.4,pointRadius:3}]},options:{...CO,scales:{...CO.scales,y:{...CO.scales.y,ticks:{...CO.scales.y.ticks,callback:v=>`₹${Number(v).toLocaleString('en-IN')}`}}}}});
+}
+function resetDash(){['d-from','d-to'].forEach(id=>document.getElementById(id).value='');document.getElementById('d-month').value='';document.getElementById('d-top').value='5';renderDash();}
+
+function downloadMonthReport(){
+  const monthVal=document.getElementById('d-month').value,fromVal=document.getElementById('d-from').value,toVal=document.getElementById('d-to').value;
+  let filtSales=[...sales]; let label='All Period';
+  if(monthVal){filtSales=sales.filter(s=>s.date&&s.date.slice(0,7)===monthVal);const[y,mo]=monthVal.split('-');label=new Date(y,mo-1,1).toLocaleString('en-IN',{month:'long',year:'numeric'});}
+  else{if(fromVal)filtSales=filtSales.filter(s=>s.date>=fromVal);if(toVal)filtSales=filtSales.filter(s=>s.date<=toVal);if(fromVal||toVal)label=`${fromVal?fmtDate(fromVal):'Start'} to ${toVal?fmtDate(toVal):'Today'}`;}
+  if(!filtSales.length){toast('No sales in selected period',true);return;}
+  const wb=XLSX.utils.book_new();
+  const totalRev=filtSales.reduce((s,r)=>s+Number(r.amount||0),0);
+  const totalQty=filtSales.reduce((s,r)=>s+Number(r.qty||0),0);
+  const uniqueCust=new Set(filtSales.map(s=>s.name)).size;
+  const partMap={};filtSales.forEach(r=>{partMap[r.item]=partMap[r.item]||{qty:0,rev:0};partMap[r.item].qty+=r.qty;partMap[r.item].rev+=r.amount;});
+  const custMap={};filtSales.forEach(r=>{custMap[r.name]=custMap[r.name]||{tx:0,rev:0};custMap[r.name].tx++;custMap[r.name].rev+=r.amount;});
+  const sumRows=[['SHREE BALAJEE AUTO SPARES',''],['Report Period:',label],['Generated On:',fmtDate(todayISO())],['',''],['SALES SUMMARY',''],['Total Revenue (₹):',totalRev],['Total Units Sold:',totalQty],['Total Transactions:',filtSales.length],['Unique Customers:',uniqueCust],['Avg Sale Value (₹):',filtSales.length?Math.round(totalRev/filtSales.length):0],['',''],['ITEM-WISE BREAKDOWN',''],['Item','Qty Sold','Revenue (₹)'],...Object.entries(partMap).sort((a,b)=>b[1].rev-a[1].rev).map(([k,v])=>[k,v.qty,v.rev]),['','',''],['CUSTOMER-WISE BREAKDOWN','',''],['Customer','Transactions','Revenue (₹)'],...Object.entries(custMap).sort((a,b)=>b[1].rev-a[1].rev).map(([k,v])=>[k,v.tx,v.rev])];
+  const ws1=XLSX.utils.aoa_to_sheet(sumRows);ws1['!cols']=[{wch:28},{wch:18},{wch:16}];XLSX.utils.book_append_sheet(wb,ws1,'Summary');
+  const txRows=[...filtSales].sort((a,b)=>a.date?.localeCompare(b.date)).map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount}));
+  const ws2=XLSX.utils.json_to_sheet(txRows);ws2['!cols']=[4,12,20,14,24,8,14].map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws2,'Sales Transactions');
+  const invRows=[...inventory].sort((a,b)=>a.item.localeCompare(b.item)).map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,'BRAND':r.brand,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount,'PAYMENT':r.payment,'DUE DATE':fmtDate(r.dueDate)}));
+  const ws3=XLSX.utils.json_to_sheet(invRows);ws3['!cols']=[4,12,18,13,14,22,6,13,10,12].map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws3,'Inventory Snapshot');
+  XLSX.writeFile(wb,`SBAutoSpares_Report_${label.replace(/\s+/g,'_')}.xlsx`);toast(`Report downloaded: ${label}`);
+}
+
+// ══════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════
+let _tt;
+function toast(msg,isErr=false){const el=document.getElementById('toast');el.textContent=msg;el.className=isErr?'err':'';el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3500);}
+
+// ══════════════════════════════════════════════════════
+// CALENDAR PICKER
+// ══════════════════════════════════════════════════════
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS=['Su','Mo','Tu','We','Th','Fr','Sa'];
+const calState={
+  inv:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
+  invdue:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
+  sale:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
+  esale:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
+  einv:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
+  einvdue:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
+};
+function todayParts(){const t=new Date();return{y:t.getFullYear(),m:t.getMonth(),d:t.getDate()};}
+function setCal(id,iso){
+  const s=calState[id]; if(!s)return;
+  s.selected=iso||''; s.mode='days';
+  if(iso){const[y,m]=iso.split('-');s.viewYear=parseInt(y);s.viewMonth=parseInt(m)-1;}
+  else{const t=new Date();s.viewYear=t.getFullYear();s.viewMonth=t.getMonth();}
+  const lbl=document.getElementById('dl-'+id);
+  if(lbl)lbl.textContent=iso?fmtDate(iso):(id.includes('due')?'Select due date':'Select date');
+}
+function toggleCal(id){
+  const pop=document.getElementById('cp-'+id),disp=document.getElementById('dd-'+id);
+  const was=pop.classList.contains('open');
+  document.querySelectorAll('.cal-popup').forEach(p=>p.classList.remove('open'));
+  document.querySelectorAll('.date-display').forEach(d=>d.classList.remove('open'));
+  if(!was){renderCal(id);pop.classList.add('open');disp.classList.add('open');}
+}
+function renderCal(id){
+  const s=calState[id];const pop=document.getElementById('cp-'+id);const tp=todayParts();
+  if(s.mode==='months'){
+    let h=`<div class="cal-header"><button class="cal-nav" onclick="calYS('${id}',-1)">‹</button><span class="cal-ml" onclick="calSM('${id}','years')">${s.viewYear}</span><button class="cal-nav" onclick="calYS('${id}',1)">›</button></div><div class="cal-ym-grid">`;
+    MONTHS.forEach((mn,i)=>{const sel=(s.selected&&parseInt(s.selected.split('-')[1])-1===i&&parseInt(s.selected.split('-')[0])===s.viewYear)?'selected':'';h+=`<div class="cal-ym-item ${sel}" onclick="calPM('${id}',${i})">${mn.slice(0,3)}</div>`;});
+    pop.innerHTML=h+`</div><button class="cal-back" onclick="calSM('${id}','days')">← Back</button>`;return;
+  }
+  if(s.mode==='years'){
+    const base=Math.floor(s.viewYear/12)*12;
+    let h=`<div class="cal-header"><button class="cal-nav" onclick="calYBS('${id}',-12)">‹</button><span class="cal-ml">${base}–${base+11}</span><button class="cal-nav" onclick="calYBS('${id}',12)">›</button></div><div class="cal-ym-grid">`;
+    for(let y=base;y<base+12;y++){const sel=(s.selected&&parseInt(s.selected.split('-')[0])===y)?'selected':'';h+=`<div class="cal-ym-item ${sel}" onclick="calPY('${id}',${y})">${y}</div>`;}
+    pop.innerHTML=h+`</div><button class="cal-back" onclick="calSM('${id}','months')">← Back</button>`;return;
+  }
+  const fd=new Date(s.viewYear,s.viewMonth,1).getDay(),dim=new Date(s.viewYear,s.viewMonth+1,0).getDate();
+  let h=`<div class="cal-header"><button class="cal-nav" onclick="calMS('${id}',-1)">‹</button><span class="cal-ml" onclick="calSM('${id}','months')">${MONTHS[s.viewMonth].slice(0,3)} ${s.viewYear}</span><button class="cal-nav" onclick="calMS('${id}',1)">›</button></div><div class="cal-grid">`;
+  DAYS.forEach(d=>{h+=`<div class="cal-dow">${d}</div>`;});
+  for(let i=0;i<fd;i++)h+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=dim;d++){
+    const iso=`${s.viewYear}-${String(s.viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cls=(d===tp.d&&s.viewMonth===tp.m&&s.viewYear===tp.y)?'today':'';
+    const sel=(iso===s.selected)?'selected':'';
+    h+=`<div class="cal-day ${cls} ${sel}" onclick="calPD('${id}','${iso}')">${d}</div>`;
+  }
+  pop.innerHTML=h+`</div>`;
+}
+function calSM(id,m){calState[id].mode=m;renderCal(id);}
+function calMS(id,d){const s=calState[id];s.viewMonth+=d;if(s.viewMonth<0){s.viewMonth=11;s.viewYear--;}else if(s.viewMonth>11){s.viewMonth=0;s.viewYear++;}renderCal(id);}
+function calYS(id,d){calState[id].viewYear+=d;renderCal(id);}
+function calYBS(id,d){calState[id].viewYear+=d;renderCal(id);}
+function calPM(id,m){calState[id].viewMonth=m;calState[id].mode='days';renderCal(id);}
+function calPY(id,y){calState[id].viewYear=y;calState[id].mode='months';renderCal(id);}
+function calPD(id,iso){calState[id].selected=iso;const lbl=document.getElementById('dl-'+id);if(lbl)lbl.textContent=fmtDate(iso);document.getElementById('cp-'+id).classList.remove('open');document.getElementById('dd-'+id).classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.date-field')&&!e.target.closest('.cal-popup')){document.querySelectorAll('.cal-popup').forEach(p=>p.classList.remove('open'));document.querySelectorAll('.date-display').forEach(d=>d.classList.remove('open'));}});
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+setCal('inv',todayISO()); setCal('invdue',''); setCal('sale',todayISO());
+resetInvRows();
+renderInventoryTable();
+renderSalesLog();
+populateSalesLogFilters();
+populateSaleDropdown();
+runInvSearch(); runSalesSearch();
+</script>
+</body>
+</html>
