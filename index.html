@@ -3,213 +3,288 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
-<title>SHREE BALAJEE AUTO SPARES</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>Shree Balajee Auto Spares</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#09090b;--surface:#111116;--card:#18181f;--border:#27272f;
-  --accent:#f59e0b;--accent2:#fcd34d;--green:#34d399;--red:#f87171;--blue:#60a5fa;
-  --text:#f0f0f5;--muted:#6b7280;--muted2:#9ca3af;
-  --fh:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace;
-  --hh:58px;--nw:210px;--mnh:60px;
+  --bg:#f5f6fa;--surface:#ffffff;--card:#ffffff;--border:#e2e5ef;--border2:#cbd0de;
+  --accent:#1e6ff1;--accent2:#3b82f6;--accent-bg:#eff4ff;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-b:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;--red-b:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-b:#fde68a;
+  --orange:#ea580c;--orange-bg:#fff7ed;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;
+  --text:#111827;--text2:#374151;--muted:#6b7280;--muted2:#9ca3af;
+  --fh:'Bebas Neue',sans-serif;--fb:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;
+  --hh:60px;--nw:220px;--mnh:60px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:var(--fb);display:flex;flex-direction:column}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 70% 40% at 15% 0%,rgba(245,158,11,.07),transparent 60%),
-             radial-gradient(ellipse 50% 30% at 85% 100%,rgba(245,158,11,.04),transparent 60%)}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);display:flex;flex-direction:column;font-size:14px}
+
+/* ── HEADER ── */
 header{height:var(--hh);flex-shrink:0;z-index:20;position:relative;display:flex;align-items:center;
   justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);
-  background:rgba(9,9,11,.92);backdrop-filter:blur(12px)}
-.logo-name{font-family:var(--fh);font-size:26px;letter-spacing:2px;color:var(--accent);line-height:1}
+  background:#fff;box-shadow:var(--shadow)}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-name{font-family:var(--fh);font-size:22px;letter-spacing:1.5px;color:var(--text);line-height:1}
 .logo-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-.hbtns{display:flex;gap:6px}
-.btn{font-family:var(--fb);font-weight:600;font-size:12px;padding:8px 14px;border-radius:7px;
-  border:none;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.btn-accent{background:var(--accent);color:#09090b;font-weight:700}
-.btn-accent:hover{background:var(--accent2)}
-.btn-green{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--green)}
-.btn-green:hover{background:rgba(52,211,153,.22)}
-.btn-blue{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.35);color:var(--blue)}
-.btn-blue:hover{background:rgba(96,165,250,.22)}
-.btn-red{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red)}
-.btn-red:hover{background:rgba(248,113,113,.2)}
-.btn-sm{padding:5px 10px;font-size:11px}
+.hbtns{display:flex;gap:8px}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--fb);font-weight:600;font-size:12.5px;padding:8px 16px;border-radius:8px;
+  border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:#fff;border:1.5px solid var(--border2);color:var(--text2)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.btn-green{background:var(--green-bg);border:1.5px solid var(--green-b);color:var(--green)}
+.btn-green:hover{background:#dcfce7}
+.btn-red{background:var(--red-bg);border:1.5px solid var(--red-b);color:var(--red)}
+.btn-red:hover{background:#fee2e2}
+.btn-amber{background:var(--amber-bg);border:1.5px solid var(--amber-b);color:var(--amber)}
+.btn-amber:hover{background:#fef3c7}
+.btn-purple{background:var(--purple-bg);border:1.5px solid #ddd6fe;color:var(--purple)}
+.btn-purple:hover{background:#ede9fe}
+.btn-sm{padding:5px 11px;font-size:11.5px}
 #fileInput{display:none}
-.shell{display:flex;flex:1;overflow:hidden;position:relative;z-index:1;height:calc(100vh - var(--hh))}
-nav.sidebar{width:var(--nw);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
-  padding:16px 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+
+/* ── LAYOUT ── */
+.shell{display:flex;flex:1;overflow:hidden;position:relative;height:calc(100vh - var(--hh))}
+nav.sidebar{width:var(--nw);flex-shrink:0;background:#fff;border-right:1px solid var(--border);
+  padding:16px 0;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
 .nav-section{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-  color:var(--muted);padding:10px 20px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:500;
-  color:var(--muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s;white-space:nowrap}
-.nav-item:hover{color:var(--text);background:rgba(255,255,255,.025)}
-.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(245,158,11,.06)}
+  color:var(--muted2);padding:12px 18px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;font-weight:500;
+  color:var(--muted);cursor:pointer;border-left:3px solid transparent;transition:all .12s;border-radius:0 6px 6px 0;margin-right:8px}
+.nav-item:hover{color:var(--text);background:var(--bg)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-bg);font-weight:600}
 .nav-icon{font-size:15px;width:20px;text-align:center}
-.nav-div{height:1px;background:var(--border);margin:8px 20px}
+.nav-div{height:1px;background:var(--border);margin:8px 18px}
+.credit-dot{width:7px;height:7px;background:var(--red);border-radius:50%;margin-left:auto;flex-shrink:0}
+
 main{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.page{display:none;flex:1;overflow-y:auto;padding:20px 26px;flex-direction:column}
-.page.active{display:flex;animation:fadeUp .2s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.page::-webkit-scrollbar{width:4px}
-.page::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.page-title{font-family:var(--fh);font-size:30px;letter-spacing:1.5px;margin-bottom:2px;flex-shrink:0}
-.page-sub{font-size:12px;color:var(--muted);margin-bottom:16px;flex-shrink:0}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;flex-shrink:0}
-.card-head{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:14px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.page{display:none;flex:1;overflow-y:auto;padding:22px 28px;flex-direction:column}
+.page.active{display:flex;animation:fadeUp .18s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page::-webkit-scrollbar{width:5px}
+.page::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+.page-title{font-family:var(--fh);font-size:28px;letter-spacing:1px;margin-bottom:2px;color:var(--text);flex-shrink:0}
+.page-sub{font-size:12px;color:var(--muted);margin-bottom:18px;flex-shrink:0}
+
+/* ── CARDS / FORMS ── */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;flex-shrink:0;box-shadow:var(--shadow)}
+.card-head{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr}
 .fg{display:flex;flex-direction:column;gap:5px}
-label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
-input,select,textarea{background:var(--surface);border:1px solid var(--border);color:var(--text);
-  font-family:var(--fb);font-size:13px;padding:9px 11px;border-radius:7px;outline:none;
-  transition:border-color .15s;width:100%}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
-input::placeholder,textarea::placeholder{color:var(--muted)}
-select option{background:var(--surface)}
-/* payment badge */
-.pay-cash{color:var(--green);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);
-  font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;white-space:nowrap}
-.pay-credit{color:var(--accent);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
-  font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;white-space:nowrap}
-.pay-partial{color:var(--blue);background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);
-  font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;white-space:nowrap}
-/* TABLE */
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex-shrink:0;margin-bottom:16px}
-.table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);gap:8px;flex-wrap:wrap}
+label{font-size:11px;font-weight:600;color:var(--text2)}
+input,select,textarea{background:#fff;border:1.5px solid var(--border2);color:var(--text);
+  font-family:var(--fb);font-size:13px;padding:8px 11px;border-radius:7px;outline:none;
+  transition:border-color .15s,box-shadow .15s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,111,241,.1)}
+input::placeholder,textarea::placeholder{color:var(--muted2)}
+select option{background:#fff}
+input[readonly]{background:var(--bg);color:var(--muted);cursor:not-allowed}
+
+/* ── BADGES ── */
+.badge{font-family:var(--fm);font-size:10px;color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:12px;border:1px solid var(--border);white-space:nowrap}
+.pay-cash{color:var(--green);background:var(--green-bg);border:1px solid var(--green-b);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;font-family:var(--fb)}
+.pay-credit{color:var(--red);background:var(--red-bg);border:1px solid var(--red-b);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;font-family:var(--fb)}
+.pay-partial{color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-b);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;font-family:var(--fb)}
+
+/* ── TABLES ── */
+.table-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;flex-shrink:0;margin-bottom:16px;box-shadow:var(--shadow)}
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);gap:8px;flex-wrap:wrap;background:#fafbfc}
 .ttl{display:flex;align-items:center;gap:8px}
-.ttitle{font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
-.badge{font-family:var(--fm);font-size:10px;color:var(--muted);background:var(--surface);padding:3px 9px;border-radius:20px;border:1px solid var(--border)}
+.ttitle{font-size:11.5px;font-weight:700;color:var(--text2);letter-spacing:.3px}
 .tbl-scroll{overflow:auto;max-height:320px}
-.tbl-scroll::-webkit-scrollbar{height:3px;width:3px}
-.tbl-scroll::-webkit-scrollbar-thumb{background:var(--border)}
+.tbl-scroll::-webkit-scrollbar{height:4px;width:4px}
+.tbl-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 table{width:100%;border-collapse:collapse;min-width:600px}
-thead th{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
-  padding:9px 12px;text-align:left;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
-tbody tr{border-bottom:1px solid rgba(39,39,47,.6);transition:background .1s}
+thead th{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);
+  padding:9px 12px;text-align:left;background:#f8f9fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
 tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:rgba(245,158,11,.025)}
-tbody td{padding:8px 12px;font-size:12px;vertical-align:middle}
-.td-amt{font-family:var(--fm);color:var(--green);font-weight:500}
-.td-date{font-family:var(--fm);font-size:11px;color:var(--muted2)}
-.td-muted{font-family:var(--fm);font-size:11px;color:var(--muted2)}
+tbody tr:hover{background:#f8f9ff}
+tbody td{padding:9px 12px;font-size:13px;vertical-align:middle;color:var(--text2)}
+.td-num{font-family:var(--fm);font-size:12px;font-weight:500;color:var(--green)}
+.td-cost{font-family:var(--fm);font-size:12px;font-weight:500;color:var(--text2)}
+.td-date{font-family:var(--fm);font-size:11px;color:var(--muted)}
+.td-muted{font-size:11px;color:var(--muted)}
 .td-act{display:flex;gap:4px;align-items:center}
-.ic-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;
-  width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:12px;transition:all .15s}
-.ic-btn:hover{border-color:var(--accent);color:var(--accent)}
-.ic-btn.del:hover{border-color:var(--red);color:var(--red)}
-.empty-row td{text-align:center;color:var(--muted);padding:32px;font-style:italic}
-/* SEARCH */
-.sb-wrap{position:relative;margin-bottom:12px;flex-shrink:0}
-.sb-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--muted);pointer-events:none}
-#searchInput{width:100%;padding:12px 14px 12px 42px;font-size:13px;border-radius:10px;background:var(--card);border:1px solid var(--border)}
-#searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
-.filter-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end;flex-shrink:0}
-.filter-row .fg{min-width:120px}
-mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padding:0 2px}
-/* DASHBOARD */
-#pgDash{padding:14px 20px;overflow:hidden}
-.dash-inner{display:grid;grid-template-rows:auto auto 1fr;height:100%;gap:11px}
+.ic-btn{background:#fff;border:1.5px solid var(--border2);color:var(--muted);border-radius:6px;
+  width:27px;height:27px;display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;transition:all .12s;flex-shrink:0}
+.ic-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.ic-btn.del:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.ic-btn.paid:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.empty-row td{text-align:center;color:var(--muted2);padding:32px;font-style:italic}
+.profit-pos{color:var(--green);font-family:var(--fm);font-size:12px;font-weight:600}
+.profit-neg{color:var(--red);font-family:var(--fm);font-size:12px;font-weight:600}
+
+/* ── FILTER ROW ── */
+.filter-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end;flex-shrink:0}
+.filter-row .fg{min-width:110px}
+mark{background:#fef3c7;color:#92400e;border-radius:2px;padding:0 2px}
+
+/* ── MULTI-ITEM ROWS ── */
+.multi-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 28px;gap:8px;align-items:end;margin-bottom:8px;padding:10px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.multi-add-btn{background:#fff;border:1.5px dashed var(--border2);color:var(--muted);border-radius:8px;
+  padding:9px;cursor:pointer;width:100%;font-size:12.5px;transition:all .15s;margin-top:4px;font-family:var(--fb);font-weight:500}
+.multi-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.row-del-btn{background:#fff;border:1.5px solid var(--border2);color:var(--muted2);border-radius:6px;
+  width:28px;height:34px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.row-del-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+
+/* ── DASHBOARD ── */
+#pgDash{padding:16px 22px;overflow:hidden}
+.dash-inner{display:grid;grid-template-rows:auto auto 1fr;height:100%;gap:12px}
 .d-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
-.d-filters .fg{min-width:105px}
+.d-filters .fg{min-width:100px}
 .d-filters input,.d-filters select{font-size:12px;padding:7px 9px}
-.d-filters label{font-size:9px}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;position:relative;overflow:hidden}
-.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
-.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.kpi-val{font-family:var(--fh);font-size:26px;letter-spacing:1px;line-height:1}
-.kpi-meta{font-size:10px;color:var(--muted);margin-top:3px}
+.d-filters label{font-size:10.5px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi-accent{border-top:3px solid var(--accent)}
+.kpi-green{border-top:3px solid var(--green)}
+.kpi-red{border-top:3px solid var(--red)}
+.kpi-amber{border-top:3px solid var(--amber)}
+.kpi-purple{border-top:3px solid var(--purple)}
+.kpi-lbl{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.kpi-val{font-family:var(--fh);font-size:24px;letter-spacing:.5px;line-height:1;color:var(--text)}
+.kpi-meta{font-size:10px;color:var(--muted);margin-top:4px}
 .charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr;gap:10px;min-height:0}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;min-height:0}
-.chart-title{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;flex-shrink:0}
+.chart-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;min-height:0;box-shadow:var(--shadow)}
+.chart-title{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;flex-shrink:0}
 .chart-canvas-wrap{flex:1;min-height:0;position:relative}
 .chart-canvas-wrap canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
-/* DATE PICKER */
+
+/* ── DATE PICKER ── */
 .date-field{position:relative}
-.date-display{background:var(--surface);border:1px solid var(--border);color:var(--text);
-  font-family:var(--fb);font-size:13px;padding:9px 11px;border-radius:7px;
+.date-display{background:#fff;border:1.5px solid var(--border2);color:var(--text);
+  font-family:var(--fb);font-size:13px;padding:8px 11px;border-radius:7px;
   cursor:pointer;display:flex;align-items:center;justify-content:space-between;
   transition:border-color .15s;user-select:none;width:100%}
-.date-display:hover,.date-display.open{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.1)}
-.date-display .ci{font-size:14px;opacity:.6}
+.date-display:hover,.date-display.open{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,111,241,.1)}
+.date-display .ci{font-size:14px;opacity:.5}
 .cal-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:400;
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:16px;width:272px;box-shadow:0 20px 60px rgba(0,0,0,.7);display:none;animation:fadeUp .15s ease}
+  background:#fff;border:1.5px solid var(--border2);border-radius:12px;
+  padding:16px;width:272px;box-shadow:var(--shadow-md);display:none;animation:fadeUp .15s ease}
 .cal-popup.open{display:block}
 .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cal-nav{background:none;border:1px solid var(--border);color:var(--muted2);border-radius:6px;
-  width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cal-nav{background:#fff;border:1.5px solid var(--border2);color:var(--muted);border-radius:6px;
+  width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .12s}
 .cal-nav:hover{border-color:var(--accent);color:var(--accent)}
 .cal-ml{font-family:var(--fh);font-size:19px;letter-spacing:1px;color:var(--text);cursor:pointer}
 .cal-ml:hover{color:var(--accent)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-dow{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--muted);text-align:center;padding:4px 0}
-.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:6px;cursor:pointer;transition:all .12s;color:var(--text)}
-.cal-day:hover{background:rgba(245,158,11,.15);color:var(--accent)}
+.cal-dow{font-size:9px;font-weight:700;color:var(--muted2);text-align:center;padding:4px 0}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:6px;cursor:pointer;transition:all .1s;color:var(--text2)}
+.cal-day:hover{background:var(--accent-bg);color:var(--accent)}
 .cal-day.today{color:var(--accent);font-weight:700}
-.cal-day.selected{background:var(--accent)!important;color:#09090b!important;font-weight:700}
+.cal-day.selected{background:var(--accent)!important;color:#fff!important;font-weight:700}
 .cal-day.empty{cursor:default;pointer-events:none}
 .cal-ym-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.cal-ym-item{padding:8px 4px;text-align:center;font-size:12px;border-radius:6px;cursor:pointer;transition:all .12s;color:var(--text)}
-.cal-ym-item:hover{background:rgba(245,158,11,.15);color:var(--accent)}
-.cal-ym-item.selected{background:var(--accent);color:#09090b;font-weight:700}
-.cal-back{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:4px 8px;border-radius:5px;margin-top:8px;width:100%;text-align:center}
+.cal-ym-item{padding:8px 4px;text-align:center;font-size:12px;border-radius:6px;cursor:pointer;transition:all .1s;color:var(--text2)}
+.cal-ym-item:hover{background:var(--accent-bg);color:var(--accent)}
+.cal-ym-item.selected{background:var(--accent);color:#fff;font-weight:700}
+.cal-back{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:4px 8px;border-radius:5px;margin-top:8px;width:100%;text-align:center;font-family:var(--fb)}
 .cal-back:hover{color:var(--accent)}
-/* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+
+/* ── ITEM COMBO ── */
+.item-combo{position:relative}
+.item-combo-input{width:100%;background:#fff;border:1.5px solid var(--border2);color:var(--text);
+  font-family:var(--fb);font-size:13px;padding:8px 32px 8px 11px;border-radius:7px;outline:none;
+  transition:border-color .15s,box-shadow .15s}
+.item-combo-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,111,241,.1)}
+.item-combo-input::placeholder{color:var(--muted2)}
+.item-combo-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted2);pointer-events:none;font-size:11px}
+.item-combo-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:350;
+  background:#fff;border:1.5px solid var(--border2);border-radius:8px;
+  box-shadow:var(--shadow-md);max-height:200px;overflow-y:auto}
+.item-combo-list.open{display:block}
+.item-combo-list::-webkit-scrollbar{width:4px}
+.item-combo-list::-webkit-scrollbar-thumb{background:var(--border2)}
+.combo-item{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.combo-item:last-child{border-bottom:none}
+.combo-item:hover{background:var(--accent-bg)}
+.combo-item.manual{color:var(--muted);font-style:italic}
+.combo-item.manual:hover{background:var(--bg)}
+.combo-item-name{font-weight:500;color:var(--text)}
+.combo-item-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+.combo-item-stock{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.stock-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b)}
+.stock-low{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}
+.stock-out{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:500;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
 .modal-bg.open{display:flex}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md)}
 .modal::-webkit-scrollbar{width:4px}
-.modal::-webkit-scrollbar-thumb{background:var(--border)}
-.modal-title{font-family:var(--fh);font-size:26px;letter-spacing:1px;margin-bottom:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--border2)}
+.modal-title{font-family:var(--fh);font-size:26px;letter-spacing:.8px;margin-bottom:4px;color:var(--text)}
 .modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
 .modal-footer{display:flex;gap:8px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap}
-/* MULTI-ENTRY rows */
-.multi-row{display:grid;grid-template-columns:2fr 1fr 1fr 24px;gap:8px;align-items:end;margin-bottom:8px}
-.multi-add-btn{background:none;border:1px dashed var(--border);color:var(--muted);border-radius:7px;
-  padding:8px;cursor:pointer;width:100%;font-size:12px;transition:all .15s;margin-top:4px}
-.multi-add-btn:hover{border-color:var(--accent);color:var(--accent)}
-.row-del-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;
-  width:24px;height:36px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.row-del-btn:hover{border-color:var(--red);color:var(--red)}
-/* PDF preview */
-#pdf-preview{display:none}
-/* TOAST */
-#toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--green);color:#09090b;
+
+/* ── REMINDERS PAGE ── */
+.reminder-section{margin-bottom:24px}
+.reminder-section-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.credit-card{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow);transition:all .15s}
+.credit-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md)}
+.credit-card.overdue{border-left:4px solid var(--red);background:var(--red-bg)}
+.credit-card.due-soon{border-left:4px solid var(--amber);background:var(--amber-bg)}
+.credit-card.ok{border-left:4px solid var(--green)}
+.cc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.cc-body{flex:1;min-width:0}
+.cc-name{font-weight:600;font-size:13px;color:var(--text);margin-bottom:2px}
+.cc-item{font-size:12px;color:var(--muted);margin-bottom:4px}
+.cc-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.cc-amt{font-family:var(--fh);font-size:20px;color:var(--text);flex-shrink:0;text-align:right;line-height:1.2}
+.cc-due{font-size:10px;color:var(--muted);text-align:right}
+.cc-actions{display:flex;gap:6px;margin-top:8px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted2);font-size:13px}
+.empty-state div{font-size:32px;margin-bottom:8px}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--green);color:#fff;
   font-weight:600;font-size:13px;padding:11px 20px;border-radius:9px;
-  transform:translateY(70px);opacity:0;transition:all .28s;pointer-events:none;max-width:320px}
+  transform:translateY(70px);opacity:0;transition:all .28s;pointer-events:none;max-width:320px;box-shadow:var(--shadow-md)}
 #toast.show{transform:translateY(0);opacity:1}
-#toast.err{background:var(--red);color:#fff}
-/* MOBILE */
+#toast.err{background:var(--red)}
+#toast.info{background:var(--accent)}
+
+/* ── MOBILE ── */
 @media(max-width:768px){
   :root{--hh:52px}
   nav.sidebar{display:none}
   .mob-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;
-    background:var(--surface);border-top:1px solid var(--border);height:var(--mnh)}
+    background:#fff;border-top:1px solid var(--border);height:var(--mnh);box-shadow:0 -2px 8px rgba(0,0,0,.06)}
   .mn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:500;
-    transition:color .15s;padding:6px 0;border:none;background:none}
+    gap:2px;cursor:pointer;color:var(--muted2);font-size:9px;font-weight:500;
+    transition:color .12s;padding:6px 0;border:none;background:none;font-family:var(--fb)}
   .mn-item .mni{font-size:19px;line-height:1}
   .mn-item.active{color:var(--accent)}
   .shell{height:calc(100vh - var(--hh) - var(--mnh))}
-  header{padding:0 14px}.logo-name{font-size:20px;letter-spacing:1px}.logo-tag{display:none}
+  header{padding:0 14px}.logo-name{font-size:18px}.logo-tag{display:none}
   .hbtns .btn span{display:none}.hbtns .btn{padding:7px 10px}
   .page{padding:14px}#pgDash{padding:10px}
-  .form-grid{grid-template-columns:1fr}.card{padding:14px}
-  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.kpi-val{font-size:20px}
+  .form-grid{grid-template-columns:1fr}.form-grid-3{grid-template-columns:1fr 1fr}.card{padding:14px}
+  .kpi-grid{grid-template-columns:1fr 1fr 1fr;gap:8px}.kpi-val{font-size:18px}
   #pgDash{overflow-y:auto}
   .charts-grid{grid-template-columns:1fr;grid-template-rows:200px 200px 200px;gap:8px}
   .chart-canvas-wrap canvas{position:static!important;width:100%!important;height:100%!important}
   .d-filters .fg,.filter-row .fg{min-width:calc(50% - 6px)}
+  .multi-row{grid-template-columns:1fr 60px 60px 70px 28px}
   .tbl-scroll{max-height:220px}
   #toast{bottom:70px;right:10px;left:10px;text-align:center}
-  .multi-row{grid-template-columns:1fr 80px 80px 24px}
 }
 @media(min-width:769px){.mob-nav{display:none}}
 </style>
@@ -217,12 +292,15 @@ mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padd
 <body>
 
 <header>
-  <div>
-    <div class="logo-name">🔧 SHREE BALAJEE AUTO SPARES</div>
-    <div class="logo-tag">Automotive Parts &amp; Sales Management</div>
+  <div class="logo-wrap">
+    <div class="logo-icon">🔧</div>
+    <div>
+      <div class="logo-name">SHREE BALAJEE AUTO SPARES</div>
+      <div class="logo-tag">Parts &amp; Sales Management</div>
+    </div>
   </div>
   <div class="hbtns">
-    <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">⬆ <span>Import Excel</span></button>
+    <button class="btn btn-outline btn-sm" onclick="document.getElementById('fileInput').click()">⬆ <span>Import Excel</span></button>
     <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="importExcel(event)"/>
   </div>
 </header>
@@ -233,9 +311,12 @@ mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padd
     <div class="nav-item active" onclick="showPage('pgInventory',this)"><span class="nav-icon">📦</span>Inventory</div>
     <div class="nav-item" onclick="showPage('pgSale',this)"><span class="nav-icon">🛒</span>Record Sale</div>
     <div class="nav-div"></div>
-    <div class="nav-section">Reports</div>
+    <div class="nav-section">Logs</div>
     <div class="nav-item" onclick="showPage('pgSalesLog',this)"><span class="nav-icon">📋</span>Sales Log</div>
     <div class="nav-item" onclick="showPage('pgSearch',this)"><span class="nav-icon">🔎</span>Search</div>
+    <div class="nav-div"></div>
+    <div class="nav-section">Finance</div>
+    <div class="nav-item" onclick="showPage('pgReminders',this)"><span class="nav-icon">🔔</span>Credit Ledger <span class="credit-dot" id="credit-dot" style="display:none"></span></div>
     <div class="nav-item" onclick="showPage('pgDash',this)"><span class="nav-icon">📊</span>Dashboard</div>
   </nav>
 
@@ -244,81 +325,99 @@ mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padd
     <!-- ══════════ INVENTORY ══════════ -->
     <div id="pgInventory" class="page active">
       <div class="page-title">Master Inventory</div>
-      <div class="page-sub">Add stock · track brand · mark paid / credit · add multiple items per supplier in one go.</div>
-
+      <div class="page-sub">Add purchased stock. Amount here = cost price (what you paid the supplier).</div>
       <div class="card">
-        <div class="card-head">➕ Add Stock Entry</div>
+        <div class="card-head">➕ New Stock Entry</div>
         <div class="form-grid">
           <div class="fg"><label>Purchase Date</label>
-            <div class="date-field">
-              <div class="date-display" onclick="toggleCal('inv')" id="dd-inv"><span id="dl-inv">Select date</span><span class="ci">📅</span></div>
-              <div class="cal-popup" id="cp-inv"></div>
-            </div>
+            <div class="date-field"><div class="date-display" onclick="toggleCal('inv')" id="dd-inv"><span id="dl-inv">Select date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-inv"></div></div>
           </div>
           <div class="fg"><label>Supplier Name</label><input type="text" id="inv-name" placeholder="Supplier / source name"/></div>
-          <div class="fg"><label>P. No (Supplier Phone)</label><input type="text" id="inv-pno" placeholder="Phone number"/></div>
-          <div class="fg"><label>Brand Name</label><input type="text" id="inv-brand" placeholder="e.g. Bosch, MRF, OEM"/></div>
-          <div class="fg"><label>Payment Mode</label>
-            <select id="inv-pay">
+          <div class="fg"><label>Supplier Phone</label><input type="text" id="inv-pno" placeholder="Phone number"/></div>
+          <div class="fg"><label>Brand</label><input type="text" id="inv-brand" placeholder="e.g. Bosch, MRF, OEM"/></div>
+          <div class="fg"><label>Payment to Supplier</label>
+            <select id="inv-pay" onchange="toggleInvPayFields()">
               <option value="Cash">Cash — Paid in Full</option>
               <option value="Credit">Credit — Not Yet Paid</option>
               <option value="Partial">Partial — Part Paid</option>
             </select>
           </div>
-          <div class="fg"><label>Credit Due Date <span style="font-size:9px;color:var(--muted);text-transform:none;letter-spacing:0">(if credit)</span></label>
-            <div class="date-field">
-              <div class="date-display" onclick="toggleCal('invdue')" id="dd-invdue"><span id="dl-invdue">Select due date</span><span class="ci">📅</span></div>
-              <div class="cal-popup" id="cp-invdue"></div>
+          <div class="fg"><label>Due Date <span style="font-weight:400;color:var(--muted2)">(if credit / partial)</span></label>
+            <div class="date-field"><div class="date-display" onclick="toggleCal('invdue')" id="dd-invdue"><span id="dl-invdue">Select due date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-invdue"></div></div>
+          </div>
+        </div>
+        <!-- Partial payment breakdown -->
+        <div id="inv-partial-wrap" style="display:none;margin-bottom:14px">
+          <div style="background:var(--amber-bg);border:1.5px solid var(--amber-b);border-radius:10px;padding:14px 16px">
+            <div class="card-head" style="color:var(--amber);margin-bottom:12px">💰 Partial Payment Breakdown</div>
+            <div class="form-grid">
+              <div class="fg"><label>Total Order Amount (₹)</label><input type="number" id="inv-total-amt" min="0" step="0.01" value="0" oninput="calcInvBalance()"/></div>
+              <div class="fg"><label>Amount Paid Now (₹)</label><input type="number" id="inv-paid-amt" min="0" step="0.01" value="0" oninput="calcInvBalance()"/></div>
+              <div class="fg"><label>Balance Still Owed (₹)</label><input type="number" id="inv-balance-amt" readonly value="0" style="background:var(--red-bg);border-color:var(--red-b);color:var(--red);font-weight:700"/></div>
             </div>
           </div>
         </div>
-
-        <!-- Multi-item rows -->
-        <div class="card-head" style="margin-top:4px">Items from this supplier</div>
+        <div class="card-head" style="margin-top:4px">Items in this Order</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Add each part separately. Cost price per item is optional — leave 0 if unknown.</div>
         <div id="inv-rows-container"></div>
         <button class="multi-add-btn" onclick="addInvRow()">＋ Add another item</button>
-        <div style="margin-top:16px"><button class="btn btn-accent" onclick="addInventory()">＋ Save All Items to Stock</button></div>
+        <div style="margin-top:14px"><button class="btn btn-primary" onclick="addInventory()">＋ Save to Inventory</button></div>
       </div>
-
       <div class="table-wrap">
         <div class="table-toolbar">
-          <div class="ttl"><span class="ttitle">All Stock</span><span class="badge" id="inv-count">0 items</span></div>
-          <button class="btn btn-ghost btn-sm" onclick="exportInventoryExcel()">⬇ Export</button>
+          <div class="ttl"><span class="ttitle">All Stock</span><span class="badge" id="inv-count">0</span></div>
+          <button class="btn btn-outline btn-sm" onclick="exportInventoryExcel()">⬇ Export</button>
         </div>
-        <div class="tbl-scroll">
-          <table>
-            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>BRAND</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th><th>PAYMENT</th><th>DUE DATE</th><th>ACTIONS</th></tr></thead>
-            <tbody id="inv-tbody"></tbody>
-          </table>
-        </div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>#</th><th>DATE</th><th>SUPPLIER</th><th>PHONE</th><th>BRAND</th><th>ITEM</th><th>PART NO</th><th>QTY</th><th>COST PRICE</th><th>PAYMENT</th><th>DUE DATE</th><th>ACTIONS</th></tr></thead>
+          <tbody id="inv-tbody"></tbody>
+        </table></div>
       </div>
     </div>
 
     <!-- ══════════ RECORD SALE ══════════ -->
     <div id="pgSale" class="page">
       <div class="page-title">Record Sale</div>
-      <div class="page-sub">Choose item from inventory dropdown — qty is deducted automatically.</div>
+      <div class="page-sub">Selling price = what the customer pays. Profit = selling − cost price.</div>
       <div class="card">
         <div class="form-grid">
-          <div class="fg"><label>Date</label>
-            <div class="date-field">
-              <div class="date-display" onclick="toggleCal('sale')" id="dd-sale"><span id="dl-sale">Select date</span><span class="ci">📅</span></div>
-              <div class="cal-popup" id="cp-sale"></div>
-            </div>
+          <div class="fg"><label>Sale Date</label>
+            <div class="date-field"><div class="date-display" onclick="toggleCal('sale')" id="dd-sale"><span id="dl-sale">Select date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-sale"></div></div>
           </div>
           <div class="fg"><label>Customer Name</label><input type="text" id="sale-name" placeholder="Customer name"/></div>
-          <div class="fg"><label>P. No</label><input type="text" id="sale-pno" placeholder="Customer phone"/></div>
-          <div class="fg"><label>Item <span id="sale-avail" style="color:var(--muted);font-size:10px;letter-spacing:0;text-transform:none;font-weight:400;margin-left:4px"></span></label>
-            <select id="sale-item-sel" onchange="onSaleItemChange()">
-              <option value="">— Select from inventory —</option>
+          <div class="fg"><label>Customer Phone</label><input type="text" id="sale-pno" placeholder="Phone number"/></div>
+          <div class="fg"><label>Item <span id="sale-avail" style="font-weight:400;font-size:11px;margin-left:4px"></span></label>
+            <div class="item-combo" id="item-combo-wrap">
+              <input type="text" class="item-combo-input" id="sale-item-input"
+                placeholder="Type to search or enter item name…"
+                oninput="filterCombo()" onfocus="openCombo()" autocomplete="off"/>
+              <span class="item-combo-arrow">▾</span>
+              <div class="item-combo-list" id="sale-combo-list"></div>
+            </div>
+            <!-- hidden fields to carry selected inventory id and cost price -->
+            <input type="hidden" id="sale-item-sel" value=""/>
+            <input type="hidden" id="sale-item-cost" value="0"/>
+          </div>
+          <div class="fg"><label>QTY</label><input type="number" id="sale-qty" min="1" value="1" oninput="recalcSale()"/></div>
+          <div class="fg"><label>Selling Price / Unit (₹)</label><input type="number" id="sale-sprice" min="0" step="0.01" value="0" oninput="recalcSale()"/></div>
+          <div class="fg"><label>Discount (%)</label><input type="number" id="sale-disc" min="0" max="100" step="0.1" value="0" oninput="recalcSale()"/></div>
+          <div class="fg"><label>Total After Discount (₹)</label><input type="number" id="sale-total" readonly value="0"/></div>
+          <div class="fg"><label>Payment from Customer</label>
+            <select id="sale-pay" onchange="toggleSaleDue()">
+              <option value="Cash">Cash — Paid in Full</option>
+              <option value="Credit">Credit — Not Yet Paid</option>
+              <option value="Partial">Partial — Part Paid</option>
             </select>
           </div>
-          <div class="fg"><label>QTY to Sell</label><input type="number" id="sale-qty" min="1" value="1" oninput="checkSaleStock()"/></div>
-          <div class="fg"><label>Amount (₹)</label><input type="number" id="sale-amount" min="0" step="0.01" value="0"/></div>
+          <div class="fg" id="sale-due-wrap" style="display:none"><label>Payment Due Date</label>
+            <div class="date-field"><div class="date-display" onclick="toggleCal('saledue')" id="dd-saledue"><span id="dl-saledue">Select due date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-saledue"></div></div>
+          </div>
+          <div class="fg" id="sale-paid-wrap" style="display:none"><label>Amount Paid So Far (₹)</label><input type="number" id="sale-paid" min="0" step="0.01" value="0"/></div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <button class="btn btn-accent" onclick="recordSale()">✓ Confirm Sale</button>
-          <span id="sale-stock-msg" style="font-size:12px"></span>
+          <button class="btn btn-primary" onclick="recordSale()">✓ Confirm Sale</button>
+          <span id="sale-stock-msg" style="font-size:12px;color:var(--red)"></span>
+          <span id="sale-profit-preview" style="font-size:12px;color:var(--green);font-weight:600"></span>
         </div>
       </div>
     </div>
@@ -326,89 +425,108 @@ mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padd
     <!-- ══════════ SALES LOG ══════════ -->
     <div id="pgSalesLog" class="page">
       <div class="page-title">Sales Log</div>
-      <div class="page-sub">All completed sales — edit entries or void to restore stock.</div>
+      <div class="page-sub">All sales with selling price, discount, profit margin, and payment status.</div>
       <div class="filter-row">
-        <div class="fg"><label>From Date</label><input type="date" id="sl-from" onchange="renderSalesLog()"/></div>
-        <div class="fg"><label>To Date</label><input type="date" id="sl-to" onchange="renderSalesLog()"/></div>
-        <div class="fg"><label>Customer</label><input type="text" id="sl-cust" placeholder="Filter by name…" oninput="renderSalesLog()"/></div>
-        <div class="fg"><label>Item</label>
-          <select id="sl-item" onchange="renderSalesLog()"><option value="">All Items</option></select>
+        <div class="fg"><label>From</label><input type="date" id="sl-from" onchange="renderSalesLog()"/></div>
+        <div class="fg"><label>To</label><input type="date" id="sl-to" onchange="renderSalesLog()"/></div>
+        <div class="fg"><label>Customer</label><input type="text" id="sl-cust" placeholder="Name or phone…" oninput="renderSalesLog()"/></div>
+        <div class="fg"><label>Item</label><select id="sl-item" onchange="renderSalesLog()"><option value="">All Items</option></select></div>
+        <div class="fg"><label>Payment</label>
+          <select id="sl-pay" onchange="renderSalesLog()">
+            <option value="">All</option><option value="Cash">Cash</option><option value="Credit">Credit</option><option value="Partial">Partial</option>
+          </select>
         </div>
         <div style="align-self:flex-end;display:flex;gap:6px">
-          <button class="btn btn-ghost btn-sm" onclick="clearSalesFilters()">Clear</button>
-          <button class="btn btn-ghost btn-sm" onclick="exportSalesExcel()">⬇ Export</button>
+          <button class="btn btn-outline btn-sm" onclick="clearSalesFilters()">Clear</button>
+          <button class="btn btn-outline btn-sm" onclick="exportSalesExcel()">⬇ Export</button>
         </div>
       </div>
       <div class="table-wrap">
         <div class="table-toolbar">
           <div class="ttl"><span class="ttitle">Sales History</span><span class="badge" id="sl-count">0</span></div>
+          <span id="sl-summary" style="font-size:12px;color:var(--muted)"></span>
         </div>
-        <div class="tbl-scroll">
-          <table>
-            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th><th>ACTIONS</th></tr></thead>
-            <tbody id="sl-tbody"></tbody>
-          </table>
-        </div>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>PHONE</th><th>ITEM</th><th>QTY</th><th>COST ₹</th><th>SELL ₹</th><th>DISC %</th><th>TOTAL ₹</th><th>PAID ₹</th><th>BALANCE ₹</th><th>PROFIT ₹</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+          <tbody id="sl-tbody"></tbody>
+        </table></div>
       </div>
     </div>
 
     <!-- ══════════ SEARCH ══════════ -->
     <div id="pgSearch" class="page">
       <div class="page-title">Search</div>
-      <div class="page-sub">Search inventory and sales separately with independent filters.</div>
-
-      <!-- Inventory search -->
-      <div class="card" style="padding:14px 16px">
+      <div class="page-sub">Independent filters for inventory and sales. Export PDF per customer.</div>
+      <div class="card" style="padding:16px">
         <div class="card-head">📦 Inventory Search</div>
         <div class="filter-row">
-          <div class="fg" style="flex:2;min-width:160px">
-            <label>Search</label>
-            <input type="text" id="si-q" placeholder="Name, item, brand, phone…" oninput="runInvSearch()"/>
-          </div>
+          <div class="fg" style="flex:2;min-width:160px"><label>Search</label><input type="text" id="si-q" placeholder="Name, item, brand, phone…" oninput="runInvSearch()"/></div>
           <div class="fg"><label>Payment</label>
-            <select id="si-pay" onchange="runInvSearch()">
-              <option value="">All</option><option value="Cash">Cash</option>
-              <option value="Credit">Credit</option><option value="Partial">Partial</option>
-            </select>
+            <select id="si-pay" onchange="runInvSearch()"><option value="">All</option><option value="Cash">Cash</option><option value="Credit">Credit</option><option value="Partial">Partial</option></select>
           </div>
           <div class="fg"><label>From</label><input type="date" id="si-from" onchange="runInvSearch()"/></div>
           <div class="fg"><label>To</label><input type="date" id="si-to" onchange="runInvSearch()"/></div>
           <div style="align-self:flex-end;display:flex;gap:6px">
-            <button class="btn btn-ghost btn-sm" onclick="clearInvSearch()">Clear</button>
-            <button class="btn btn-blue btn-sm" onclick="exportCustomerPDF('inv')">📄 PDF</button>
+            <button class="btn btn-outline btn-sm" onclick="clearInvSearch()">Clear</button>
+            <button class="btn btn-purple btn-sm" onclick="exportCustomerPDF('inv')">📄 PDF</button>
           </div>
         </div>
-        <div class="table-wrap" style="margin-bottom:0">
-          <div class="table-toolbar"><div class="ttl"><span class="ttitle">Results</span><span class="badge" id="si-count">0</span></div></div>
+        <div class="table-wrap" style="margin-bottom:0"><div class="table-toolbar"><div class="ttl"><span class="ttitle">Results</span><span class="badge" id="si-count">0</span></div></div>
           <div class="tbl-scroll"><table>
-            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>BRAND</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th><th>PAYMENT</th></tr></thead>
+            <thead><tr><th>#</th><th>DATE</th><th>SUPPLIER</th><th>PHONE</th><th>BRAND</th><th>ITEM</th><th>QTY</th><th>COST ₹</th><th>PAYMENT</th><th>DUE DATE</th></tr></thead>
             <tbody id="si-tbody"></tbody>
           </table></div>
         </div>
       </div>
-
-      <!-- Sales search -->
-      <div class="card" style="padding:14px 16px">
+      <div class="card" style="padding:16px">
         <div class="card-head">🛒 Sales Search</div>
         <div class="filter-row">
-          <div class="fg" style="flex:2;min-width:160px">
-            <label>Search</label>
-            <input type="text" id="ss-q" placeholder="Customer name, item, phone…" oninput="runSalesSearch()"/>
-          </div>
+          <div class="fg" style="flex:2;min-width:160px"><label>Search</label><input type="text" id="ss-q" placeholder="Customer, item, phone…" oninput="runSalesSearch()"/></div>
           <div class="fg"><label>From</label><input type="date" id="ss-from" onchange="runSalesSearch()"/></div>
           <div class="fg"><label>To</label><input type="date" id="ss-to" onchange="runSalesSearch()"/></div>
           <div style="align-self:flex-end;display:flex;gap:6px">
-            <button class="btn btn-ghost btn-sm" onclick="clearSalesSearch()">Clear</button>
-            <button class="btn btn-blue btn-sm" onclick="exportCustomerPDF('sales')">📄 PDF</button>
+            <button class="btn btn-outline btn-sm" onclick="clearSalesSearch()">Clear</button>
+            <button class="btn btn-purple btn-sm" onclick="exportCustomerPDF('sales')">📄 PDF</button>
           </div>
         </div>
-        <div class="table-wrap" style="margin-bottom:0">
-          <div class="table-toolbar"><div class="ttl"><span class="ttitle">Results</span><span class="badge" id="ss-count">0</span></div></div>
+        <div class="table-wrap" style="margin-bottom:0"><div class="table-toolbar"><div class="ttl"><span class="ttitle">Results</span><span class="badge" id="ss-count">0</span></div></div>
           <div class="tbl-scroll"><table>
-            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>P. NO</th><th>ITEM</th><th>QTY</th><th>AMOUNT</th></tr></thead>
+            <thead><tr><th>#</th><th>DATE</th><th>NAME</th><th>PHONE</th><th>ITEM</th><th>QTY</th><th>SELL ₹</th><th>TOTAL ₹</th><th>PROFIT ₹</th><th>PAYMENT</th></tr></thead>
             <tbody id="ss-tbody"></tbody>
           </table></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CREDIT LEDGER ══════════ -->
+    <div id="pgReminders" class="page">
+      <div class="page-title">Credit Ledger</div>
+      <div class="page-sub">All outstanding credits — money you owe suppliers (payables) and money customers owe you (receivables).</div>
+
+      <!-- Summary strip -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div class="kpi kpi-red" style="padding:14px 18px">
+          <div class="kpi-lbl">💸 You Owe Suppliers (Payable)</div>
+          <div class="kpi-val" id="cr-payable">₹0</div>
+          <div class="kpi-meta" id="cr-payable-n">0 entries</div>
+        </div>
+        <div class="kpi kpi-green" style="padding:14px 18px">
+          <div class="kpi-lbl">💰 Customers Owe You (Receivable)</div>
+          <div class="kpi-val" id="cr-receivable">₹0</div>
+          <div class="kpi-meta" id="cr-receivable-n">0 entries</div>
+        </div>
+      </div>
+
+      <!-- Payables (you → supplier) -->
+      <div class="reminder-section">
+        <div class="reminder-section-title">💸 Payables — You Owe Suppliers <span class="badge" id="cr-pay-badge">0</span></div>
+        <div id="cr-payables-list"></div>
+      </div>
+
+      <!-- Receivables (customer → you) -->
+      <div class="reminder-section">
+        <div class="reminder-section-title">💰 Receivables — Customers Owe You <span class="badge" id="cr-rec-badge">0</span></div>
+        <div id="cr-receivables-list"></div>
       </div>
     </div>
 
@@ -421,24 +539,24 @@ mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padd
           <div class="fg"><label>Month</label><select id="d-month" onchange="renderDash()"><option value="">All Months</option></select></div>
           <div class="fg"><label>Show Top</label>
             <select id="d-top" onchange="renderDash()">
-              <option value="0">All</option><option value="5" selected>Top 5</option>
-              <option value="10">Top 10</option><option value="20">Top 20</option>
+              <option value="0">All</option><option value="5" selected>Top 5</option><option value="10">Top 10</option><option value="20">Top 20</option>
             </select>
           </div>
           <div style="align-self:flex-end;display:flex;gap:6px">
-            <button class="btn btn-ghost btn-sm" onclick="resetDash()">Reset</button>
-            <button class="btn btn-green btn-sm" onclick="downloadMonthReport()">⬇ Month Report</button>
+            <button class="btn btn-outline btn-sm" onclick="resetDash()">Reset</button>
+            <button class="btn btn-green btn-sm" onclick="downloadMonthReport()">⬇ Balance Sheet</button>
           </div>
         </div>
         <div class="kpi-grid">
-          <div class="kpi"><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="k-rev">₹0</div><div class="kpi-meta">from sales</div></div>
-          <div class="kpi"><div class="kpi-lbl">Units Sold</div><div class="kpi-val" id="k-qty">0</div><div class="kpi-meta">total qty</div></div>
-          <div class="kpi"><div class="kpi-lbl">Transactions</div><div class="kpi-val" id="k-tx">0</div><div class="kpi-meta">sales</div></div>
-          <div class="kpi"><div class="kpi-lbl">Avg Sale Value</div><div class="kpi-val" id="k-avg">₹0</div><div class="kpi-meta">per sale</div></div>
+          <div class="kpi kpi-accent"><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="k-rev">₹0</div><div class="kpi-meta">from sales</div></div>
+          <div class="kpi kpi-red"><div class="kpi-lbl">Total Cost</div><div class="kpi-val" id="k-cost">₹0</div><div class="kpi-meta">cost of goods sold</div></div>
+          <div class="kpi kpi-green"><div class="kpi-lbl">Gross Profit</div><div class="kpi-val" id="k-profit">₹0</div><div class="kpi-meta" id="k-margin">0% margin</div></div>
+          <div class="kpi kpi-amber"><div class="kpi-lbl">Units Sold</div><div class="kpi-val" id="k-qty">0</div><div class="kpi-meta" id="k-tx">0 transactions</div></div>
+          <div class="kpi kpi-purple"><div class="kpi-lbl">Outstanding Credit</div><div class="kpi-val" id="k-credit">₹0</div><div class="kpi-meta">receivables</div></div>
         </div>
         <div class="charts-grid">
-          <div class="chart-card"><div class="chart-title">Top Items by Qty Sold</div><div class="chart-canvas-wrap"><canvas id="cItems"></canvas></div></div>
-          <div class="chart-card"><div class="chart-title">Top Customers by Revenue</div><div class="chart-canvas-wrap"><canvas id="cCust"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title">Top Items — Qty Sold</div><div class="chart-canvas-wrap"><canvas id="cItems"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title">Revenue vs Cost vs Profit</div><div class="chart-canvas-wrap"><canvas id="cProfit"></canvas></div></div>
           <div class="chart-card"><div class="chart-title">Revenue Over Time</div><div class="chart-canvas-wrap"><canvas id="cRev"></canvas></div></div>
         </div>
       </div>
@@ -447,79 +565,87 @@ mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padd
   </main>
 </div>
 
-<!-- ══ MOBILE NAV ══ -->
+<!-- MOBILE NAV -->
 <nav class="mob-nav">
   <button class="mn-item active" onclick="showPage('pgInventory',this)"><span class="mni">📦</span>Stock</button>
   <button class="mn-item" onclick="showPage('pgSale',this)"><span class="mni">🛒</span>Sale</button>
   <button class="mn-item" onclick="showPage('pgSalesLog',this)"><span class="mni">📋</span>Log</button>
-  <button class="mn-item" onclick="showPage('pgSearch',this)"><span class="mni">🔎</span>Search</button>
+  <button class="mn-item" onclick="showPage('pgReminders',this)"><span class="mni">🔔</span>Credits</button>
   <button class="mn-item" onclick="showPage('pgDash',this)"><span class="mni">📊</span>Dash</button>
 </nav>
 
-<!-- ══ EDIT SALE MODAL ══ -->
+<!-- EDIT SALE MODAL -->
 <div class="modal-bg" id="editSaleModal">
   <div class="modal">
     <div class="modal-title">Edit Sale</div>
-    <div class="modal-sub">Modify any field. Amount and qty changes will update inventory.</div>
-    <input type="hidden" id="edit-sale-id"/>
-    <input type="hidden" id="edit-sale-orig-qty"/>
-    <input type="hidden" id="edit-sale-orig-item"/>
+    <div class="modal-sub">Changes to QTY will update inventory stock automatically.</div>
+    <input type="hidden" id="es-id"/><input type="hidden" id="es-orig-qty"/><input type="hidden" id="es-inv-id"/>
     <div class="form-grid">
       <div class="fg"><label>Date</label>
-        <div class="date-field">
-          <div class="date-display" onclick="toggleCal('esale')" id="dd-esale"><span id="dl-esale">Select date</span><span class="ci">📅</span></div>
-          <div class="cal-popup" id="cp-esale"></div>
-        </div>
+        <div class="date-field"><div class="date-display" onclick="toggleCal('esale')" id="dd-esale"><span id="dl-esale">Date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-esale"></div></div>
       </div>
-      <div class="fg"><label>Customer Name</label><input type="text" id="edit-sale-name" placeholder="Customer name"/></div>
-      <div class="fg"><label>P. No</label><input type="text" id="edit-sale-pno" placeholder="Phone"/></div>
-      <div class="fg"><label>Item</label><input type="text" id="edit-sale-item" readonly style="opacity:.6;cursor:not-allowed" title="Cannot change item — void and re-enter"/></div>
-      <div class="fg"><label>QTY</label><input type="number" id="edit-sale-qty" min="1" value="1"/></div>
-      <div class="fg"><label>Amount (₹)</label><input type="number" id="edit-sale-amount" min="0" step="0.01" value="0"/></div>
+      <div class="fg"><label>Customer Name</label><input type="text" id="es-name"/></div>
+      <div class="fg"><label>Phone</label><input type="text" id="es-pno"/></div>
+      <div class="fg"><label>Item (read-only)</label><input type="text" id="es-item" readonly/></div>
+      <div class="fg"><label>QTY</label><input type="number" id="es-qty" min="1" oninput="recalcEditSale()"/></div>
+      <div class="fg"><label>Selling Price / Unit (₹)</label><input type="number" id="es-sprice" min="0" step="0.01" oninput="recalcEditSale()"/></div>
+      <div class="fg"><label>Discount (%)</label><input type="number" id="es-disc" min="0" max="100" step="0.1" oninput="recalcEditSale()"/></div>
+      <div class="fg"><label>Total (₹)</label><input type="number" id="es-total" readonly/></div>
+      <div class="fg"><label>Payment Status</label>
+        <select id="es-pay" onchange="toggleEditSaleDue()">
+          <option value="Cash">Cash</option><option value="Credit">Credit</option><option value="Partial">Partial</option>
+        </select>
+      </div>
+      <div class="fg" id="es-due-wrap"><label>Due Date</label>
+        <div class="date-field"><div class="date-display" onclick="toggleCal('esaledue')" id="dd-esaledue"><span id="dl-esaledue">Due date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-esaledue"></div></div>
+      </div>
+      <div class="fg" id="es-paid-wrap"><label>Amount Paid (₹)</label><input type="number" id="es-paid" min="0" step="0.01"/></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('editSaleModal')">Cancel</button>
-      <button class="btn btn-accent" onclick="saveSaleEdit()">Save Changes</button>
+      <button class="btn btn-outline" onclick="closeModal('editSaleModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSaleEdit()">Save Changes</button>
     </div>
   </div>
 </div>
 
-<!-- ══ EDIT INVENTORY MODAL ══ -->
+<!-- EDIT INV MODAL -->
 <div class="modal-bg" id="editInvModal">
   <div class="modal">
     <div class="modal-title">Edit Inventory Item</div>
     <div class="modal-sub">Update any field for this stock entry.</div>
-    <input type="hidden" id="edit-inv-id"/>
+    <input type="hidden" id="ei-id"/>
     <div class="form-grid">
       <div class="fg"><label>Date</label>
-        <div class="date-field">
-          <div class="date-display" onclick="toggleCal('einv')" id="dd-einv"><span id="dl-einv">Select date</span><span class="ci">📅</span></div>
-          <div class="cal-popup" id="cp-einv"></div>
-        </div>
+        <div class="date-field"><div class="date-display" onclick="toggleCal('einv')" id="dd-einv"><span id="dl-einv">Date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-einv"></div></div>
       </div>
-      <div class="fg"><label>Supplier Name</label><input type="text" id="edit-inv-name"/></div>
-      <div class="fg"><label>P. No</label><input type="text" id="edit-inv-pno"/></div>
-      <div class="fg"><label>Brand</label><input type="text" id="edit-inv-brand"/></div>
-      <div class="fg"><label>Item</label><input type="text" id="edit-inv-item"/></div>
-      <div class="fg"><label>QTY</label><input type="number" id="edit-inv-qty" min="0"/></div>
-      <div class="fg"><label>Amount (₹)</label><input type="number" id="edit-inv-amount" min="0" step="0.01"/></div>
-      <div class="fg"><label>Payment Mode</label>
-        <select id="edit-inv-pay">
-          <option value="Cash">Cash — Paid in Full</option>
-          <option value="Credit">Credit — Not Yet Paid</option>
-          <option value="Partial">Partial — Part Paid</option>
-        </select>
+      <div class="fg"><label>Supplier</label><input type="text" id="ei-name"/></div>
+      <div class="fg"><label>Phone</label><input type="text" id="ei-pno"/></div>
+      <div class="fg"><label>Brand</label><input type="text" id="ei-brand"/></div>
+      <div class="fg"><label>Item</label><input type="text" id="ei-item"/></div>
+      <div class="fg"><label>Part No <span style="font-weight:400;color:var(--muted2)">(optional)</span></label><input type="text" id="ei-partno" placeholder="e.g. BP-4201"/></div>
+      <div class="fg"><label>QTY</label><input type="number" id="ei-qty" min="0"/></div>
+      <div class="fg"><label>Cost Price (₹)</label><input type="number" id="ei-amount" min="0" step="0.01"/></div>
+      <div class="fg"><label>Payment</label>
+        <select id="ei-pay" onchange="toggleEditInvPay()"><option value="Cash">Cash</option><option value="Credit">Credit</option><option value="Partial">Partial</option></select>
       </div>
-      <div class="fg"><label>Credit Due Date</label>
-        <div class="date-field">
-          <div class="date-display" onclick="toggleCal('einvdue')" id="dd-einvdue"><span id="dl-einvdue">Select due date</span><span class="ci">📅</span></div>
-          <div class="cal-popup" id="cp-einvdue"></div>
+      <div class="fg"><label>Due Date</label>
+        <div class="date-field"><div class="date-display" onclick="toggleCal('einvdue')" id="dd-einvdue"><span id="dl-einvdue">Due date</span><span class="ci">📅</span></div><div class="cal-popup" id="cp-einvdue"></div></div>
+      </div>
+    </div>
+    <!-- Partial fields in modal -->
+    <div id="ei-partial-wrap" style="display:none;margin-bottom:4px">
+      <div style="background:var(--amber-bg);border:1.5px solid var(--amber-b);border-radius:8px;padding:12px 14px;margin-bottom:14px">
+        <div class="card-head" style="color:var(--amber);margin-bottom:10px">💰 Partial Payment</div>
+        <div class="form-grid">
+          <div class="fg"><label>Total Order Amt (₹)</label><input type="number" id="ei-total-amt" min="0" step="0.01" value="0" oninput="calcEditInvBalance()"/></div>
+          <div class="fg"><label>Amount Paid (₹)</label><input type="number" id="ei-paid-amt" min="0" step="0.01" value="0" oninput="calcEditInvBalance()"/></div>
+          <div class="fg"><label>Balance Owed (₹)</label><input type="number" id="ei-balance-amt" readonly value="0" style="background:var(--red-bg);border-color:var(--red-b);color:var(--red);font-weight:700"/></div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('editInvModal')">Cancel</button>
-      <button class="btn btn-accent" onclick="saveInvEdit()">Save Changes</button>
+      <button class="btn btn-outline" onclick="closeModal('editInvModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveInvEdit()">Save</button>
     </div>
   </div>
 </div>
@@ -527,86 +653,98 @@ mark{background:rgba(245,158,11,.28);color:var(--accent2);border-radius:2px;padd
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════
-// DATA
-// inventory: {_id,date,name,pno,brand,item,qty,amount,payment,dueDate}
-// sales:     {_id,date,name,pno,item,qty,amount}
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// DATA SCHEMA
+// inventory: {_id,date,name,pno,brand,item,qty,amount(costPrice),payment,dueDate}
+// sales: {_id,date,name,pno,item,qty,costPrice,sellingPrice,discount,total,profit,payment,dueDate,paidAmt,invId}
+// ══════════════════════════════════════════════════
 let inventory=[], sales=[];
-try{inventory=JSON.parse(localStorage.getItem('sbas_inv')||'[]');}catch(e){}
-try{sales=JSON.parse(localStorage.getItem('sbas_sal')||'[]');}catch(e){}
-
-// ── Session keep-alive: re-save every 4 minutes to prevent browser clearing ──
-setInterval(()=>{ try{ saveAll(); } catch(e){} }, 4*60*1000);
+try{inventory=JSON.parse(localStorage.getItem('sbas_inv3')||'[]');}catch(e){}
+try{sales=JSON.parse(localStorage.getItem('sbas_sal3')||'[]');}catch(e){}
+// auto-save every 4 min (session keepalive)
+setInterval(()=>{try{saveAll();}catch(e){}},4*60*1000);
 
 function saveAll(){
-  localStorage.setItem('sbas_inv',JSON.stringify(inventory));
-  localStorage.setItem('sbas_sal',JSON.stringify(sales));
+  localStorage.setItem('sbas_inv3',JSON.stringify(inventory));
+  localStorage.setItem('sbas_sal3',JSON.stringify(sales));
 }
 
-// ── Date helpers ──
+// ── Helpers ──
 function toISO(s){
-  if(!s) return '';
-  s=String(s).trim();
-  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  if(!s)return '';s=String(s).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
   const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-  if(m){ let[,mo,d,y]=m; if(y.length===2)y='20'+y; return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`; }
-  const dt=new Date(s); return isNaN(dt)?'':dt.toISOString().slice(0,10);
+  if(m){let[,mo,d,y]=m;if(y.length===2)y='20'+y;return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;}
+  const dt=new Date(s);return isNaN(dt)?'':dt.toISOString().slice(0,10);
 }
-function fmtDate(iso){ if(!iso)return ''; const p=iso.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso; }
-function todayISO(){ return new Date().toISOString().slice(0,10); }
-function fmtAmt(n){ return `₹${Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}`; }
-function payBadge(p){ return p==='Cash'?`<span class="pay-cash">CASH</span>`:p==='Credit'?`<span class="pay-credit">CREDIT</span>`:`<span class="pay-partial">PARTIAL</span>`; }
-function hl(t,q){ if(!q||!t)return t||''; return String(t).replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark>$1</mark>'); }
+function fmtDate(iso){if(!iso)return '';const p=iso.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;}
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function rupee(n){return `₹${Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}`;}
+function pct(n){return `${Number(n||0).toFixed(1)}%`;}
+function hl(t,q){if(!q||!t)return t||'';return String(t).replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark>$1</mark>');}
+function payBadge(p){return p==='Cash'?`<span class="pay-cash">CASH</span>`:p==='Credit'?`<span class="pay-credit">CREDIT</span>`:`<span class="pay-partial">PARTIAL</span>`;}
+function daysUntil(iso){if(!iso)return null;const diff=new Date(iso)-new Date();return Math.ceil(diff/(1000*60*60*24));}
 
-// ── NAV ──
+// ── Nav ──
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item,.mn-item').forEach(n=>n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.nav-item,.mn-item').forEach(n=>{ if(n.getAttribute('onclick')?.includes(`'${id}'`))n.classList.add('active'); });
+  document.querySelectorAll('.nav-item,.mn-item').forEach(n=>{if(n.getAttribute('onclick')?.includes(`'${id}'`))n.classList.add('active');});
   if(id==='pgDash'){populateDashFilters();renderDash();}
   if(id==='pgSale'){populateSaleDropdown();}
   if(id==='pgSalesLog'){populateSalesLogFilters();renderSalesLog();}
+  if(id==='pgReminders'){renderCreditLedger();}
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ── Update credit dot ──
+function updateCreditDot(){
+  const hasCredit=inventory.some(r=>r.payment!=='Cash')||sales.some(r=>r.payment!=='Cash');
+  document.getElementById('credit-dot').style.display=hasCredit?'':'none';
 }
 
-// ── Modal ──
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+// ══════════════════════════════════════════════════
+// INVENTORY PAYMENT FIELDS
+// ══════════════════════════════════════════════════
+function toggleInvPayFields(){
+  const pay=document.getElementById('inv-pay').value;
+  document.getElementById('inv-partial-wrap').style.display=pay==='Partial'?'block':'none';
+}
+function calcInvBalance(){
+  const total=parseFloat(document.getElementById('inv-total-amt').value)||0;
+  const paid=parseFloat(document.getElementById('inv-paid-amt').value)||0;
+  document.getElementById('inv-balance-amt').value=Math.max(0,total-paid).toFixed(2);
+}
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // MULTI-ITEM INVENTORY FORM
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 let invRowCount=0;
 function addInvRow(){
   invRowCount++;
   const c=document.getElementById('inv-rows-container');
   const d=document.createElement('div');
-  d.className='multi-row'; d.id='irow-'+invRowCount;
+  d.className='multi-row';d.id='irow-'+invRowCount;
   d.innerHTML=`
-    <div class="fg"><label>Item Name</label><input type="text" id="ir-item-${invRowCount}" placeholder="Part name"/></div>
+    <div class="fg"><label>Item Name</label><input type="text" id="ir-item-${invRowCount}" placeholder="Part / item name"/></div>
+    <div class="fg"><label>Part No <span style="font-weight:400;font-size:10px;color:var(--muted2)">(opt.)</span></label><input type="text" id="ir-partno-${invRowCount}" placeholder="e.g. BP-4201"/></div>
     <div class="fg"><label>QTY</label><input type="number" id="ir-qty-${invRowCount}" min="1" value="1"/></div>
-    <div class="fg"><label>Amount (₹)</label><input type="number" id="ir-amt-${invRowCount}" min="0" step="0.01" value="0"/></div>
-    <button class="row-del-btn" onclick="removeInvRow(${invRowCount})" title="Remove row">✕</button>`;
+    <div class="fg"><label>Cost ₹ <span style="font-weight:400;font-size:10px;color:var(--muted2)">(opt.)</span></label><input type="number" id="ir-amt-${invRowCount}" min="0" step="0.01" value="0"/></div>
+    <button class="row-del-btn" onclick="removeInvRow(${invRowCount})">✕</button>`;
   c.appendChild(d);
 }
-function removeInvRow(n){
-  const el=document.getElementById('irow-'+n); if(el) el.remove();
-}
-function resetInvRows(){
-  document.getElementById('inv-rows-container').innerHTML='';
-  invRowCount=0; addInvRow();
-}
+function removeInvRow(n){const el=document.getElementById('irow-'+n);if(el)el.remove();}
+function resetInvRows(){document.getElementById('inv-rows-container').innerHTML='';invRowCount=0;addInvRow();}
 
 function addInventory(){
-  const date    = calState.inv.selected||todayISO();
-  const name    = document.getElementById('inv-name').value.trim();
-  const pno     = document.getElementById('inv-pno').value.trim();
-  const brand   = document.getElementById('inv-brand').value.trim();
-  const payment = document.getElementById('inv-pay').value;
-  const dueDate = calState.invdue.selected||'';
-
-  // collect all item rows
+  const date=calState.inv.selected||todayISO();
+  const name=document.getElementById('inv-name').value.trim();
+  const pno=document.getElementById('inv-pno').value.trim();
+  const brand=document.getElementById('inv-brand').value.trim();
+  const payment=document.getElementById('inv-pay').value;
+  const dueDate=calState.invdue.selected||'';
   const rows=document.querySelectorAll('#inv-rows-container .multi-row');
   const items=[];
   for(const row of rows){
@@ -614,41 +752,41 @@ function addInventory(){
     const item=document.getElementById('ir-item-'+n)?.value.trim()||'';
     const qty=parseFloat(document.getElementById('ir-qty-'+n)?.value)||0;
     const amount=parseFloat(document.getElementById('ir-amt-'+n)?.value)||0;
-    if(item&&qty>0) items.push({item,qty,amount});
+    const partNo=document.getElementById('ir-partno-'+n)?.value.trim()||'';
+    if(item&&qty>0)items.push({item,qty,amount,partNo});
   }
-  if(!items.length){ toast('Add at least one item with name and qty > 0',true); return; }
-
+  if(!items.length){toast('Add at least one item with a name and qty > 0',true);return;}
+  const totalAmt = payment==='Partial' ? parseFloat(document.getElementById('inv-total-amt').value)||0 : 0;
+  const paidAmt  = payment==='Partial' ? parseFloat(document.getElementById('inv-paid-amt').value)||0  : 0;
+  const balanceAmt = Math.max(0, totalAmt - paidAmt);
   items.forEach(it=>{
-    inventory.push({_id:Date.now()+Math.random(), date, name, pno, brand, item:it.item, qty:it.qty, amount:it.amount, payment, dueDate});
+    inventory.push({_id:Date.now()+Math.random(),date,name,pno,brand,partNo:it.partNo,item:it.item,qty:it.qty,amount:it.amount,payment,dueDate,totalAmt,paidAmt,balanceAmt});
   });
-  saveAll();
-  renderInventoryTable();
-  populateSaleDropdown();
-  toast(`${items.length} item(s) added to inventory!`);
-
-  document.getElementById('inv-name').value='';
-  document.getElementById('inv-pno').value='';
-  document.getElementById('inv-brand').value='';
-  document.getElementById('inv-pay').value='Cash';
-  setCal('inv',todayISO()); setCal('invdue','');
-  resetInvRows();
+  saveAll();renderInventoryTable();populateSaleDropdown();updateCreditDot();
+  toast(`${items.length} item(s) added to stock!`);
+  document.getElementById('inv-name').value='';document.getElementById('inv-pno').value='';
+  document.getElementById('inv-brand').value='';document.getElementById('inv-pay').value='Cash';
+  document.getElementById('inv-total-amt').value=0;document.getElementById('inv-paid-amt').value=0;document.getElementById('inv-balance-amt').value=0;
+  document.getElementById('inv-partial-wrap').style.display='none';
+  setCal('inv',todayISO());setCal('invdue','');resetInvRows();
 }
 
 function renderInventoryTable(){
   const tb=document.getElementById('inv-tbody');
   const sorted=[...inventory].sort((a,b)=>b._id-a._id);
-  document.getElementById('inv-count').textContent=`${inventory.length} items`;
-  if(!sorted.length){ tb.innerHTML=`<tr class="empty-row"><td colspan="11">No stock yet. Add items above.</td></tr>`; return; }
+  document.getElementById('inv-count').textContent=`${inventory.length}`;
+  if(!sorted.length){tb.innerHTML=`<tr class="empty-row"><td colspan="12">No stock yet.</td></tr>`;return;}
   tb.innerHTML=sorted.map((r,i)=>`<tr>
-    <td style="color:var(--muted);font-family:var(--fm);font-size:10px">${i+1}</td>
+    <td class="td-muted">${i+1}</td>
     <td class="td-date">${fmtDate(r.date)}</td>
-    <td>${r.name||'—'}</td>
+    <td style="font-weight:500">${r.name||'—'}</td>
     <td class="td-muted">${r.pno||'—'}</td>
-    <td style="color:var(--accent2);font-size:11px">${r.brand||'—'}</td>
-    <td style="font-weight:500">${r.item}</td>
-    <td style="font-family:var(--fm);font-weight:600;${r.qty<=0?'color:var(--red)':'color:var(--green)'}">${r.qty}</td>
-    <td class="td-amt">${fmtAmt(r.amount)}</td>
-    <td>${payBadge(r.payment||'Cash')}</td>
+    <td style="font-size:12px;color:var(--accent)">${r.brand||'—'}</td>
+    <td style="font-weight:600">${r.item}</td>
+    <td class="td-muted">${r.partNo||'—'}</td>
+    <td style="font-family:var(--fm);font-weight:700;${r.qty<=0?'color:var(--red)':r.qty<=3?'color:var(--amber)':'color:var(--green)'}">${r.qty}</td>
+    <td class="td-cost">${rupee(r.amount)}</td>
+    <td>${payBadge(r.payment||'Cash')}${r.payment==='Partial'&&r.balanceAmt>0?`<br><span style="font-size:10px;color:var(--red)">Bal: ${rupee(r.balanceAmt)}</span>`:''}</td>
     <td class="td-date">${r.dueDate?fmtDate(r.dueDate):'—'}</td>
     <td><div class="td-act">
       <button class="ic-btn" onclick="openEditInv(${r._id})" title="Edit">✏</button>
@@ -658,337 +796,537 @@ function renderInventoryTable(){
 }
 
 function deleteInvItem(id){
-  const r=inventory.find(x=>x._id===id); if(!r)return;
+  const r=inventory.find(x=>x._id===id);if(!r)return;
   if(!confirm(`Delete "${r.item}" from inventory?`))return;
   inventory=inventory.filter(x=>x._id!==id);
-  saveAll(); renderInventoryTable(); populateSaleDropdown();
-  toast('Item deleted');
+  saveAll();renderInventoryTable();populateSaleDropdown();updateCreditDot();toast('Item deleted');
 }
 
 function openEditInv(id){
-  const r=inventory.find(x=>x._id===id); if(!r)return;
-  document.getElementById('edit-inv-id').value=id;
-  setCal('einv',r.date||todayISO()); setCal('einvdue',r.dueDate||'');
-  document.getElementById('edit-inv-name').value=r.name||'';
-  document.getElementById('edit-inv-pno').value=r.pno||'';
-  document.getElementById('edit-inv-brand').value=r.brand||'';
-  document.getElementById('edit-inv-item').value=r.item||'';
-  document.getElementById('edit-inv-qty').value=r.qty||0;
-  document.getElementById('edit-inv-amount').value=r.amount||0;
-  document.getElementById('edit-inv-pay').value=r.payment||'Cash';
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  document.getElementById('ei-id').value=id;
+  setCal('einv',r.date||todayISO());setCal('einvdue',r.dueDate||'');
+  document.getElementById('ei-name').value=r.name||'';
+  document.getElementById('ei-pno').value=r.pno||'';
+  document.getElementById('ei-brand').value=r.brand||'';
+  document.getElementById('ei-item').value=r.item||'';
+  document.getElementById('ei-partno').value=r.partNo||'';
+  document.getElementById('ei-qty').value=r.qty||0;
+  document.getElementById('ei-amount').value=r.amount||0;
+  document.getElementById('ei-pay').value=r.payment||'Cash';
+  document.getElementById('ei-total-amt').value=r.totalAmt||0;
+  document.getElementById('ei-paid-amt').value=r.paidAmt||0;
+  document.getElementById('ei-balance-amt').value=r.balanceAmt||0;
+  document.getElementById('ei-partial-wrap').style.display=(r.payment==='Partial')?'block':'none';
   openModal('editInvModal');
 }
-
 function saveInvEdit(){
-  const id=parseFloat(document.getElementById('edit-inv-id').value);
-  const r=inventory.find(x=>x._id===id); if(!r)return;
-  r.date=calState.einv.selected||todayISO();
-  r.name=document.getElementById('edit-inv-name').value.trim();
-  r.pno=document.getElementById('edit-inv-pno').value.trim();
-  r.brand=document.getElementById('edit-inv-brand').value.trim();
-  r.item=document.getElementById('edit-inv-item').value.trim();
-  r.qty=parseFloat(document.getElementById('edit-inv-qty').value)||0;
-  r.amount=parseFloat(document.getElementById('edit-inv-amount').value)||0;
-  r.payment=document.getElementById('edit-inv-pay').value;
-  r.dueDate=calState.einvdue.selected||'';
-  saveAll(); renderInventoryTable(); populateSaleDropdown();
-  closeModal('editInvModal'); toast('Inventory updated!');
+  const id=parseFloat(document.getElementById('ei-id').value);
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  r.date=calState.einv.selected||todayISO();r.dueDate=calState.einvdue.selected||'';
+  r.name=document.getElementById('ei-name').value.trim();r.pno=document.getElementById('ei-pno').value.trim();
+  r.brand=document.getElementById('ei-brand').value.trim();r.item=document.getElementById('ei-item').value.trim();
+  r.partNo=document.getElementById('ei-partno').value.trim();
+  r.qty=parseFloat(document.getElementById('ei-qty').value)||0;
+  r.amount=parseFloat(document.getElementById('ei-amount').value)||0;
+  r.payment=document.getElementById('ei-pay').value;
+  r.totalAmt=parseFloat(document.getElementById('ei-total-amt').value)||0;
+  r.paidAmt=parseFloat(document.getElementById('ei-paid-amt').value)||0;
+  r.balanceAmt=Math.max(0,r.totalAmt-r.paidAmt);
+  saveAll();renderInventoryTable();populateSaleDropdown();updateCreditDot();
+  closeModal('editInvModal');toast('Inventory updated!');
+}
+function toggleEditInvPay(){
+  const p=document.getElementById('ei-pay').value;
+  document.getElementById('ei-partial-wrap').style.display=p==='Partial'?'block':'none';
+}
+function calcEditInvBalance(){
+  const t=parseFloat(document.getElementById('ei-total-amt').value)||0;
+  const p=parseFloat(document.getElementById('ei-paid-amt').value)||0;
+  document.getElementById('ei-balance-amt').value=Math.max(0,t-p).toFixed(2);
 }
 
 function exportInventoryExcel(){
   if(!inventory.length){toast('No inventory to export',true);return;}
-  const rows=[...inventory].sort((a,b)=>a.date?.localeCompare(b.date)).map((r,i)=>({
-    'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,
-    'BRAND':r.brand,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount,
-    'PAYMENT':r.payment,'DUE DATE':fmtDate(r.dueDate)
+  const rows=[...inventory].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map((r,i)=>({
+    'S.NO':i+1,'DATE':fmtDate(r.date),'SUPPLIER':r.name,'PHONE':r.pno,'BRAND':r.brand,
+    'ITEM':r.item,'PART NO':r.partNo||'','QTY':r.qty,'COST PRICE (₹)':r.amount,'PAYMENT':r.payment,'PAID AMT (₹)':r.paidAmt||0,'BALANCE (₹)':r.balanceAmt||0,'DUE DATE':fmtDate(r.dueDate)
   }));
-  const ws=XLSX.utils.json_to_sheet(rows);
-  ws['!cols']=[4,12,18,13,14,22,6,13,10,12].map(w=>({wch:w}));
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Inventory');
-  XLSX.writeFile(wb,'SBAutoSpares_Inventory.xlsx'); toast('Inventory exported!');
+  const ws=XLSX.utils.json_to_sheet(rows);ws['!cols']=[4,12,18,13,12,22,6,14,10,12].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Inventory');
+  XLSX.writeFile(wb,'SBAS_Inventory.xlsx');toast('Inventory exported!');
 }
 
-// ══════════════════════════════════════════════════════
-// RECORD SALE
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// RECORD SALE — COMBO ITEM PICKER
+// ══════════════════════════════════════════════════
 function populateSaleDropdown(){
-  const sel=document.getElementById('sale-item-sel');
-  const cur=sel.value;
-  sel.innerHTML='<option value="">— Select from inventory —</option>';
-  [...inventory].filter(r=>r.qty>0).sort((a,b)=>a.item.localeCompare(b.item)).forEach(r=>{
-    const o=document.createElement('option');
-    o.value=r._id;
-    o.textContent=`${r.item}${r.brand?' ['+r.brand+']':''} — ${r.qty} in stock`;
-    sel.appendChild(o);
-  });
-  if(inventory.some(r=>r._id===parseFloat(cur))) sel.value=cur;
-  onSaleItemChange();
+  // Called on page load and after inventory changes — just re-render open list if visible
+  if(document.getElementById('sale-combo-list').classList.contains('open')) filterCombo();
 }
 
-function onSaleItemChange(){
-  const id=parseFloat(document.getElementById('sale-item-sel').value);
-  const r=inventory.find(x=>x._id===id);
+function openCombo(){
+  filterCombo();
+  document.getElementById('sale-combo-list').classList.add('open');
+}
+
+function filterCombo(){
+  const q=(document.getElementById('sale-item-input').value||'').toLowerCase().trim();
+  const list=document.getElementById('sale-combo-list');
+
+  // Match inventory items
+  const matches=[...inventory]
+    .filter(r=>!q||r.item.toLowerCase().includes(q)||(r.brand||'').toLowerCase().includes(q))
+    .sort((a,b)=>{
+      // In-stock first, then alphabetical
+      if(a.qty>0&&b.qty<=0)return -1;if(a.qty<=0&&b.qty>0)return 1;
+      return a.item.localeCompare(b.item);
+    });
+
+  let html='';
+  if(matches.length){
+    matches.forEach(r=>{
+      const stockCls=r.qty<=0?'stock-out':r.qty<=3?'stock-low':'stock-ok';
+      const stockTxt=r.qty<=0?'OUT':r.qty+' left';
+      html+=`<div class="combo-item" onclick="selectComboItem(${r._id})">
+        <div>
+          <span class="combo-item-name">${r.item}</span>
+          ${r.brand?`<span class="combo-item-meta"> [${r.brand}]</span>`:''}
+        </div>
+        <span class="combo-item-stock ${stockCls}">${stockTxt}</span>
+      </div>`;
+    });
+  }
+  // Always show "use as typed" option if there's text
+  if(q){
+    html+=`<div class="combo-item manual" onclick="selectComboManual()">
+      ✏ Use "<b>${document.getElementById('sale-item-input').value}</b>" as item name (backlog / manual entry)
+    </div>`;
+  }
+  if(!html) html='<div class="combo-item manual">No items in inventory. Type a name to enter manually.</div>';
+  list.innerHTML=html;
+  list.classList.add('open');
+
+  // Update avail label
+  const selId=parseFloat(document.getElementById('sale-item-sel').value);
+  const sel=inventory.find(x=>x._id===selId);
   const avail=document.getElementById('sale-avail');
-  if(r){
-    avail.textContent=`(${r.qty} in stock)`;
-    avail.style.color=r.qty<=5?'var(--red)':'var(--green)';
-    document.getElementById('sale-amount').value=r.amount||0;
-  } else { avail.textContent=''; }
+  if(sel){
+    avail.textContent=`(${sel.qty} in stock)`;
+    avail.style.color=sel.qty<=3?'var(--red)':sel.qty<=5?'var(--amber)':'var(--green)';
+  }
+}
+
+function selectComboItem(id){
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  document.getElementById('sale-item-input').value=r.item+(r.brand?' ['+r.brand+']':'');
+  document.getElementById('sale-item-sel').value=id;
+  document.getElementById('sale-item-cost').value=r.amount||0;
+  const avail=document.getElementById('sale-avail');
+  avail.textContent=`(${r.qty} in stock)`;
+  avail.style.color=r.qty<=3?'var(--red)':r.qty<=5?'var(--amber)':'var(--green)';
+  document.getElementById('sale-combo-list').classList.remove('open');
+  recalcSale();
+}
+
+function selectComboManual(){
+  // User typed a custom item not in inventory
+  document.getElementById('sale-item-sel').value='manual';
+  document.getElementById('sale-item-cost').value=0;
+  document.getElementById('sale-avail').textContent='(manual entry)';
+  document.getElementById('sale-avail').style.color='var(--muted)';
+  document.getElementById('sale-combo-list').classList.remove('open');
+  recalcSale();
+}
+
+// Close combo on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#item-combo-wrap')){
+    document.getElementById('sale-combo-list').classList.remove('open');
+  }
+});
+
+function recalcSale(){
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const sp=parseFloat(document.getElementById('sale-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('sale-disc').value)||0;
+  const total=Math.max(0,qty*sp*(1-disc/100));
+  document.getElementById('sale-total').value=total.toFixed(2);
+  // profit preview — only if inventory item selected (not manual)
+  const invId=parseFloat(document.getElementById('sale-item-sel').value);
+  const inv=inventory.find(x=>x._id===invId);
+  const costPrice=inv?inv.amount:0;
+  const profit=inv?total-(costPrice*qty):0;
+  const pp=document.getElementById('sale-profit-preview');
+  if(inv&&qty>0){pp.textContent=`Est. profit: ${rupee(profit)}`;pp.style.color=profit>=0?'var(--green)':'var(--red)';}
+  else pp.textContent='';
   checkSaleStock();
 }
 
 function checkSaleStock(){
-  const id=parseFloat(document.getElementById('sale-item-sel').value);
-  const r=inventory.find(x=>x._id===id);
+  const invId=parseFloat(document.getElementById('sale-item-sel').value);
+  const r=inventory.find(x=>x._id===invId);
   const qty=parseFloat(document.getElementById('sale-qty').value)||0;
   const msg=document.getElementById('sale-stock-msg');
-  if(r&&qty>r.qty){ msg.textContent=`⚠ Only ${r.qty} available`; msg.style.color='var(--red)'; }
-  else { msg.textContent=''; }
+  if(r&&qty>r.qty){msg.textContent=`⚠ Only ${r.qty} available`;} else {msg.textContent='';}
+}
+
+function toggleSaleDue(){
+  const pay=document.getElementById('sale-pay').value;
+  document.getElementById('sale-due-wrap').style.display=(pay==='Credit'||pay==='Partial')?'':'none';
+  document.getElementById('sale-paid-wrap').style.display=pay==='Partial'?'':'none';
 }
 
 function recordSale(){
-  const date  =calState.sale.selected;
-  const invId =parseFloat(document.getElementById('sale-item-sel').value);
-  const name  =document.getElementById('sale-name').value.trim();
-  const pno   =document.getElementById('sale-pno').value.trim();
-  const qty   =parseFloat(document.getElementById('sale-qty').value)||0;
-  const amount=parseFloat(document.getElementById('sale-amount').value)||0;
+  const date=calState.sale.selected;
+  const rawSelId=document.getElementById('sale-item-sel').value;
+  const itemInputVal=document.getElementById('sale-item-input').value.trim();
+  const isManual=(rawSelId==='manual'||(!rawSelId&&itemInputVal));
+  const invId=isManual?null:parseFloat(rawSelId)||null;
+  const name=document.getElementById('sale-name').value.trim();
+  const pno=document.getElementById('sale-pno').value.trim();
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const sp=parseFloat(document.getElementById('sale-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('sale-disc').value)||0;
+  const total=parseFloat(document.getElementById('sale-total').value)||0;
+  const payment=document.getElementById('sale-pay').value;
+  const dueDate=calState.saledue.selected||'';
+  const paidAmt=payment==='Partial'?parseFloat(document.getElementById('sale-paid').value)||0:payment==='Cash'?total:0;
+
   if(!date){toast('Please select a date',true);return;}
-  if(!name){toast('Customer name is required',true);return;}
-  if(!invId){toast('Please select an item from stock',true);return;}
+  if(!name){toast('Customer name required',true);return;}
+  if(!itemInputVal){toast('Please enter or select an item',true);return;}
   if(qty<=0){toast('QTY must be > 0',true);return;}
-  const inv=inventory.find(x=>x._id===invId);
-  if(!inv){toast('Item not found',true);return;}
-  if(qty>inv.qty){toast(`Only ${inv.qty} units in stock!`,true);return;}
-  inv.qty-=qty;
-  sales.push({_id:Date.now(), date, name, pno, item:inv.item, qty, amount, invId});
-  saveAll(); renderInventoryTable(); renderSalesLog(); populateSaleDropdown(); populateSalesLogFilters();
-  toast(`Sale done! "${inv.item}" ×${qty} — ${inv.qty} left`);
-  document.getElementById('sale-name').value=''; document.getElementById('sale-pno').value='';
-  document.getElementById('sale-item-sel').value=''; document.getElementById('sale-qty').value=1;
-  document.getElementById('sale-amount').value=0; document.getElementById('sale-avail').textContent='';
-  document.getElementById('sale-stock-msg').textContent=''; setCal('sale',todayISO());
+  if(sp<=0){toast('Selling price must be > 0',true);return;}
+
+  let itemName=itemInputVal;
+  let costPrice=0;
+
+  if(invId){
+    const inv=inventory.find(x=>x._id===invId);
+    if(!inv){toast('Item not found in inventory',true);return;}
+    if(qty>inv.qty){toast(`Only ${inv.qty} in stock!`,true);return;}
+    costPrice=inv.amount;
+    // strip brand suffix if present (e.g. "Brake Pad [Bosch]" → "Brake Pad")
+    itemName=inv.item;
+    inv.qty-=qty;
+  }
+  const profit=total-(costPrice*qty);
+
+  sales.push({_id:Date.now(),date,name,pno,item:itemName,qty,costPrice,sellingPrice:sp,discount:disc,total,profit,payment,dueDate,paidAmt,invId:invId||null});
+  saveAll();renderInventoryTable();renderSalesLog();populateSaleDropdown();updateCreditDot();populateSalesLogFilters();
+
+  const profitTxt=invId?` | Profit: ${rupee(profit)}`:'';
+  toast(`Sale recorded!${profitTxt}`,'info');
+
+  document.getElementById('sale-name').value='';document.getElementById('sale-pno').value='';
+  document.getElementById('sale-item-input').value='';document.getElementById('sale-item-sel').value='';
+  document.getElementById('sale-item-cost').value=0;document.getElementById('sale-qty').value=1;
+  document.getElementById('sale-sprice').value=0;document.getElementById('sale-disc').value=0;
+  document.getElementById('sale-total').value=0;document.getElementById('sale-pay').value='Cash';
+  document.getElementById('sale-avail').textContent='';document.getElementById('sale-stock-msg').textContent='';
+  document.getElementById('sale-profit-preview').textContent='';
+  document.getElementById('sale-due-wrap').style.display='none';
+  document.getElementById('sale-paid-wrap').style.display='none';
+  setCal('sale',todayISO());setCal('saledue','');
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // SALES LOG
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function populateSalesLogFilters(){
   const items=[...new Set(sales.map(s=>s.item).filter(Boolean))].sort();
-  const sel=document.getElementById('sl-item'); const cur=sel.value;
+  const sel=document.getElementById('sl-item');const cur=sel.value;
   sel.innerHTML='<option value="">All Items</option>'+items.map(i=>`<option value="${i}">${i}</option>`).join('');
   sel.value=cur;
 }
-
 function renderSalesLog(){
-  const from=document.getElementById('sl-from').value;
-  const to=document.getElementById('sl-to').value;
+  const from=document.getElementById('sl-from').value,to=document.getElementById('sl-to').value;
   const cust=document.getElementById('sl-cust').value.toLowerCase().trim();
-  const item=document.getElementById('sl-item').value;
+  const item=document.getElementById('sl-item').value,pay=document.getElementById('sl-pay').value;
   let data=[...sales].filter(s=>
     (!from||s.date>=from)&&(!to||s.date<=to)&&
     (!cust||s.name?.toLowerCase().includes(cust)||s.pno?.includes(cust))&&
-    (!item||s.item===item)
+    (!item||s.item===item)&&(!pay||s.payment===pay)
   ).sort((a,b)=>b._id-a._id);
   document.getElementById('sl-count').textContent=`${data.length} of ${sales.length}`;
+  const totalRev=data.reduce((s,r)=>s+r.total,0),totalProfit=data.reduce((s,r)=>s+r.profit,0);
+  document.getElementById('sl-summary').textContent=data.length?`Revenue: ${rupee(totalRev)} | Profit: ${rupee(totalProfit)}`:'';
   const tb=document.getElementById('sl-tbody');
-  if(!data.length){tb.innerHTML=`<tr class="empty-row"><td colspan="8">No sales match filter.</td></tr>`;return;}
+  if(!data.length){tb.innerHTML=`<tr class="empty-row"><td colspan="15">No sales match filter.</td></tr>`;return;}
   tb.innerHTML=data.map((r,i)=>`<tr>
-    <td style="color:var(--muted);font-family:var(--fm);font-size:10px">${i+1}</td>
+    <td class="td-muted">${i+1}</td>
     <td class="td-date">${fmtDate(r.date)}</td>
     <td style="font-weight:500">${r.name}</td>
     <td class="td-muted">${r.pno||'—'}</td>
     <td>${r.item}</td>
     <td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
-    <td class="td-amt">${fmtAmt(r.amount)}</td>
+    <td class="td-cost">${rupee(r.costPrice)}</td>
+    <td style="font-family:var(--fm);font-weight:500">${rupee(r.sellingPrice)}</td>
+    <td class="td-muted">${r.discount?pct(r.discount):'—'}</td>
+    <td class="td-num">${rupee(r.total)}</td>
+    <td style="font-family:var(--fm);font-size:12px;color:var(--green);font-weight:500">${rupee(r.paidAmt||0)}</td>
+    <td style="font-family:var(--fm);font-size:12px;${Math.max(0,r.total-(r.paidAmt||0))>0?'color:var(--red);font-weight:700':'color:var(--muted2)'}">${Math.max(0,r.total-(r.paidAmt||0))>0?rupee(Math.max(0,r.total-(r.paidAmt||0))):'—'}</td>
+    <td class="${r.profit>=0?'profit-pos':'profit-neg'}">${rupee(r.profit)}</td>
+    <td>${payBadge(r.payment)}${r.payment!=='Cash'&&r.dueDate?`<br><span class="td-muted">Due: ${fmtDate(r.dueDate)}</span>`:''}</td>
     <td><div class="td-act">
       <button class="ic-btn" onclick="openEditSale(${r._id})" title="Edit">✏</button>
-      <button class="ic-btn del" onclick="deleteSale(${r._id})" title="Void sale">✕</button>
+      ${r.payment!=='Cash'?`<button class="ic-btn paid" onclick="markSalePaid(${r._id})" title="Mark fully paid">✓</button>`:''}
+      <button class="ic-btn del" onclick="deleteSale(${r._id})" title="Void">✕</button>
     </div></td>
   </tr>`).join('');
 }
+function clearSalesFilters(){['sl-from','sl-to','sl-cust'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-item').value='';document.getElementById('sl-pay').value='';renderSalesLog();}
 
-function clearSalesFilters(){
-  ['sl-from','sl-to','sl-cust'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('sl-item').value=''; renderSalesLog();
+function markSalePaid(id){
+  const s=sales.find(x=>x._id===id);if(!s)return;
+  s.payment='Cash';s.paidAmt=s.total;s.dueDate='';
+  saveAll();renderSalesLog();renderCreditLedger();updateCreditDot();toast('Marked as paid!');
 }
 
 function openEditSale(id){
-  const s=sales.find(x=>x._id===id); if(!s)return;
-  document.getElementById('edit-sale-id').value=id;
-  document.getElementById('edit-sale-orig-qty').value=s.qty;
-  document.getElementById('edit-sale-orig-item').value=s.item;
-  setCal('esale',s.date||todayISO());
-  document.getElementById('edit-sale-name').value=s.name||'';
-  document.getElementById('edit-sale-pno').value=s.pno||'';
-  document.getElementById('edit-sale-item').value=s.item||'';
-  document.getElementById('edit-sale-qty').value=s.qty||1;
-  document.getElementById('edit-sale-amount').value=s.amount||0;
+  const s=sales.find(x=>x._id===id);if(!s)return;
+  document.getElementById('es-id').value=id;
+  document.getElementById('es-orig-qty').value=s.qty;
+  document.getElementById('es-inv-id').value=s.invId||'';
+  setCal('esale',s.date||todayISO());setCal('esaledue',s.dueDate||'');
+  document.getElementById('es-name').value=s.name||'';document.getElementById('es-pno').value=s.pno||'';
+  document.getElementById('es-item').value=s.item||'';document.getElementById('es-qty').value=s.qty||1;
+  document.getElementById('es-sprice').value=s.sellingPrice||0;document.getElementById('es-disc').value=s.discount||0;
+  document.getElementById('es-total').value=s.total||0;document.getElementById('es-pay').value=s.payment||'Cash';
+  document.getElementById('es-paid').value=s.paidAmt||0;
+  toggleEditSaleDue();
   openModal('editSaleModal');
 }
-
+function toggleEditSaleDue(){
+  const p=document.getElementById('es-pay').value;
+  document.getElementById('es-due-wrap').style.display=(p==='Credit'||p==='Partial')?'':'none';
+  document.getElementById('es-paid-wrap').style.display=p==='Partial'?'':'none';
+}
+function recalcEditSale(){
+  const qty=parseFloat(document.getElementById('es-qty').value)||0;
+  const sp=parseFloat(document.getElementById('es-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('es-disc').value)||0;
+  document.getElementById('es-total').value=Math.max(0,qty*sp*(1-disc/100)).toFixed(2);
+}
 function saveSaleEdit(){
-  const id=parseFloat(document.getElementById('edit-sale-id').value);
-  const s=sales.find(x=>x._id===id); if(!s)return;
-  const origQty=parseFloat(document.getElementById('edit-sale-orig-qty').value)||0;
-  const newQty=parseFloat(document.getElementById('edit-sale-qty').value)||0;
+  const id=parseFloat(document.getElementById('es-id').value);
+  const s=sales.find(x=>x._id===id);if(!s)return;
+  const origQty=parseFloat(document.getElementById('es-orig-qty').value)||0;
+  const newQty=parseFloat(document.getElementById('es-qty').value)||0;
   if(newQty<=0){toast('QTY must be > 0',true);return;}
-  // adjust inventory: return origQty, deduct newQty
-  const inv=inventory.find(x=>x._id===s.invId);
-  if(inv){
-    inv.qty+=origQty;
-    if(newQty>inv.qty){toast(`Only ${inv.qty} available`,true); inv.qty-=origQty; return;}
-    inv.qty-=newQty;
-  }
-  s.date=calState.esale.selected||s.date;
-  s.name=document.getElementById('edit-sale-name').value.trim();
-  s.pno=document.getElementById('edit-sale-pno').value.trim();
-  s.qty=newQty;
-  s.amount=parseFloat(document.getElementById('edit-sale-amount').value)||0;
-  saveAll(); renderInventoryTable(); renderSalesLog(); populateSaleDropdown();
-  closeModal('editSaleModal'); toast('Sale updated!');
+  const invId=parseFloat(document.getElementById('es-inv-id').value);
+  const inv=inventory.find(x=>x._id===invId);
+  if(inv){inv.qty+=origQty;if(newQty>inv.qty){toast(`Only ${inv.qty} available`,true);inv.qty-=origQty;return;}inv.qty-=newQty;}
+  const sp=parseFloat(document.getElementById('es-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('es-disc').value)||0;
+  const total=parseFloat(document.getElementById('es-total').value)||0;
+  s.date=calState.esale.selected||s.date;s.name=document.getElementById('es-name').value.trim();
+  s.pno=document.getElementById('es-pno').value.trim();s.qty=newQty;s.sellingPrice=sp;s.discount=disc;s.total=total;
+  s.payment=document.getElementById('es-pay').value;s.dueDate=calState.esaledue.selected||'';
+  s.paidAmt=parseFloat(document.getElementById('es-paid').value)||0;
+  s.profit=total-(s.costPrice*newQty);
+  saveAll();renderInventoryTable();renderSalesLog();populateSaleDropdown();updateCreditDot();
+  closeModal('editSaleModal');toast('Sale updated!');
 }
-
 function deleteSale(id){
-  const s=sales.find(x=>x._id===id); if(!s)return;
+  const s=sales.find(x=>x._id===id);if(!s)return;
   if(!confirm(`Void sale of "${s.item}" ×${s.qty}? Stock will be restored.`))return;
-  const inv=inventory.find(x=>x._id===s.invId);
-  if(inv) inv.qty+=s.qty;
+  const inv=inventory.find(x=>x._id===s.invId);if(inv)inv.qty+=s.qty;
   sales=sales.filter(x=>x._id!==id);
-  saveAll(); renderInventoryTable(); renderSalesLog(); populateSaleDropdown();
-  toast('Sale voided. Stock restored.');
+  saveAll();renderInventoryTable();renderSalesLog();populateSaleDropdown();updateCreditDot();toast('Sale voided. Stock restored.');
 }
-
 function exportSalesExcel(){
-  const from=document.getElementById('sl-from').value;
-  const to=document.getElementById('sl-to').value;
-  const cust=document.getElementById('sl-cust').value.toLowerCase().trim();
-  const item=document.getElementById('sl-item').value;
-  let data=[...sales].filter(s=>
-    (!from||s.date>=from)&&(!to||s.date<=to)&&
-    (!cust||s.name?.toLowerCase().includes(cust))&&(!item||s.item===item)
-  ).sort((a,b)=>a.date?.localeCompare(b.date));
+  const from=document.getElementById('sl-from').value,to=document.getElementById('sl-to').value;
+  const cust=document.getElementById('sl-cust').value.toLowerCase().trim(),item=document.getElementById('sl-item').value;
+  const pay=document.getElementById('sl-pay').value;
+  let data=[...sales].filter(s=>(!from||s.date>=from)&&(!to||s.date<=to)&&(!cust||s.name?.toLowerCase().includes(cust))&&(!item||s.item===item)&&(!pay||s.payment===pay)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   if(!data.length){toast('No sales to export',true);return;}
-  const rows=data.map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount}));
-  const ws=XLSX.utils.json_to_sheet(rows); ws['!cols']=[4,12,20,14,24,8,14].map(w=>({wch:w}));
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Sales');
-  XLSX.writeFile(wb,'SBAutoSpares_Sales.xlsx'); toast('Sales exported!');
+  const rows=data.map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'CUSTOMER':r.name,'PHONE':r.pno,'ITEM':r.item,'QTY':r.qty,'COST PRICE (₹)':r.costPrice,'SELLING PRICE (₹)':r.sellingPrice,'DISCOUNT (%)':r.discount,'TOTAL (₹)':r.total,'PROFIT (₹)':r.profit,'PAYMENT':r.payment,'PAID AMT (₹)':r.paidAmt||0,'BALANCE (₹)':Math.max(0,r.total-(r.paidAmt||0)),'DUE DATE':fmtDate(r.dueDate)}));
+  const ws=XLSX.utils.json_to_sheet(rows);ws['!cols']=[4,12,18,13,22,6,14,16,12,13,13,10,13,13,12].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Sales');
+  XLSX.writeFile(wb,'SBAS_Sales.xlsx');toast('Sales exported!');
 }
 
-// ══════════════════════════════════════════════════════
-// SEARCH — separate inventory + sales with own filters
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// CREDIT LEDGER
+// ══════════════════════════════════════════════════
+function renderCreditLedger(){
+  const today=todayISO();
+  // Payables: inv credits (you owe supplier)
+  const payables=inventory.filter(r=>r.payment!=='Cash').sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+  // Receivables: sales credits (customer owes you)
+  const receivables=sales.filter(r=>r.payment!=='Cash').sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+
+  const totalPayable=payables.reduce((s,r)=>s+(r.payment==='Partial'?r.balanceAmt||0:r.amount*r.qty),0);
+  const totalReceivable=receivables.reduce((s,r)=>s+Math.max(0,r.total-(r.paidAmt||0)),0);
+  document.getElementById('cr-payable').textContent=rupee(totalPayable);
+  document.getElementById('cr-payable-n').textContent=`${payables.length} entries`;
+  document.getElementById('cr-receivable').textContent=rupee(totalReceivable);
+  document.getElementById('cr-receivable-n').textContent=`${receivables.length} entries`;
+  document.getElementById('cr-pay-badge').textContent=payables.length;
+  document.getElementById('cr-rec-badge').textContent=receivables.length;
+
+  // Render payables
+  const pDiv=document.getElementById('cr-payables-list');
+  if(!payables.length){pDiv.innerHTML=`<div class="empty-state"><div>✅</div>No outstanding payables to suppliers.</div>`;} else {
+    pDiv.innerHTML=payables.map(r=>{
+      const d=daysUntil(r.dueDate);
+      const cls=!r.dueDate?'ok':d<0?'overdue':d<=7?'due-soon':'ok';
+      const dueTxt=!r.dueDate?'No due date set':d<0?`Overdue by ${Math.abs(d)} day(s)`:d===0?'Due Today':`Due in ${d} day(s) — ${fmtDate(r.dueDate)}`;
+      const owedAmt=r.payment==='Partial'?(r.balanceAmt||0):r.amount*r.qty;
+      const fullAmt=r.payment==='Partial'?(r.totalAmt||r.amount*r.qty):r.amount*r.qty;
+      const alreadyPaid=r.payment==='Partial'?(r.paidAmt||0):0;
+      return `<div class="credit-card ${cls}">
+        <div class="cc-icon" style="background:var(--red-bg)">💸</div>
+        <div class="cc-body">
+          <div class="cc-name">${r.name||'Unknown Supplier'} <span class="td-muted">${r.pno||''}</span></div>
+          <div class="cc-item">${r.item}${r.brand?' — '+r.brand:''}${r.partNo?' · #'+r.partNo:''} × ${r.qty} unit(s)</div>
+          <div class="cc-meta">
+            <span>Purchased: ${fmtDate(r.date)}</span>
+            ${r.payment==='Partial'?`<span>Order Total: <b>${rupee(fullAmt)}</b></span><span style="color:var(--green)">Paid: <b>${rupee(alreadyPaid)}</b></span><span style="color:var(--red);font-weight:700">Balance: <b>${rupee(owedAmt)}</b></span>`:''}
+            <span style="${cls==='overdue'?'color:var(--red);font-weight:700':cls==='due-soon'?'color:var(--amber);font-weight:600':''}">${dueTxt}</span>
+            ${payBadge(r.payment)}
+          </div>
+          <div class="cc-actions">
+            <button class="btn btn-green btn-sm" onclick="markInvPaid(${r._id})">✓ Mark Paid</button>
+            <button class="btn btn-outline btn-sm" onclick="openEditInv(${r._id})">Edit</button>
+          </div>
+        </div>
+        <div>
+          <div class="cc-amt">${rupee(owedAmt)}</div>
+          <div class="cc-due">${r.payment==='Partial'?'Balance owed':'Total owed'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Render receivables
+  const rDiv=document.getElementById('cr-receivables-list');
+  if(!receivables.length){rDiv.innerHTML=`<div class="empty-state"><div>✅</div>No outstanding receivables from customers.</div>`;} else {
+    rDiv.innerHTML=receivables.map(r=>{
+      const balance=Math.max(0,r.total-(r.paidAmt||0));
+      const d=daysUntil(r.dueDate);
+      const cls=!r.dueDate?'ok':d<0?'overdue':d<=7?'due-soon':'ok';
+      const dueTxt=!r.dueDate?'No due date set':d<0?`Overdue by ${Math.abs(d)} day(s)`:d===0?'Due Today':`Due in ${d} day(s) — ${fmtDate(r.dueDate)}`;
+      return `<div class="credit-card ${cls}">
+        <div class="cc-icon" style="background:var(--green-bg)">💰</div>
+        <div class="cc-body">
+          <div class="cc-name">${r.name} <span class="td-muted">${r.pno||''}</span></div>
+          <div class="cc-item">${r.item} × ${r.qty} — Sale date: ${fmtDate(r.date)}</div>
+          <div class="cc-meta">
+            <span>Total: ${rupee(r.total)}</span>
+            <span>Paid: ${rupee(r.paidAmt||0)}</span>
+            <span style="font-weight:700;color:var(--red)">Balance: ${rupee(balance)}</span>
+            <span style="${cls==='overdue'?'color:var(--red);font-weight:700':cls==='due-soon'?'color:var(--amber);font-weight:600':''}">${dueTxt}</span>
+            ${payBadge(r.payment)}
+          </div>
+          <div class="cc-actions">
+            <button class="btn btn-green btn-sm" onclick="markSalePaid(${r._id})">✓ Mark Fully Paid</button>
+            <button class="btn btn-outline btn-sm" onclick="openEditSale(${r._id})">Edit</button>
+          </div>
+        </div>
+        <div>
+          <div class="cc-amt">${rupee(balance)}</div>
+          <div class="cc-due">Balance due</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function markInvPaid(id){
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  r.payment='Cash';r.dueDate='';
+  saveAll();renderInventoryTable();renderCreditLedger();updateCreditDot();toast('Supplier payment marked as settled!');
+}
+
+// ══════════════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════════════
 function runInvSearch(){
   const q=document.getElementById('si-q').value.toLowerCase().trim();
-  const pay=document.getElementById('si-pay').value;
-  const from=document.getElementById('si-from').value;
-  const to=document.getElementById('si-to').value;
-  let res=inventory.filter(r=>
-    (!q||[r.name,r.item,r.brand,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&
-    (!pay||r.payment===pay)&&(!from||r.date>=from)&&(!to||r.date<=to)
-  );
+  const pay=document.getElementById('si-pay').value,from=document.getElementById('si-from').value,to=document.getElementById('si-to').value;
+  const res=inventory.filter(r=>(!q||[r.name,r.item,r.brand,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&(!pay||r.payment===pay)&&(!from||r.date>=from)&&(!to||r.date<=to));
   document.getElementById('si-count').textContent=res.length;
   const tb=document.getElementById('si-tbody');
   tb.innerHTML=res.length?[...res].reverse().map((r,i)=>`<tr>
-    <td style="color:var(--muted);font-size:10px;font-family:var(--fm)">${i+1}</td>
-    <td class="td-date">${fmtDate(r.date)}</td>
-    <td>${hl(r.name,q)||'—'}</td>
-    <td class="td-muted">${hl(r.pno,q)||'—'}</td>
-    <td style="color:var(--accent2);font-size:11px">${hl(r.brand,q)||'—'}</td>
-    <td>${hl(r.item,q)}</td>
-    <td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
-    <td class="td-amt">${fmtAmt(r.amount)}</td>
-    <td>${payBadge(r.payment||'Cash')}</td>
-  </tr>`).join(''):`<tr class="empty-row"><td colspan="9">No inventory matches</td></tr>`;
+    <td class="td-muted">${i+1}</td><td class="td-date">${fmtDate(r.date)}</td>
+    <td>${hl(r.name,q)||'—'}</td><td class="td-muted">${hl(r.pno,q)||'—'}</td>
+    <td style="color:var(--accent);font-size:12px">${hl(r.brand,q)||'—'}</td>
+    <td style="font-weight:500">${hl(r.item,q)}</td>
+    <td style="font-family:var(--fm);font-weight:700">${r.qty}</td>
+    <td class="td-cost">${rupee(r.amount)}</td>
+    <td>${payBadge(r.payment||'Cash')}</td><td class="td-date">${r.dueDate?fmtDate(r.dueDate):'—'}</td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="10">No matches</td></tr>`;
 }
 function clearInvSearch(){['si-q','si-from','si-to'].forEach(id=>document.getElementById(id).value='');document.getElementById('si-pay').value='';runInvSearch();}
 
 function runSalesSearch(){
   const q=document.getElementById('ss-q').value.toLowerCase().trim();
-  const from=document.getElementById('ss-from').value;
-  const to=document.getElementById('ss-to').value;
-  let res=sales.filter(r=>
-    (!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&
-    (!from||r.date>=from)&&(!to||r.date<=to)
-  );
+  const from=document.getElementById('ss-from').value,to=document.getElementById('ss-to').value;
+  const res=sales.filter(r=>(!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&(!from||r.date>=from)&&(!to||r.date<=to));
   document.getElementById('ss-count').textContent=res.length;
   const tb=document.getElementById('ss-tbody');
   tb.innerHTML=res.length?[...res].reverse().map((r,i)=>`<tr>
-    <td style="color:var(--muted);font-size:10px;font-family:var(--fm)">${i+1}</td>
-    <td class="td-date">${fmtDate(r.date)}</td>
-    <td>${hl(r.name,q)}</td>
-    <td class="td-muted">${hl(r.pno,q)||'—'}</td>
-    <td>${hl(r.item,q)}</td>
-    <td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
-    <td class="td-amt">${fmtAmt(r.amount)}</td>
-  </tr>`).join(''):`<tr class="empty-row"><td colspan="7">No sales matches</td></tr>`;
+    <td class="td-muted">${i+1}</td><td class="td-date">${fmtDate(r.date)}</td>
+    <td style="font-weight:500">${hl(r.name,q)}</td><td class="td-muted">${hl(r.pno,q)||'—'}</td>
+    <td>${hl(r.item,q)}</td><td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
+    <td style="font-family:var(--fm)">${rupee(r.sellingPrice)}</td>
+    <td class="td-num">${rupee(r.total)}</td>
+    <td class="${r.profit>=0?'profit-pos':'profit-neg'}">${rupee(r.profit)}</td>
+    <td>${payBadge(r.payment)}</td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="10">No matches</td></tr>`;
 }
 function clearSalesSearch(){['ss-q','ss-from','ss-to'].forEach(id=>document.getElementById(id).value='');runSalesSearch();}
 
-// ── Customer PDF Export ──
 function exportCustomerPDF(scope){
   const q=scope==='inv'?document.getElementById('si-q').value.trim():document.getElementById('ss-q').value.trim();
   const data=scope==='inv'
-    ? inventory.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())))
-    : sales.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())));
+    ?inventory.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())))
+    :sales.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())));
   if(!data.length){toast('No results to export as PDF',true);return;}
-
-  const title=scope==='inv'?'Inventory Report':'Sales Report';
-  const customer=q||'All Records';
-  const totalAmt=data.reduce((s,r)=>s+Number(r.amount||0),0);
-  const date=fmtDate(todayISO());
-
-  const headerRow=scope==='inv'
-    ?`<tr><th>#</th><th>Date</th><th>Name</th><th>P.No</th><th>Brand</th><th>Item</th><th>Qty</th><th>Amount</th><th>Payment</th></tr>`
-    :`<tr><th>#</th><th>Date</th><th>Name</th><th>P.No</th><th>Item</th><th>Qty</th><th>Amount</th></tr>`;
-
-  const bodyRows=data.map((r,i)=>scope==='inv'
-    ?`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name||'—'}</td><td>${r.pno||'—'}</td><td>${r.brand||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${fmtAmt(r.amount)}</td><td>${r.payment||'Cash'}</td></tr>`
-    :`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name}</td><td>${r.pno||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${fmtAmt(r.amount)}</td></tr>`
+  const title=scope==='inv'?'Inventory / Purchase Report':'Customer Sales Report';
+  const filterLabel=q||'All Records';
+  const totalAmt=scope==='inv'?data.reduce((s,r)=>s+r.amount*r.qty,0):data.reduce((s,r)=>s+r.total,0);
+  const totalProfit=scope==='sales'?data.reduce((s,r)=>s+r.profit,0):0;
+  const hdr=scope==='inv'
+    ?`<tr><th>#</th><th>Date</th><th>Supplier</th><th>Phone</th><th>Brand</th><th>Item</th><th>Qty</th><th>Cost ₹</th><th>Payment</th><th>Due Date</th></tr>`
+    :`<tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th>Item</th><th>Qty</th><th>Sell ₹</th><th>Disc%</th><th>Total ₹</th><th>Profit ₹</th><th>Payment</th></tr>`;
+  const body=data.map((r,i)=>scope==='inv'
+    ?`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name||'—'}</td><td>${r.pno||'—'}</td><td>${r.brand||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${rupee(r.amount)}</td><td>${r.payment||'Cash'}</td><td>${fmtDate(r.dueDate)||'—'}</td></tr>`
+    :`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name}</td><td>${r.pno||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${rupee(r.sellingPrice)}</td><td>${r.discount?pct(r.discount):'—'}</td><td>${rupee(r.total)}</td><td style="color:${r.profit>=0?'#16a34a':'#dc2626'}">${rupee(r.profit)}</td><td>${r.payment}</td></tr>`
   ).join('');
-
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
-  <title>${title}</title>
-  <style>
-    body{font-family:Arial,sans-serif;padding:28px;color:#1a1a1a;font-size:12px}
-    .hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #f59e0b}
-    .co{font-size:20px;font-weight:700;letter-spacing:1px;color:#b45309}
-    .co-tag{font-size:9px;color:#888;letter-spacing:2px;text-transform:uppercase}
-    .meta{font-size:11px;color:#555;text-align:right}
-    h2{font-size:15px;margin:0 0 4px;color:#333}
-    .summary{background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:10px 16px;margin-bottom:18px;display:flex;gap:32px}
-    .sum-item{font-size:11px;color:#555} .sum-val{font-size:15px;font-weight:700;color:#92400e}
-    table{width:100%;border-collapse:collapse;font-size:11px}
-    thead{background:#f59e0b;color:#09090b}
-    thead th{padding:7px 10px;text-align:left;font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase}
-    tbody tr:nth-child(even){background:#fffbeb} tbody tr:hover{background:#fef3c7}
-    tbody td{padding:6px 10px;border-bottom:1px solid #e5e7eb}
-    .footer{margin-top:20px;font-size:10px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:10px}
-    @media print{body{padding:12px}.no-print{display:none}}
-  </style></head><body>
-  <div class="hdr">
-    <div><div class="co">🔧 SHREE BALAJEE AUTO SPARES</div><div class="co-tag">Automotive Parts &amp; Sales</div></div>
-    <div class="meta"><h2>${title}</h2><div>Customer / Filter: <b>${customer}</b></div><div>Generated: ${date}</div></div>
-  </div>
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${title}</title>
+  <style>body{font-family:Arial,sans-serif;padding:28px;color:#111;font-size:12px}
+  .hdr{display:flex;justify-content:space-between;border-bottom:2px solid #1e6ff1;margin-bottom:18px;padding-bottom:12px}
+  .co{font-size:20px;font-weight:800;color:#1e40af}.co-sub{font-size:9px;color:#888;letter-spacing:2px;text-transform:uppercase}
+  .meta{text-align:right;font-size:11px;color:#555}
+  .summary{display:flex;gap:24px;background:#eff4ff;border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:11px}
+  .sv{font-size:16px;font-weight:800;color:#1e3a8a}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  thead{background:#1e6ff1;color:#fff}thead th{padding:7px 9px;text-align:left;font-weight:700;font-size:10px;letter-spacing:.4px;text-transform:uppercase}
+  tbody tr:nth-child(even){background:#f8faff}tbody td{padding:6px 9px;border-bottom:1px solid #e5e7eb}
+  .footer{margin-top:16px;font-size:10px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:8px}
+  @media print{body{padding:12px}}</style></head><body>
+  <div class="hdr"><div><div class="co">🔧 SHREE BALAJEE AUTO SPARES</div><div class="co-sub">Automotive Parts &amp; Sales</div></div>
+  <div class="meta"><b>${title}</b><br>Filter: ${filterLabel}<br>Generated: ${fmtDate(todayISO())}</div></div>
   <div class="summary">
-    <div class="sum-item">Total Records<div class="sum-val">${data.length}</div></div>
-    <div class="sum-item">Total Amount<div class="sum-val">${fmtAmt(totalAmt)}</div></div>
-    ${scope==='inv'?`<div class="sum-item">Total Qty<div class="sum-val">${data.reduce((s,r)=>s+r.qty,0)}</div></div>`:''}
+    <div>Records<div class="sv">${data.length}</div></div>
+    <div>Total Amount<div class="sv">${rupee(totalAmt)}</div></div>
+    ${scope==='sales'?`<div>Total Profit<div class="sv" style="color:#16a34a">${rupee(totalProfit)}</div></div>`:''}
   </div>
-  <table><thead>${headerRow}</thead><tbody>${bodyRows}</tbody></table>
-  <div class="footer">Shree Balajee Auto Spares — Generated on ${date}</div>
-  <script>window.onload=()=>window.print();<\/script>
-  </body></html>`;
-
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(html); w.document.close();
+  <table><thead>${hdr}</thead><tbody>${body}</tbody></table>
+  <div class="footer">Shree Balajee Auto Spares · ${fmtDate(todayISO())}</div>
+  <script>window.onload=()=>window.print();<\/script></body></html>`;
+  const w=window.open('','_blank','width=960,height=720');w.document.write(html);w.document.close();
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // IMPORT EXCEL
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function importExcel(e){
-  const file=e.target.files[0]; if(!file)return;
+  const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=evt=>{
     try{
@@ -997,38 +1335,29 @@ function importExcel(e){
       const rows=XLSX.utils.sheet_to_json(ws,{raw:false});
       let n=0;
       rows.forEach(row=>{
-        const rawDate=String(row['DATE']||row['Date']||'');
-        inventory.push({
-          _id:Date.now()+Math.random(), date:toISO(rawDate)||todayISO(),
-          name:String(row['NAME']||row['Name']||'').trim(),
-          pno:String(row['P. NO']||row['P.NO']||row['Phone']||'').trim(),
-          brand:String(row['BRAND']||row['Brand']||'').trim(),
-          item:String(row['ITEM']||row['Item']||'').trim(),
-          qty:parseFloat(row['QTY']||row['Qty']||0)||0,
-          amount:parseFloat(row['AMOUNT']||row['Amount']||0)||0,
-          payment:String(row['PAYMENT']||row['Payment']||'Cash').trim(),
-          dueDate:toISO(String(row['DUE DATE']||row['Due Date']||'')),
-        });
+        inventory.push({_id:Date.now()+Math.random(),date:toISO(String(row['DATE']||row['Date']||''))||todayISO(),
+          name:String(row['NAME']||row['SUPPLIER']||'').trim(),pno:String(row['P. NO']||row['PHONE']||'').trim(),
+          brand:String(row['BRAND']||'').trim(),item:String(row['ITEM']||'').trim(),
+          qty:parseFloat(row['QTY']||0)||0,amount:parseFloat(row['AMOUNT']||row['COST PRICE (₹)']||0)||0,
+          payment:String(row['PAYMENT']||'Cash').trim(),dueDate:toISO(String(row['DUE DATE']||'')),sellPrice:parseFloat(row['SELLING PRICE (₹)']||0)||0});
         n++;
       });
-      saveAll(); renderInventoryTable(); populateSaleDropdown();
-      toast(`Imported ${n} items!`);
+      saveAll();renderInventoryTable();populateSaleDropdown();updateCreditDot();toast(`Imported ${n} items!`);
     }catch(err){toast('Import failed: '+err.message,true);}
     e.target.value='';
   };
   reader.readAsBinaryString(file);
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // DASHBOARD
-// ══════════════════════════════════════════════════════
-let cItems,cCust,cRev;
+// ══════════════════════════════════════════════════
+let cItems,cProfit,cRev;
 function populateDashFilters(){
   const months=[...new Set(sales.map(s=>s.date?s.date.slice(0,7):null).filter(Boolean))].sort().reverse();
-  const mSel=document.getElementById('d-month'); const mCur=mSel.value;
-  mSel.innerHTML='<option value="">All Months</option>'+months.map(m=>{
-    const[y,mo]=m.split('-'); return `<option value="${m}">${new Date(y,mo-1,1).toLocaleString('en-IN',{month:'long',year:'numeric'})}</option>`;
-  }).join(''); mSel.value=mCur;
+  const mSel=document.getElementById('d-month');const mCur=mSel.value;
+  mSel.innerHTML='<option value="">All Months</option>'+months.map(m=>{const[y,mo]=m.split('-');return `<option value="${m}">${new Date(y,mo-1,1).toLocaleString('en-IN',{month:'long',year:'numeric'})}</option>`;}).join('');
+  mSel.value=mCur;
 }
 function getDashData(){
   const from=document.getElementById('d-from').value,to=document.getElementById('d-to').value,month=document.getElementById('d-month').value;
@@ -1036,113 +1365,158 @@ function getDashData(){
 }
 function renderDash(){
   populateDashFilters();
-  const data=getDashData(); const topN=parseInt(document.getElementById('d-top').value)||0;
-  const rev=data.reduce((s,r)=>s+Number(r.amount||0),0);
-  const qty=data.reduce((s,r)=>s+Number(r.qty||0),0);
-  const tx=data.length;
+  const data=getDashData();const topN=parseInt(document.getElementById('d-top').value)||0;
+  const rev=data.reduce((s,r)=>s+r.total,0);
+  const cost=data.reduce((s,r)=>s+(r.costPrice*r.qty),0);
+  const profit=data.reduce((s,r)=>s+r.profit,0);
+  const qty=data.reduce((s,r)=>s+r.qty,0);
+  const creditOut=sales.filter(s=>s.payment!=='Cash').reduce((s,r)=>s+Math.max(0,r.total-(r.paidAmt||0)),0);
   document.getElementById('k-rev').textContent=`₹${Math.round(rev).toLocaleString('en-IN')}`;
+  document.getElementById('k-cost').textContent=`₹${Math.round(cost).toLocaleString('en-IN')}`;
+  document.getElementById('k-profit').textContent=`₹${Math.round(profit).toLocaleString('en-IN')}`;
+  document.getElementById('k-margin').textContent=rev>0?`${(profit/rev*100).toFixed(1)}% margin`:'0% margin';
+  document.getElementById('k-profit').style.color=profit>=0?'var(--green)':'var(--red)';
   document.getElementById('k-qty').textContent=qty.toLocaleString('en-IN');
-  document.getElementById('k-tx').textContent=tx;
-  document.getElementById('k-avg').textContent=`₹${Math.round(tx?rev/tx:0).toLocaleString('en-IN')}`;
-  const CO={responsive:true,maintainAspectRatio:false,animation:{duration:400},plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:'#6b7280',font:{size:10},maxRotation:30},grid:{color:'rgba(39,39,47,.5)'}},
-            y:{ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(39,39,47,.5)'}}}};
-  const iMap={}; data.forEach(r=>{iMap[r.item]=(iMap[r.item]||0)+Number(r.qty||0)});
-  let iE=Object.entries(iMap).sort((a,b)=>b[1]-a[1]); if(topN)iE=iE.slice(0,topN);
+  document.getElementById('k-tx').textContent=`${data.length} transactions`;
+  document.getElementById('k-credit').textContent=`₹${Math.round(creditOut).toLocaleString('en-IN')}`;
+
+  const CO={responsive:true,maintainAspectRatio:false,animation:{duration:300},plugins:{legend:{display:false}},
+    scales:{x:{ticks:{color:'#9ca3af',font:{size:10},maxRotation:30},grid:{color:'#f3f4f6'}},
+            y:{ticks:{color:'#9ca3af',font:{size:10}},grid:{color:'#f3f4f6'}}}};
+
+  // Items chart
+  const iMap={};data.forEach(r=>{iMap[r.item]=(iMap[r.item]||0)+r.qty;});
+  let iE=Object.entries(iMap).sort((a,b)=>b[1]-a[1]);if(topN)iE=iE.slice(0,topN);
   if(cItems)cItems.destroy();
-  cItems=new Chart(document.getElementById('cItems'),{type:'bar',data:{labels:iE.map(e=>e[0]),datasets:[{data:iE.map(e=>e[1]),backgroundColor:'rgba(245,158,11,.75)',borderColor:'rgba(245,158,11,1)',borderWidth:1,borderRadius:5}]},options:{...CO}});
-  const cMap={}; data.forEach(r=>{cMap[r.name]=(cMap[r.name]||0)+Number(r.amount||0)});
-  let cE=Object.entries(cMap).sort((a,b)=>b[1]-a[1]); if(topN)cE=cE.slice(0,topN);
-  if(cCust)cCust.destroy();
-  cCust=new Chart(document.getElementById('cCust'),{type:'bar',data:{labels:cE.map(e=>e[0]),datasets:[{data:cE.map(e=>e[1]),backgroundColor:'rgba(52,211,153,.75)',borderColor:'rgba(52,211,153,1)',borderWidth:1,borderRadius:5}]},options:{...CO,scales:{...CO.scales,y:{...CO.scales.y,ticks:{...CO.scales.y.ticks,callback:v=>`₹${Number(v).toLocaleString('en-IN')}`}}}}});
-  const dMap={}; data.forEach(r=>{dMap[r.date]=(dMap[r.date]||0)+Number(r.amount||0)});
+  cItems=new Chart(document.getElementById('cItems'),{type:'bar',data:{labels:iE.map(e=>e[0]),datasets:[{data:iE.map(e=>e[1]),backgroundColor:'#3b82f6',borderRadius:5}]},options:{...CO}});
+
+  // Profit chart — grouped by month
+  const byMonth={};
+  data.forEach(r=>{
+    const m=r.date?r.date.slice(0,7):'';if(!m)return;
+    byMonth[m]=byMonth[m]||{rev:0,cost:0,profit:0};
+    byMonth[m].rev+=r.total;byMonth[m].cost+=r.costPrice*r.qty;byMonth[m].profit+=r.profit;
+  });
+  const mKeys=Object.keys(byMonth).sort();
+  if(cProfit)cProfit.destroy();
+  cProfit=new Chart(document.getElementById('cProfit'),{type:'bar',
+    data:{labels:mKeys.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1,1).toLocaleString('en-IN',{month:'short',year:'2-digit'});}),
+      datasets:[
+        {label:'Revenue',data:mKeys.map(m=>byMonth[m].rev),backgroundColor:'rgba(59,130,246,.7)',borderRadius:3},
+        {label:'Cost',data:mKeys.map(m=>byMonth[m].cost),backgroundColor:'rgba(239,68,68,.7)',borderRadius:3},
+        {label:'Profit',data:mKeys.map(m=>byMonth[m].profit),backgroundColor:'rgba(22,163,74,.7)',borderRadius:3},
+      ]},
+    options:{...CO,plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:10}}},scales:{...CO.scales,y:{...CO.scales.y,ticks:{...CO.scales.y.ticks,callback:v=>`₹${Number(v).toLocaleString('en-IN')}`}}}}});
+
+  // Revenue over time
+  const dMap={};data.forEach(r=>{dMap[r.date]=(dMap[r.date]||0)+r.total;});
   const dE=Object.entries(dMap).sort((a,b)=>a[0].localeCompare(b[0]));
   if(cRev)cRev.destroy();
-  cRev=new Chart(document.getElementById('cRev'),{type:'line',data:{labels:dE.map(e=>fmtDate(e[0])),datasets:[{data:dE.map(e=>e[1]),borderColor:'rgba(245,158,11,1)',backgroundColor:'rgba(245,158,11,.08)',pointBackgroundColor:'rgba(245,158,11,1)',fill:true,tension:0.4,pointRadius:3}]},options:{...CO,scales:{...CO.scales,y:{...CO.scales.y,ticks:{...CO.scales.y.ticks,callback:v=>`₹${Number(v).toLocaleString('en-IN')}`}}}}});
+  cRev=new Chart(document.getElementById('cRev'),{type:'line',
+    data:{labels:dE.map(e=>fmtDate(e[0])),datasets:[{data:dE.map(e=>e[1]),borderColor:'#1e6ff1',backgroundColor:'rgba(30,111,241,.08)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#1e6ff1'}]},
+    options:{...CO,scales:{...CO.scales,y:{...CO.scales.y,ticks:{...CO.scales.y.ticks,callback:v=>`₹${Number(v).toLocaleString('en-IN')}`}}}}});
 }
 function resetDash(){['d-from','d-to'].forEach(id=>document.getElementById(id).value='');document.getElementById('d-month').value='';document.getElementById('d-top').value='5';renderDash();}
 
+// ══════════════════════════════════════════════════
+// BALANCE SHEET EXPORT
+// ══════════════════════════════════════════════════
 function downloadMonthReport(){
-  const monthVal=document.getElementById('d-month').value,fromVal=document.getElementById('d-from').value,toVal=document.getElementById('d-to').value;
-  let filtSales=[...sales]; let label='All Period';
+  const monthVal=document.getElementById('d-month').value;
+  const fromVal=document.getElementById('d-from').value,toVal=document.getElementById('d-to').value;
+  let filtSales=[...sales];let label='All Period';
   if(monthVal){filtSales=sales.filter(s=>s.date&&s.date.slice(0,7)===monthVal);const[y,mo]=monthVal.split('-');label=new Date(y,mo-1,1).toLocaleString('en-IN',{month:'long',year:'numeric'});}
   else{if(fromVal)filtSales=filtSales.filter(s=>s.date>=fromVal);if(toVal)filtSales=filtSales.filter(s=>s.date<=toVal);if(fromVal||toVal)label=`${fromVal?fmtDate(fromVal):'Start'} to ${toVal?fmtDate(toVal):'Today'}`;}
   if(!filtSales.length){toast('No sales in selected period',true);return;}
+
   const wb=XLSX.utils.book_new();
-  const totalRev=filtSales.reduce((s,r)=>s+Number(r.amount||0),0);
-  const totalQty=filtSales.reduce((s,r)=>s+Number(r.qty||0),0);
-  const uniqueCust=new Set(filtSales.map(s=>s.name)).size;
-  const partMap={};filtSales.forEach(r=>{partMap[r.item]=partMap[r.item]||{qty:0,rev:0};partMap[r.item].qty+=r.qty;partMap[r.item].rev+=r.amount;});
-  const custMap={};filtSales.forEach(r=>{custMap[r.name]=custMap[r.name]||{tx:0,rev:0};custMap[r.name].tx++;custMap[r.name].rev+=r.amount;});
-  const sumRows=[['SHREE BALAJEE AUTO SPARES',''],['Report Period:',label],['Generated On:',fmtDate(todayISO())],['',''],['SALES SUMMARY',''],['Total Revenue (₹):',totalRev],['Total Units Sold:',totalQty],['Total Transactions:',filtSales.length],['Unique Customers:',uniqueCust],['Avg Sale Value (₹):',filtSales.length?Math.round(totalRev/filtSales.length):0],['',''],['ITEM-WISE BREAKDOWN',''],['Item','Qty Sold','Revenue (₹)'],...Object.entries(partMap).sort((a,b)=>b[1].rev-a[1].rev).map(([k,v])=>[k,v.qty,v.rev]),['','',''],['CUSTOMER-WISE BREAKDOWN','',''],['Customer','Transactions','Revenue (₹)'],...Object.entries(custMap).sort((a,b)=>b[1].rev-a[1].rev).map(([k,v])=>[k,v.tx,v.rev])];
-  const ws1=XLSX.utils.aoa_to_sheet(sumRows);ws1['!cols']=[{wch:28},{wch:18},{wch:16}];XLSX.utils.book_append_sheet(wb,ws1,'Summary');
-  const txRows=[...filtSales].sort((a,b)=>a.date?.localeCompare(b.date)).map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount}));
-  const ws2=XLSX.utils.json_to_sheet(txRows);ws2['!cols']=[4,12,20,14,24,8,14].map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws2,'Sales Transactions');
-  const invRows=[...inventory].sort((a,b)=>a.item.localeCompare(b.item)).map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'NAME':r.name,'P. NO':r.pno,'BRAND':r.brand,'ITEM':r.item,'QTY':r.qty,'AMOUNT':r.amount,'PAYMENT':r.payment,'DUE DATE':fmtDate(r.dueDate)}));
-  const ws3=XLSX.utils.json_to_sheet(invRows);ws3['!cols']=[4,12,18,13,14,22,6,13,10,12].map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws3,'Inventory Snapshot');
-  XLSX.writeFile(wb,`SBAutoSpares_Report_${label.replace(/\s+/g,'_')}.xlsx`);toast(`Report downloaded: ${label}`);
+
+  // ── Sheet 1: P&L Summary ──
+  const totalRev=filtSales.reduce((s,r)=>s+r.total,0);
+  const totalCost=filtSales.reduce((s,r)=>s+(r.costPrice*r.qty),0);
+  const totalProfit=filtSales.reduce((s,r)=>s+r.profit,0);
+  const totalDisc=filtSales.reduce((s,r)=>s+(r.sellingPrice*r.qty*(r.discount||0)/100),0);
+  const totalQty=filtSales.reduce((s,r)=>s+r.qty,0);
+  const totalCreditOut=filtSales.filter(s=>s.payment!=='Cash').reduce((s,r)=>s+Math.max(0,r.total-(r.paidAmt||0)),0);
+  const totalCreditIn=inventory.filter(r=>r.payment!=='Cash').reduce((s,r)=>s+r.amount*r.qty,0);
+  const partMap={};filtSales.forEach(r=>{partMap[r.item]=partMap[r.item]||{qty:0,cost:0,rev:0,profit:0};partMap[r.item].qty+=r.qty;partMap[r.item].cost+=r.costPrice*r.qty;partMap[r.item].rev+=r.total;partMap[r.item].profit+=r.profit;});
+  const custMap={};filtSales.forEach(r=>{custMap[r.name]=custMap[r.name]||{tx:0,rev:0,profit:0};custMap[r.name].tx++;custMap[r.name].rev+=r.total;custMap[r.name].profit+=r.profit;});
+  const sumRows=[
+    ['SHREE BALAJEE AUTO SPARES — BALANCE SHEET'],
+    ['Period:', label],['Generated:', fmtDate(todayISO())],[''],
+    ['PROFIT & LOSS',''],
+    ['Gross Revenue (₹):', totalRev],['Total Discounts Given (₹):', totalDisc],
+    ['Cost of Goods Sold (₹):', totalCost],['Gross Profit (₹):', totalProfit],
+    ['Profit Margin (%):', totalRev>0?(totalProfit/totalRev*100).toFixed(2)+'%':'0%'],[''],
+    ['SALES METRICS',''],
+    ['Total Transactions:', filtSales.length],['Units Sold:', totalQty],
+    ['Avg Sale Value (₹):', filtSales.length?Math.round(totalRev/filtSales.length):0],
+    ['Avg Profit Per Sale (₹):', filtSales.length?Math.round(totalProfit/filtSales.length):0],[''],
+    ['CREDIT SUMMARY',''],
+    ['Receivable from Customers (₹):', totalCreditOut],
+    ['Payable to Suppliers (₹):', totalCreditIn],
+    ['Net Credit Position (₹):', totalCreditOut-totalCreditIn],[''],
+    ['ITEM-WISE P&L',''],
+    ['Item','Qty','Revenue (₹)','Cost (₹)','Profit (₹)','Margin (%)'],
+    ...Object.entries(partMap).sort((a,b)=>b[1].profit-a[1].profit).map(([k,v])=>[k,v.qty,v.rev,v.cost,v.profit,v.rev>0?((v.profit/v.rev)*100).toFixed(2)+'%':'0%']),
+    [''],['CUSTOMER-WISE',''],['Customer','Transactions','Revenue (₹)','Profit (₹)'],
+    ...Object.entries(custMap).sort((a,b)=>b[1].rev-a[1].rev).map(([k,v])=>[k,v.tx,v.rev,v.profit]),
+  ];
+  const ws1=XLSX.utils.aoa_to_sheet(sumRows);ws1['!cols']=[{wch:30},{wch:18},{wch:14},{wch:14},{wch:14},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws1,'P&L Summary');
+
+  // ── Sheet 2: Full Sales ──
+  const txRows=filtSales.sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'CUSTOMER':r.name,'PHONE':r.pno,'ITEM':r.item,'QTY':r.qty,'COST PRICE (₹)':r.costPrice,'SELLING PRICE (₹)':r.sellingPrice,'DISCOUNT (%)':r.discount||0,'TOTAL (₹)':r.total,'PROFIT (₹)':r.profit,'MARGIN (%)':r.total>0?((r.profit/r.total)*100).toFixed(2)+'%':'0%','PAYMENT':r.payment,'PAID AMT (₹)':r.paidAmt||0,'BALANCE (₹)':Math.max(0,r.total-(r.paidAmt||0)),'DUE DATE':fmtDate(r.dueDate)}));
+  const ws2=XLSX.utils.json_to_sheet(txRows);ws2['!cols']=[4,12,18,13,22,6,14,16,12,13,13,12,10,12,13,12].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws2,'Sales Detail');
+
+  // ── Sheet 3: Inventory Snapshot ──
+  const invRows=[...inventory].map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'SUPPLIER':r.name,'PHONE':r.pno,'BRAND':r.brand,'ITEM':r.item,'QTY IN STOCK':r.qty,'COST PRICE (₹)':r.amount,'PAYMENT':r.payment,'DUE DATE':fmtDate(r.dueDate)}));
+  const ws3=XLSX.utils.json_to_sheet(invRows);ws3['!cols']=[4,12,18,13,12,22,12,14,10,12].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws3,'Inventory Snapshot');
+
+  // ── Sheet 4: Credit Ledger ──
+  const crRows=[];
+  crRows.push({'TYPE':'PAYABLE (You Owe Supplier)','DATE':'','NAME':'','PHONE':'','ITEM':'','AMOUNT (₹)':'','DUE DATE':'','STATUS':''});
+  inventory.filter(r=>r.payment!=='Cash').forEach(r=>{crRows.push({'TYPE':'Payable','DATE':fmtDate(r.date),'NAME':r.name,'PHONE':r.pno,'ITEM':r.item,'AMOUNT (₹)':r.amount*r.qty,'DUE DATE':fmtDate(r.dueDate),'STATUS':r.payment});});
+  crRows.push({'TYPE':'','DATE':'','NAME':'','PHONE':'','ITEM':'','AMOUNT (₹)':'','DUE DATE':'','STATUS':''});
+  crRows.push({'TYPE':'RECEIVABLE (Customer Owes You)','DATE':'','NAME':'','PHONE':'','ITEM':'','AMOUNT (₹)':'','DUE DATE':'','STATUS':''});
+  sales.filter(r=>r.payment!=='Cash').forEach(r=>{crRows.push({'TYPE':'Receivable','DATE':fmtDate(r.date),'NAME':r.name,'PHONE':r.pno,'ITEM':r.item,'AMOUNT (₹)':Math.max(0,r.total-(r.paidAmt||0)),'DUE DATE':fmtDate(r.dueDate),'STATUS':r.payment});});
+  const ws4=XLSX.utils.json_to_sheet(crRows);ws4['!cols']=[14,12,18,13,22,14,12,10].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws4,'Credit Ledger');
+
+  XLSX.writeFile(wb,`SBAS_BalanceSheet_${label.replace(/\s+/g,'_')}.xlsx`);
+  toast(`Balance sheet downloaded: ${label}`,'info');
 }
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // TOAST
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 let _tt;
-function toast(msg,isErr=false){const el=document.getElementById('toast');el.textContent=msg;el.className=isErr?'err':'';el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3500);}
+function toast(msg,type=false){
+  const el=document.getElementById('toast');el.textContent=msg;
+  el.className=type===true?'err':type==='info'?'info':'';
+  el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3500);
+}
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // CALENDAR PICKER
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS=['Su','Mo','Tu','We','Th','Fr','Sa'];
-const calState={
-  inv:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
-  invdue:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
-  sale:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
-  esale:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
-  einv:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
-  einvdue:{selected:'',viewYear:0,viewMonth:0,mode:'days'},
-};
+const calState={inv:{selected:'',viewYear:0,viewMonth:0,mode:'days'},invdue:{selected:'',viewYear:0,viewMonth:0,mode:'days'},sale:{selected:'',viewYear:0,viewMonth:0,mode:'days'},saledue:{selected:'',viewYear:0,viewMonth:0,mode:'days'},esale:{selected:'',viewYear:0,viewMonth:0,mode:'days'},esaledue:{selected:'',viewYear:0,viewMonth:0,mode:'days'},einv:{selected:'',viewYear:0,viewMonth:0,mode:'days'},einvdue:{selected:'',viewYear:0,viewMonth:0,mode:'days'}};
 function todayParts(){const t=new Date();return{y:t.getFullYear(),m:t.getMonth(),d:t.getDate()};}
-function setCal(id,iso){
-  const s=calState[id]; if(!s)return;
-  s.selected=iso||''; s.mode='days';
-  if(iso){const[y,m]=iso.split('-');s.viewYear=parseInt(y);s.viewMonth=parseInt(m)-1;}
-  else{const t=new Date();s.viewYear=t.getFullYear();s.viewMonth=t.getMonth();}
-  const lbl=document.getElementById('dl-'+id);
-  if(lbl)lbl.textContent=iso?fmtDate(iso):(id.includes('due')?'Select due date':'Select date');
-}
-function toggleCal(id){
-  const pop=document.getElementById('cp-'+id),disp=document.getElementById('dd-'+id);
-  const was=pop.classList.contains('open');
-  document.querySelectorAll('.cal-popup').forEach(p=>p.classList.remove('open'));
-  document.querySelectorAll('.date-display').forEach(d=>d.classList.remove('open'));
-  if(!was){renderCal(id);pop.classList.add('open');disp.classList.add('open');}
-}
-function renderCal(id){
-  const s=calState[id];const pop=document.getElementById('cp-'+id);const tp=todayParts();
-  if(s.mode==='months'){
-    let h=`<div class="cal-header"><button class="cal-nav" onclick="calYS('${id}',-1)">‹</button><span class="cal-ml" onclick="calSM('${id}','years')">${s.viewYear}</span><button class="cal-nav" onclick="calYS('${id}',1)">›</button></div><div class="cal-ym-grid">`;
-    MONTHS.forEach((mn,i)=>{const sel=(s.selected&&parseInt(s.selected.split('-')[1])-1===i&&parseInt(s.selected.split('-')[0])===s.viewYear)?'selected':'';h+=`<div class="cal-ym-item ${sel}" onclick="calPM('${id}',${i})">${mn.slice(0,3)}</div>`;});
-    pop.innerHTML=h+`</div><button class="cal-back" onclick="calSM('${id}','days')">← Back</button>`;return;
-  }
-  if(s.mode==='years'){
-    const base=Math.floor(s.viewYear/12)*12;
-    let h=`<div class="cal-header"><button class="cal-nav" onclick="calYBS('${id}',-12)">‹</button><span class="cal-ml">${base}–${base+11}</span><button class="cal-nav" onclick="calYBS('${id}',12)">›</button></div><div class="cal-ym-grid">`;
-    for(let y=base;y<base+12;y++){const sel=(s.selected&&parseInt(s.selected.split('-')[0])===y)?'selected':'';h+=`<div class="cal-ym-item ${sel}" onclick="calPY('${id}',${y})">${y}</div>`;}
-    pop.innerHTML=h+`</div><button class="cal-back" onclick="calSM('${id}','months')">← Back</button>`;return;
-  }
+function setCal(id,iso){const s=calState[id];if(!s)return;s.selected=iso||'';s.mode='days';if(iso){const[y,m]=iso.split('-');s.viewYear=parseInt(y);s.viewMonth=parseInt(m)-1;}else{const t=new Date();s.viewYear=t.getFullYear();s.viewMonth=t.getMonth();}const lbl=document.getElementById('dl-'+id);if(lbl)lbl.textContent=iso?fmtDate(iso):(id.includes('due')?'Select due date':'Select date');}
+function toggleCal(id){const pop=document.getElementById('cp-'+id),disp=document.getElementById('dd-'+id);const was=pop.classList.contains('open');document.querySelectorAll('.cal-popup').forEach(p=>p.classList.remove('open'));document.querySelectorAll('.date-display').forEach(d=>d.classList.remove('open'));if(!was){renderCal(id);pop.classList.add('open');disp.classList.add('open');}}
+function renderCal(id){const s=calState[id];const pop=document.getElementById('cp-'+id);const tp=todayParts();
+  if(s.mode==='months'){let h=`<div class="cal-header"><button class="cal-nav" onclick="calYS('${id}',-1)">‹</button><span class="cal-ml" onclick="calSM('${id}','years')">${s.viewYear}</span><button class="cal-nav" onclick="calYS('${id}',1)">›</button></div><div class="cal-ym-grid">`;MONTHS.forEach((mn,i)=>{const sel=(s.selected&&parseInt(s.selected.split('-')[1])-1===i&&parseInt(s.selected.split('-')[0])===s.viewYear)?'selected':'';h+=`<div class="cal-ym-item ${sel}" onclick="calPM('${id}',${i})">${mn.slice(0,3)}</div>`;});pop.innerHTML=h+`</div><button class="cal-back" onclick="calSM('${id}','days')">← Back</button>`;return;}
+  if(s.mode==='years'){const base=Math.floor(s.viewYear/12)*12;let h=`<div class="cal-header"><button class="cal-nav" onclick="calYBS('${id}',-12)">‹</button><span class="cal-ml">${base}–${base+11}</span><button class="cal-nav" onclick="calYBS('${id}',12)">›</button></div><div class="cal-ym-grid">`;for(let y=base;y<base+12;y++){const sel=(s.selected&&parseInt(s.selected.split('-')[0])===y)?'selected':'';h+=`<div class="cal-ym-item ${sel}" onclick="calPY('${id}',${y})">${y}</div>`;}pop.innerHTML=h+`</div><button class="cal-back" onclick="calSM('${id}','months')">← Back</button>`;return;}
   const fd=new Date(s.viewYear,s.viewMonth,1).getDay(),dim=new Date(s.viewYear,s.viewMonth+1,0).getDate();
   let h=`<div class="cal-header"><button class="cal-nav" onclick="calMS('${id}',-1)">‹</button><span class="cal-ml" onclick="calSM('${id}','months')">${MONTHS[s.viewMonth].slice(0,3)} ${s.viewYear}</span><button class="cal-nav" onclick="calMS('${id}',1)">›</button></div><div class="cal-grid">`;
   DAYS.forEach(d=>{h+=`<div class="cal-dow">${d}</div>`;});
   for(let i=0;i<fd;i++)h+=`<div class="cal-day empty"></div>`;
-  for(let d=1;d<=dim;d++){
-    const iso=`${s.viewYear}-${String(s.viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const cls=(d===tp.d&&s.viewMonth===tp.m&&s.viewYear===tp.y)?'today':'';
-    const sel=(iso===s.selected)?'selected':'';
-    h+=`<div class="cal-day ${cls} ${sel}" onclick="calPD('${id}','${iso}')">${d}</div>`;
-  }
-  pop.innerHTML=h+`</div>`;
-}
+  for(let d=1;d<=dim;d++){const iso=`${s.viewYear}-${String(s.viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const cls=(d===tp.d&&s.viewMonth===tp.m&&s.viewYear===tp.y)?'today':'';const sel=(iso===s.selected)?'selected':'';h+=`<div class="cal-day ${cls} ${sel}" onclick="calPD('${id}','${iso}')">${d}</div>`;}
+  pop.innerHTML=h+`</div>`;}
 function calSM(id,m){calState[id].mode=m;renderCal(id);}
 function calMS(id,d){const s=calState[id];s.viewMonth+=d;if(s.viewMonth<0){s.viewMonth=11;s.viewYear--;}else if(s.viewMonth>11){s.viewMonth=0;s.viewYear++;}renderCal(id);}
 function calYS(id,d){calState[id].viewYear+=d;renderCal(id);}
@@ -1152,16 +1526,17 @@ function calPY(id,y){calState[id].viewYear=y;calState[id].mode='months';renderCa
 function calPD(id,iso){calState[id].selected=iso;const lbl=document.getElementById('dl-'+id);if(lbl)lbl.textContent=fmtDate(iso);document.getElementById('cp-'+id).classList.remove('open');document.getElementById('dd-'+id).classList.remove('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.date-field')&&!e.target.closest('.cal-popup')){document.querySelectorAll('.cal-popup').forEach(p=>p.classList.remove('open'));document.querySelectorAll('.date-display').forEach(d=>d.classList.remove('open'));}});
 
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // INIT
-// ══════════════════════════════════════════════════════
-setCal('inv',todayISO()); setCal('invdue',''); setCal('sale',todayISO());
+// ══════════════════════════════════════════════════
+setCal('inv',todayISO());setCal('invdue','');setCal('sale',todayISO());setCal('saledue','');
 resetInvRows();
 renderInventoryTable();
 renderSalesLog();
 populateSalesLogFilters();
 populateSaleDropdown();
-runInvSearch(); runSalesSearch();
+runInvSearch();runSalesSearch();
+updateCreditDot();
 </script>
 </body>
 </html>
