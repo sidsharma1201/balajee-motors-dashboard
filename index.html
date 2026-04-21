@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#f5f6fa;--surface:#ffffff;--card:#ffffff;--border:#e2e5ef;--border2:#cbd0de;
@@ -662,210 +661,808 @@ mark{background:#fef3c7;color:#92400e;border-radius:2px;padding:0 2px}
 </div>
 
 <div id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// ================== SUPABASE INIT ==================
-const SUPABASE_URL = "https://kvfeotgesefxapwxqiml.supabase.co/rest/v1/";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2ZmVvdGdlc2VmeGFwd3hxaW1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NjcyNzYsImV4cCI6MjA5MjI0MzI3Nn0.dVy1QP6QtZ6y0eZSYjVZQNWCPsIF4DTJxB8r9en-lX8";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ══════════════════════════════════════════════════
+// SUPABASE CONFIG
+// Tables: inventory  |  sales_logs
+// ══════════════════════════════════════════════════
+const SB_URL = 'https://kvfeotgesefxapwxqiml.supabase.co/rest/v1';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2ZmVvdGdlc2VmeGFwd3hxaW1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NjcyNzYsImV4cCI6MjA5MjI0MzI3Nn0.dVy1QP6QtZ6y0eZSYjVZQNWCPsIF4DTJxB8r9en-lX8';
+const SB_HDR = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 
-// ================== GLOBAL DATA ==================
-let inventory = [];
-let sales = [];
+// In-memory cache — populated on load from Supabase
+let inventory=[], sales=[];
 
-// ================== LOAD DATA ==================
-async function loadData() {
-  const { data: invData } = await supabaseClient.from('inventory_logs').select('*');
-  const { data: salesData } = await supabaseClient.from('sales_logs').select('*');
+// ── Generic Supabase REST helpers ──
+async function sbGet(table,params=''){
+  const r=await fetch(`${SB_URL}/${table}?${params}&order=id.asc`,{headers:SB_HDR});
+  if(!r.ok)throw new Error(await r.text());
+  return r.json();
+}
+async function sbInsert(table,row){
+  const r=await fetch(`${SB_URL}/${table}`,{method:'POST',headers:SB_HDR,body:JSON.stringify(row)});
+  if(!r.ok)throw new Error(await r.text());
+  const data=await r.json();return Array.isArray(data)?data[0]:data;
+}
+async function sbUpdate(table,id,patch){
+  const r=await fetch(`${SB_URL}/${table}?id=eq.${id}`,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(patch)});
+  if(!r.ok)throw new Error(await r.text());
+  const data=await r.json();return Array.isArray(data)?data[0]:data;
+}
+async function sbDelete(table,id){
+  const r=await fetch(`${SB_URL}/${table}?id=eq.${id}`,{method:'DELETE',headers:{...SB_HDR,'Prefer':'return=minimal'}});
+  if(!r.ok)throw new Error(await r.text());
+}
 
-  inventory = (invData || []).map(r => ({
-    _id: r.id,
-    date: r.date,
-    name: r.supplier,
-    pno: r.phone,
-    brand: r.brand,
-    item: r.item,
-    partNo: r.part_no,
-    qty: r.qty,
-    amount: r.cost_price,
-    payment: r.payment,
-    dueDate: r.due_date,
-    paidAmt: r.paid_amt,
-    balanceAmt: r.balance
+// ── Map between DB columns and app object fields ──
+function dbToInv(r){return{_id:r.id,date:r.date||'',name:r.name||'',pno:r.pno||'',brand:r.brand||'',partNo:r.part_no||'',item:r.item||'',qty:Number(r.qty||0),amount:Number(r.amount||0),payment:r.payment||'Cash',dueDate:r.due_date||'',totalAmt:Number(r.total_amt||0),paidAmt:Number(r.paid_amt||0),balanceAmt:Number(r.balance_amt||0)};}
+function invToDb(o){return{date:o.date||null,name:o.name||null,pno:o.pno||null,brand:o.brand||null,part_no:o.partNo||null,item:o.item||null,qty:o.qty||0,amount:o.amount||0,payment:o.payment||'Cash',due_date:o.dueDate||null,total_amt:o.totalAmt||0,paid_amt:o.paidAmt||0,balance_amt:o.balanceAmt||0};}
+function dbToSale(r){return{_id:r.id,date:r.date||'',name:r.name||'',pno:r.pno||'',item:r.item||'',qty:Number(r.qty||0),costPrice:Number(r.cost_price||0),sellingPrice:Number(r.selling_price||0),discount:Number(r.discount||0),total:Number(r.total||0),profit:Number(r.profit||0),payment:r.payment||'Cash',dueDate:r.due_date||'',paidAmt:Number(r.paid_amt||0),balanceAmt:Number(r.balance_amt||0),invId:r.inv_id||null};}
+function saleToDb(o){return{date:o.date||null,name:o.name||null,pno:o.pno||null,item:o.item||null,qty:o.qty||0,cost_price:o.costPrice||0,selling_price:o.sellingPrice||0,discount:o.discount||0,total:o.total||0,profit:o.profit||0,payment:o.payment||'Cash',due_date:o.dueDate||null,paid_amt:o.paidAmt||0,balance_amt:o.balanceAmt||0,inv_id:o.invId||null};}
+
+// ── Loading overlay ──
+function showLoader(msg){
+  let el=document.getElementById('sb-loader');
+  if(!el){
+    el=document.createElement('div');el.id='sb-loader';
+    el.style.cssText='position:fixed;inset:0;background:rgba(255,255,255,.88);z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-family:Inter,sans-serif;font-size:14px;color:#374151';
+    el.innerHTML='<div style="width:38px;height:38px;border:3px solid #e5e7eb;border-top-color:#1e6ff1;border-radius:50%;animation:sbspin .7s linear infinite"></div><span id="sb-loader-msg">Loading…</span>';
+    const st=document.createElement('style');st.textContent='@keyframes sbspin{to{transform:rotate(360deg)}}';document.head.appendChild(st);
+    document.body.appendChild(el);
+  }
+  document.getElementById('sb-loader-msg').textContent=msg||'Loading…';
+  el.style.display='flex';
+}
+function hideLoader(){const el=document.getElementById('sb-loader');if(el)el.style.display='none';}
+
+// ── Load all data from Supabase on startup ──
+async function loadFromSupabase(){
+  showLoader('Connecting to database…');
+  try{
+    showLoader('Loading inventory…');
+    const invRows=await sbGet('inventory','select=*');
+    inventory=invRows.map(dbToInv);
+    showLoader('Loading sales…');
+    const saleRows=await sbGet('sales_logs','select=*');
+    sales=saleRows.map(dbToSale);
+    hideLoader();
+    renderInventoryTable();renderSalesLog();populateSalesLogFilters();
+    populateSaleDropdown();runInvSearch();runSalesSearch();updateCreditDot();
+    toast('Data loaded!','info');
+  }catch(e){
+    hideLoader();
+    toast('Database error: '+e.message,true);
+    console.error('Supabase load error:',e);
+  }
+}
+
+// saveAll is now a no-op — all writes go directly to Supabase
+function saveAll(){}
+
+// ── Helpers ──
+function toISO(s){
+  if(!s)return '';s=String(s).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if(m){let[,mo,d,y]=m;if(y.length===2)y='20'+y;return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;}
+  const dt=new Date(s);return isNaN(dt)?'':dt.toISOString().slice(0,10);
+}
+function fmtDate(iso){if(!iso)return '';const p=iso.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;}
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function rupee(n){return `₹${Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}`;}
+function pct(n){return `${Number(n||0).toFixed(1)}%`;}
+function hl(t,q){if(!q||!t)return t||'';return String(t).replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark>$1</mark>');}
+function payBadge(p){return p==='Cash'?`<span class="pay-cash">CASH</span>`:p==='Credit'?`<span class="pay-credit">CREDIT</span>`:`<span class="pay-partial">PARTIAL</span>`;}
+function daysUntil(iso){if(!iso)return null;const diff=new Date(iso)-new Date();return Math.ceil(diff/(1000*60*60*24));}
+
+// ── Nav ──
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item,.mn-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item,.mn-item').forEach(n=>{if(n.getAttribute('onclick')?.includes(`'${id}'`))n.classList.add('active');});
+  if(id==='pgDash'){populateDashFilters();renderDash();}
+  if(id==='pgSale'){populateSaleDropdown();}
+  if(id==='pgSalesLog'){populateSalesLogFilters();renderSalesLog();}
+  if(id==='pgReminders'){renderCreditLedger();}
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ── Update credit dot ──
+function updateCreditDot(){
+  const hasCredit=inventory.some(r=>r.payment!=='Cash')||sales.some(r=>r.payment!=='Cash');
+  document.getElementById('credit-dot').style.display=hasCredit?'':'none';
+}
+
+// ══════════════════════════════════════════════════
+// INVENTORY PAYMENT FIELDS
+// ══════════════════════════════════════════════════
+function toggleInvPayFields(){
+  const pay=document.getElementById('inv-pay').value;
+  document.getElementById('inv-partial-wrap').style.display=pay==='Partial'?'block':'none';
+}
+function calcInvBalance(){
+  const total=parseFloat(document.getElementById('inv-total-amt').value)||0;
+  const paid=parseFloat(document.getElementById('inv-paid-amt').value)||0;
+  document.getElementById('inv-balance-amt').value=Math.max(0,total-paid).toFixed(2);
+}
+
+// ══════════════════════════════════════════════════
+// MULTI-ITEM INVENTORY FORM
+// ══════════════════════════════════════════════════
+let invRowCount=0;
+function addInvRow(){
+  invRowCount++;
+  const c=document.getElementById('inv-rows-container');
+  const d=document.createElement('div');
+  d.className='multi-row';d.id='irow-'+invRowCount;
+  d.innerHTML=`
+    <div class="fg"><label>Item Name</label><input type="text" id="ir-item-${invRowCount}" placeholder="Part / item name"/></div>
+    <div class="fg"><label>Part No <span style="font-weight:400;font-size:10px;color:var(--muted2)">(opt.)</span></label><input type="text" id="ir-partno-${invRowCount}" placeholder="e.g. BP-4201"/></div>
+    <div class="fg"><label>QTY</label><input type="number" id="ir-qty-${invRowCount}" min="1" value="1"/></div>
+    <div class="fg"><label>Cost ₹ <span style="font-weight:400;font-size:10px;color:var(--muted2)">(opt.)</span></label><input type="number" id="ir-amt-${invRowCount}" min="0" step="0.01" value="0"/></div>
+    <button class="row-del-btn" onclick="removeInvRow(${invRowCount})">✕</button>`;
+  c.appendChild(d);
+}
+function removeInvRow(n){const el=document.getElementById('irow-'+n);if(el)el.remove();}
+function resetInvRows(){document.getElementById('inv-rows-container').innerHTML='';invRowCount=0;addInvRow();}
+
+function addInventory(){
+  const date=calState.inv.selected||todayISO();
+  const name=document.getElementById('inv-name').value.trim();
+  const pno=document.getElementById('inv-pno').value.trim();
+  const brand=document.getElementById('inv-brand').value.trim();
+  const payment=document.getElementById('inv-pay').value;
+  const dueDate=calState.invdue.selected||'';
+  const rows=document.querySelectorAll('#inv-rows-container .multi-row');
+  const items=[];
+  for(const row of rows){
+    const n=row.id.replace('irow-','');
+    const item=document.getElementById('ir-item-'+n)?.value.trim()||'';
+    const qty=parseFloat(document.getElementById('ir-qty-'+n)?.value)||0;
+    const amount=parseFloat(document.getElementById('ir-amt-'+n)?.value)||0;
+    const partNo=document.getElementById('ir-partno-'+n)?.value.trim()||'';
+    if(item&&qty>0)items.push({item,qty,amount,partNo});
+  }
+  if(!items.length){toast('Add at least one item with a name and qty > 0',true);return;}
+  const totalAmt = payment==='Partial' ? parseFloat(document.getElementById('inv-total-amt').value)||0 : 0;
+  const paidAmt  = payment==='Partial' ? parseFloat(document.getElementById('inv-paid-amt').value)||0  : 0;
+  const totalBalanceAmt = Math.max(0, totalAmt - paidAmt);
+  // Split balance proportionally across items by their cost share
+  const orderCostTotal = items.reduce((s,it)=>s+(it.amount*it.qty),0);
+  items.forEach(it=>{
+    let itemBalanceAmt=0, itemPaidAmt=0, itemTotalAmt=0;
+    if(payment==='Partial'){
+      const share = orderCostTotal>0 ? (it.amount*it.qty)/orderCostTotal : 1/items.length;
+      itemTotalAmt  = parseFloat((totalAmt*share).toFixed(2));
+      itemBalanceAmt= parseFloat((totalBalanceAmt*share).toFixed(2));
+      itemPaidAmt   = parseFloat((paidAmt*share).toFixed(2));
+    }
+  });
+  // Insert each item into Supabase
+  showLoader('Saving to inventory…');
+  (async()=>{
+    try{
+      for(const it of items){
+        const share=orderCostTotal>0?(it.amount*it.qty)/orderCostTotal:1/items.length;
+        const iRow=invToDb({date,name,pno,brand,partNo:it.partNo,item:it.item,qty:it.qty,amount:it.amount,payment,dueDate,
+          totalAmt:payment==='Partial'?parseFloat((totalAmt*share).toFixed(2)):0,
+          paidAmt:payment==='Partial'?parseFloat((paidAmt*share).toFixed(2)):0,
+          balanceAmt:payment==='Partial'?parseFloat((totalBalanceAmt*share).toFixed(2)):0});
+        const saved=await sbInsert('inventory',iRow);
+        inventory.push(dbToInv(saved));
+      }
+      hideLoader();
+      renderInventoryTable();populateSaleDropdown();updateCreditDot();
+      toast(`${items.length} item(s) added to stock!`,'info');
+      document.getElementById('inv-name').value='';document.getElementById('inv-pno').value='';
+      document.getElementById('inv-brand').value='';document.getElementById('inv-pay').value='Cash';
+      document.getElementById('inv-total-amt').value=0;document.getElementById('inv-paid-amt').value=0;document.getElementById('inv-balance-amt').value=0;
+      document.getElementById('inv-partial-wrap').style.display='none';
+      setCal('inv',todayISO());setCal('invdue','');resetInvRows();
+    }catch(e){hideLoader();toast('Save failed: '+e.message,true);}
+  })();
+}
+
+function renderInventoryTable(){
+  const tb=document.getElementById('inv-tbody');
+  const sorted=[...inventory].sort((a,b)=>b._id-a._id);
+  document.getElementById('inv-count').textContent=`${inventory.length}`;
+  if(!sorted.length){tb.innerHTML=`<tr class="empty-row"><td colspan="13">No stock yet.</td></tr>`;return;}
+  const grandTotal=sorted.reduce((s,r)=>s+r.amount*r.qty,0);
+  const totalUnits=sorted.reduce((s,r)=>s+r.qty,0);
+  tb.innerHTML=sorted.map((r,i)=>`<tr>
+    <td class="td-muted">${i+1}</td>
+    <td class="td-date">${fmtDate(r.date)}</td>
+    <td style="font-weight:500">${r.name||'—'}</td>
+    <td class="td-muted">${r.pno||'—'}</td>
+    <td style="font-size:12px;color:var(--accent)">${r.brand||'—'}</td>
+    <td style="font-weight:600">${r.item}</td>
+    <td class="td-muted">${r.partNo||'—'}</td>
+    <td style="font-family:var(--fm);font-weight:700;${r.qty<=0?'color:var(--red)':r.qty<=3?'color:var(--amber)':'color:var(--green)'}">${r.qty}</td>
+    <td class="td-cost">${rupee(r.amount)}</td>
+    <td style="font-family:var(--fm);font-size:12px;font-weight:600;color:var(--text2)">${rupee(r.amount*r.qty)}</td>
+    <td>${payBadge(r.payment||'Cash')}${r.payment==='Partial'&&r.balanceAmt>0?`<br><span style="font-size:10px;color:var(--red)">Bal: ${rupee(r.balanceAmt)}</span>`:''}</td>
+    <td class="td-date">${r.dueDate?fmtDate(r.dueDate):'—'}</td>
+    <td><div class="td-act">
+      <button class="ic-btn" onclick="openEditInv(${r._id})" title="Edit">✏</button>
+      <button class="ic-btn del" onclick="deleteInvItem(${r._id})" title="Delete">✕</button>
+    </div></td>
+  </tr>`).join('')+`<tr style="background:#f0f9ff;border-top:2px solid var(--border2)">
+    <td colspan="7" style="font-weight:700;font-size:12px;color:var(--text2);padding:10px 12px">TOTALS (${sorted.length} items)</td>
+    <td style="font-family:var(--fm);font-weight:700;color:var(--text)">${totalUnits}</td>
+    <td></td>
+    <td style="font-family:var(--fm);font-weight:700;font-size:13px;color:var(--accent)">${rupee(grandTotal)}</td>
+    <td colspan="3"></td>
+  </tr>`;
+}
+
+function deleteInvItem(id){
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  if(!confirm(`Delete "${r.item}" from inventory?`))return;
+  showLoader('Deleting…');
+  sbDelete('inventory',id).then(()=>{
+    inventory=inventory.filter(x=>x._id!==id);
+    hideLoader();renderInventoryTable();populateSaleDropdown();updateCreditDot();toast('Item deleted');
+  }).catch(e=>{hideLoader();toast('Delete failed: '+e.message,true);});
+}
+
+function openEditInv(id){
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  document.getElementById('ei-id').value=id;
+  setCal('einv',r.date||todayISO());setCal('einvdue',r.dueDate||'');
+  document.getElementById('ei-name').value=r.name||'';
+  document.getElementById('ei-pno').value=r.pno||'';
+  document.getElementById('ei-brand').value=r.brand||'';
+  document.getElementById('ei-item').value=r.item||'';
+  document.getElementById('ei-partno').value=r.partNo||'';
+  document.getElementById('ei-qty').value=r.qty||0;
+  document.getElementById('ei-amount').value=r.amount||0;
+  document.getElementById('ei-pay').value=r.payment||'Cash';
+  document.getElementById('ei-total-amt').value=r.totalAmt||0;
+  document.getElementById('ei-paid-amt').value=r.paidAmt||0;
+  document.getElementById('ei-balance-amt').value=r.balanceAmt||0;
+  document.getElementById('ei-partial-wrap').style.display=(r.payment==='Partial')?'block':'none';
+  openModal('editInvModal');
+}
+function saveInvEdit(){
+  const id=parseFloat(document.getElementById('ei-id').value);
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  r.date=calState.einv.selected||todayISO();r.dueDate=calState.einvdue.selected||'';
+  r.name=document.getElementById('ei-name').value.trim();r.pno=document.getElementById('ei-pno').value.trim();
+  r.brand=document.getElementById('ei-brand').value.trim();r.item=document.getElementById('ei-item').value.trim();
+  r.partNo=document.getElementById('ei-partno').value.trim();
+  r.qty=parseFloat(document.getElementById('ei-qty').value)||0;
+  r.amount=parseFloat(document.getElementById('ei-amount').value)||0;
+  r.payment=document.getElementById('ei-pay').value;
+  r.totalAmt=parseFloat(document.getElementById('ei-total-amt').value)||0;
+  r.paidAmt=parseFloat(document.getElementById('ei-paid-amt').value)||0;
+  r.balanceAmt=Math.max(0,r.totalAmt-r.paidAmt);
+  showLoader('Updating…');
+  sbUpdate('inventory',id,invToDb(r)).then(()=>{
+    const idx=inventory.findIndex(x=>x._id===id);if(idx>-1)inventory[idx]={...r};
+    hideLoader();renderInventoryTable();populateSaleDropdown();updateCreditDot();
+    closeModal('editInvModal');toast('Inventory updated!');
+  }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
+}
+function toggleEditInvPay(){
+  const p=document.getElementById('ei-pay').value;
+  document.getElementById('ei-partial-wrap').style.display=p==='Partial'?'block':'none';
+}
+function calcEditInvBalance(){
+  const t=parseFloat(document.getElementById('ei-total-amt').value)||0;
+  const p=parseFloat(document.getElementById('ei-paid-amt').value)||0;
+  document.getElementById('ei-balance-amt').value=Math.max(0,t-p).toFixed(2);
+}
+
+function exportInventoryExcel(){
+  if(!inventory.length){toast('No inventory to export',true);return;}
+  const rows=[...inventory].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map((r,i)=>({
+    'S.NO':i+1,'DATE':fmtDate(r.date),'SUPPLIER':r.name,'PHONE':r.pno,'BRAND':r.brand,
+    'ITEM':r.item,'PART NO':r.partNo||'','QTY':r.qty,'COST PRICE (₹)':r.amount,'PAYMENT':r.payment,'PAID AMT (₹)':r.paidAmt||0,'BALANCE (₹)':r.balanceAmt||0,'DUE DATE':fmtDate(r.dueDate)
   }));
-
-  sales = (salesData || []).map(r => ({
-    _id: r.id,
-    date: r.date,
-    name: r.customer,
-    pno: r.phone,
-    item: r.item,
-    qty: r.qty,
-    costPrice: r.cost_price,
-    sellingPrice: r.selling_price,
-    discount: r.discount_pct,
-    total: r.total,
-    profit: r.profit,
-    payment: r.payment,
-    dueDate: r.due_date,
-    paidAmt: r.paid_amt,
-    balance: r.balance
-  }));
-
-  renderInventoryTable();
-  renderSalesLog();
-  populateSaleDropdown();
-  updateCreditDot();
+  const ws=XLSX.utils.json_to_sheet(rows);ws['!cols']=[4,12,18,13,12,22,6,14,10,12].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Inventory');
+  XLSX.writeFile(wb,'SBAS_Inventory.xlsx');toast('Inventory exported!');
 }
 
-// ================== INSERT ==================
-async function saveInventoryToDB(item) {
-  const { data } = await supabaseClient.from('inventory_logs').insert([{
-    date: item.date,
-    supplier: item.name,
-    phone: item.pno,
-    brand: item.brand,
-    item: item.item,
-    part_no: item.partNo,
-    qty: item.qty,
-    cost_price: item.amount,
-    payment: item.payment,
-    paid_amt: item.paidAmt || 0,
-    balance: item.balanceAmt || 0,
-    due_date: item.dueDate || null
-  }]).select();
-
-  item._id = data[0].id; // sync id
+// ══════════════════════════════════════════════════
+// RECORD SALE — COMBO ITEM PICKER
+// ══════════════════════════════════════════════════
+function populateSaleDropdown(){
+  // Called on page load and after inventory changes — just re-render open list if visible
+  if(document.getElementById('sale-combo-list').classList.contains('open')) filterCombo();
 }
 
-async function saveSaleToDB(sale) {
-  const { data } = await supabaseClient.from('sales_logs').insert([{
-    date: sale.date,
-    customer: sale.name,
-    phone: sale.pno,
-    item: sale.item,
-    qty: sale.qty,
-    cost_price: sale.costPrice,
-    selling_price: sale.sellingPrice,
-    discount_pct: sale.discount,
-    total: sale.total,
-    profit: sale.profit,
-    payment: sale.payment,
-    paid_amt: sale.paidAmt || 0,
-    balance: sale.balance || 0,
-    due_date: sale.dueDate || null
-  }]).select();
-
-  sale._id = data[0].id;
+function openCombo(){
+  filterCombo();
+  document.getElementById('sale-combo-list').classList.add('open');
 }
 
-// ================== UPDATE ==================
-async function updateInventoryInDB(item) {
-  await supabaseClient
-    .from('inventory_logs')
-    .update({
-      date: item.date,
-      supplier: item.name,
-      phone: item.pno,
-      brand: item.brand,
-      item: item.item,
-      part_no: item.partNo,
-      qty: item.qty,
-      cost_price: item.amount,
-      payment: item.payment,
-      paid_amt: item.paidAmt,
-      balance: item.balanceAmt,
-      due_date: item.dueDate
-    })
-    .eq('id', item._id);
+function filterCombo(){
+  const q=(document.getElementById('sale-item-input').value||'').toLowerCase().trim();
+  const list=document.getElementById('sale-combo-list');
+
+  // Match inventory items
+  const matches=[...inventory]
+    .filter(r=>!q||r.item.toLowerCase().includes(q)||(r.brand||'').toLowerCase().includes(q))
+    .sort((a,b)=>{
+      // In-stock first, then alphabetical
+      if(a.qty>0&&b.qty<=0)return -1;if(a.qty<=0&&b.qty>0)return 1;
+      return a.item.localeCompare(b.item);
+    });
+
+  let html='';
+  if(matches.length){
+    matches.forEach(r=>{
+      const stockCls=r.qty<=0?'stock-out':r.qty<=3?'stock-low':'stock-ok';
+      const stockTxt=r.qty<=0?'OUT':r.qty+' left';
+      html+=`<div class="combo-item" onclick="selectComboItem(${r._id})">
+        <div>
+          <span class="combo-item-name">${r.item}</span>
+          ${r.brand?`<span class="combo-item-meta"> [${r.brand}]</span>`:''}
+        </div>
+        <span class="combo-item-stock ${stockCls}">${stockTxt}</span>
+      </div>`;
+    });
+  }
+  // Always show "use as typed" option if there's text
+  if(q){
+    html+=`<div class="combo-item manual" onclick="selectComboManual()">
+      ✏ Use "<b>${document.getElementById('sale-item-input').value}</b>" as item name (backlog / manual entry)
+    </div>`;
+  }
+  if(!html) html='<div class="combo-item manual">No items in inventory. Type a name to enter manually.</div>';
+  list.innerHTML=html;
+  list.classList.add('open');
+
+  // Update avail label
+  const selId=parseFloat(document.getElementById('sale-item-sel').value);
+  const sel=inventory.find(x=>x._id===selId);
+  const avail=document.getElementById('sale-avail');
+  if(sel){
+    avail.textContent=`(${sel.qty} in stock)`;
+    avail.style.color=sel.qty<=3?'var(--red)':sel.qty<=5?'var(--amber)':'var(--green)';
+  }
 }
 
-async function updateSaleInDB(sale) {
-  await supabaseClient
-    .from('sales_logs')
-    .update({
-      date: sale.date,
-      customer: sale.name,
-      phone: sale.pno,
-      item: sale.item,
-      qty: sale.qty,
-      cost_price: sale.costPrice,
-      selling_price: sale.sellingPrice,
-      discount_pct: sale.discount,
-      total: sale.total,
-      profit: sale.profit,
-      payment: sale.payment,
-      paid_amt: sale.paidAmt,
-      balance: sale.balance,
-      due_date: sale.dueDate
-    })
-    .eq('id', sale._id);
+function selectComboItem(id){
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  document.getElementById('sale-item-input').value=r.item+(r.brand?' ['+r.brand+']':'');
+  document.getElementById('sale-item-sel').value=id;
+  document.getElementById('sale-item-cost').value=r.amount||0;
+  const avail=document.getElementById('sale-avail');
+  avail.textContent=`(${r.qty} in stock)`;
+  avail.style.color=r.qty<=3?'var(--red)':r.qty<=5?'var(--amber)':'var(--green)';
+  document.getElementById('sale-combo-list').classList.remove('open');
+  recalcSale();
 }
 
-// ================== DELETE ==================
-async function deleteInventoryFromDB(id) {
-  await supabaseClient.from('inventory_logs').delete().eq('id', id);
+function selectComboManual(){
+  // User typed a custom item not in inventory
+  document.getElementById('sale-item-sel').value='manual';
+  document.getElementById('sale-item-cost').value=0;
+  document.getElementById('sale-avail').textContent='(manual entry)';
+  document.getElementById('sale-avail').style.color='var(--muted)';
+  document.getElementById('sale-combo-list').classList.remove('open');
+  recalcSale();
 }
 
-async function deleteSaleFromDB(id) {
-  await supabaseClient.from('sales_logs').delete().eq('id', id);
+// Close combo on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#item-combo-wrap')){
+    document.getElementById('sale-combo-list').classList.remove('open');
+  }
+});
+
+function recalcSale(){
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const sp=parseFloat(document.getElementById('sale-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('sale-disc').value)||0;
+  const total=Math.max(0,qty*sp*(1-disc/100));
+  document.getElementById('sale-total').value=total.toFixed(2);
+  // sync partial panel total if open
+  if(document.getElementById('sale-pay').value==='Partial'){
+    document.getElementById('sale-partial-total').value=total.toFixed(2);
+    calcSaleBalance();
+  }
+  // profit preview — only if inventory item selected (not manual)
+  const invId=parseFloat(document.getElementById('sale-item-sel').value);
+  const inv=inventory.find(x=>x._id===invId);
+  const costPrice=inv?inv.amount:0;
+  const profit=inv?total-(costPrice*qty):0;
+  const pp=document.getElementById('sale-profit-preview');
+  if(inv&&qty>0){pp.textContent=`Est. profit: ${rupee(profit)}`;pp.style.color=profit>=0?'var(--green)':'var(--red)';}
+  else pp.textContent='';
+  checkSaleStock();
 }
 
-// ================== HOOK INTO EXISTING LOGIC ==================
-
-// Wrap existing addInventory
-const originalAddInventory = addInventory;
-addInventory = async function() {
-  originalAddInventory();
-  const item = inventory[inventory.length - 1];
-  await saveInventoryToDB(item);
-};
-
-// Wrap existing recordSale
-const originalRecordSale = recordSale;
-recordSale = async function() {
-  originalRecordSale();
-  const sale = sales[sales.length - 1];
-  await saveSaleToDB(sale);
-};
-
-// Wrap delete functions
-const originalDeleteInventory = deleteInventory;
-deleteInventory = async function(index) {
-  const id = inventory[index]._id;
-  await deleteInventoryFromDB(id);
-  originalDeleteInventory(index);
-};
-
-const originalDeleteSale = deleteSale;
-deleteSale = async function(index) {
-  const id = sales[index]._id;
-  await deleteSaleFromDB(id);
-  originalDeleteSale(index);
-};
-
-// Wrap edit/save functions (depends on your UI naming)
-const originalSaveInventoryEdit = saveInventoryEdit;
-if (originalSaveInventoryEdit) {
-  saveInventoryEdit = async function(index) {
-    originalSaveInventoryEdit(index);
-    await updateInventoryInDB(inventory[index]);
-  };
+function checkSaleStock(){
+  const invId=parseFloat(document.getElementById('sale-item-sel').value);
+  const r=inventory.find(x=>x._id===invId);
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const msg=document.getElementById('sale-stock-msg');
+  if(r&&qty>r.qty){msg.textContent=`⚠ Only ${r.qty} available`;} else {msg.textContent='';}
 }
 
-const originalSaveSaleEdit = saveSaleEdit;
-if (originalSaveSaleEdit) {
-  saveSaleEdit = async function(index) {
-    originalSaveSaleEdit(index);
-    await updateSaleInDB(sales[index]);
-  };
+function toggleSaleDue(){
+  const pay=document.getElementById('sale-pay').value;
+  document.getElementById('sale-due-wrap').style.display=(pay==='Credit'||pay==='Partial')?'':'none';
+  document.getElementById('sale-partial-wrap').style.display=pay==='Partial'?'block':'none';
+  if(pay==='Partial'){
+    const total=parseFloat(document.getElementById('sale-total').value)||0;
+    document.getElementById('sale-partial-total').value=total.toFixed(2);
+    calcSaleBalance();
+  }
+}
+function calcSaleBalance(){
+  const total=parseFloat(document.getElementById('sale-partial-total').value)||0;
+  const paid=parseFloat(document.getElementById('sale-paid').value)||0;
+  document.getElementById('sale-balance-amt').value=Math.max(0,total-paid).toFixed(2);
 }
 
-// ================== INIT ==================
-loadData();
+function recordSale(){
+  const date=calState.sale.selected;
+  const rawSelId=document.getElementById('sale-item-sel').value;
+  const itemInputVal=document.getElementById('sale-item-input').value.trim();
+  const isManual=(rawSelId==='manual'||(!rawSelId&&itemInputVal));
+  const invId=isManual?null:parseFloat(rawSelId)||null;
+  const name=document.getElementById('sale-name').value.trim();
+  const pno=document.getElementById('sale-pno').value.trim();
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const sp=parseFloat(document.getElementById('sale-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('sale-disc').value)||0;
+  const total=parseFloat(document.getElementById('sale-total').value)||0;
+  const payment=document.getElementById('sale-pay').value;
+  const dueDate=calState.saledue.selected||'';
+  const paidAmt=payment==='Partial'?parseFloat(document.getElementById('sale-paid').value)||0:payment==='Cash'?total:0;
+  const saleBalanceAmt=payment==='Partial'?Math.max(0,total-paidAmt):payment==='Credit'?total:0;
 
-</script></body></html>`;
+  if(!date){toast('Please select a date',true);return;}
+  if(!name){toast('Customer name required',true);return;}
+  if(!itemInputVal){toast('Please enter or select an item',true);return;}
+  if(qty<=0){toast('QTY must be > 0',true);return;}
+  if(sp<=0){toast('Selling price must be > 0',true);return;}
+
+  let itemName=itemInputVal;
+  let costPrice=0;
+
+  if(invId){
+    const inv=inventory.find(x=>x._id===invId);
+    if(!inv){toast('Item not found in inventory',true);return;}
+    if(qty>inv.qty){toast(`Only ${inv.qty} in stock!`,true);return;}
+    costPrice=inv.amount;
+    // strip brand suffix if present (e.g. "Brake Pad [Bosch]" → "Brake Pad")
+    itemName=inv.item;
+    // NOTE: Inventory qty is NOT reduced on sale — stock deduction is tracked separately via sales records
+  }
+  const profit=total-(costPrice*qty);
+
+  sales.push({_id:Date.now(),date,name,pno,item:itemName,qty,costPrice,sellingPrice:sp,discount:disc,total,profit,payment,dueDate,paidAmt,balanceAmt:saleBalanceAmt,invId:invId||null});
+  const newSale={date,name,pno,item:itemName,qty,costPrice,sellingPrice:sp,discount:disc,total,profit,payment,dueDate,paidAmt,balanceAmt:saleBalanceAmt,invId:invId||null};
+  showLoader('Recording sale…');
+  sbInsert('sales_logs',saleToDb(newSale)).then(saved=>{
+    sales.push(dbToSale(saved));
+    hideLoader();
+    renderInventoryTable();renderSalesLog();populateSaleDropdown();updateCreditDot();populateSalesLogFilters();
+    const profitTxt=invId?` | Profit: ${rupee(profit)}`:'';
+    toast(`Sale recorded!${profitTxt}`,'info');
+    document.getElementById('sale-name').value='';document.getElementById('sale-pno').value='';
+    document.getElementById('sale-item-input').value='';document.getElementById('sale-item-sel').value='';
+    document.getElementById('sale-item-cost').value=0;document.getElementById('sale-qty').value=1;
+    document.getElementById('sale-sprice').value=0;document.getElementById('sale-disc').value=0;
+    document.getElementById('sale-total').value=0;document.getElementById('sale-pay').value='Cash';
+    document.getElementById('sale-avail').textContent='';document.getElementById('sale-stock-msg').textContent='';
+    document.getElementById('sale-profit-preview').textContent='';
+    document.getElementById('sale-due-wrap').style.display='none';
+    document.getElementById('sale-partial-wrap').style.display='none';
+    document.getElementById('sale-paid').value=0;
+    document.getElementById('sale-partial-total').value=0;
+    document.getElementById('sale-balance-amt').value=0;
+    setCal('sale',todayISO());setCal('saledue','');
+  }).catch(e=>{hideLoader();toast('Sale save failed: '+e.message,true);});
+}
+
+// ══════════════════════════════════════════════════
+// SALES LOG
+// ══════════════════════════════════════════════════
+function populateSalesLogFilters(){
+  const items=[...new Set(sales.map(s=>s.item).filter(Boolean))].sort();
+  const sel=document.getElementById('sl-item');const cur=sel.value;
+  sel.innerHTML='<option value="">All Items</option>'+items.map(i=>`<option value="${i}">${i}</option>`).join('');
+  sel.value=cur;
+}
+function renderSalesLog(){
+  const from=document.getElementById('sl-from').value,to=document.getElementById('sl-to').value;
+  const cust=document.getElementById('sl-cust').value.toLowerCase().trim();
+  const item=document.getElementById('sl-item').value,pay=document.getElementById('sl-pay').value;
+  let data=[...sales].filter(s=>
+    (!from||s.date>=from)&&(!to||s.date<=to)&&
+    (!cust||s.name?.toLowerCase().includes(cust)||s.pno?.includes(cust))&&
+    (!item||s.item===item)&&(!pay||s.payment===pay)
+  ).sort((a,b)=>b._id-a._id);
+  document.getElementById('sl-count').textContent=`${data.length} of ${sales.length}`;
+  const totalRev=data.reduce((s,r)=>s+r.total,0),totalProfit=data.reduce((s,r)=>s+r.profit,0);
+  document.getElementById('sl-summary').textContent=data.length?`Revenue: ${rupee(totalRev)} | Profit: ${rupee(totalProfit)}`:'';
+  const tb=document.getElementById('sl-tbody');
+  if(!data.length){tb.innerHTML=`<tr class="empty-row"><td colspan="15">No sales match filter.</td></tr>`;return;}
+  tb.innerHTML=data.map((r,i)=>`<tr>
+    <td class="td-muted">${i+1}</td>
+    <td class="td-date">${fmtDate(r.date)}</td>
+    <td style="font-weight:500">${r.name}</td>
+    <td class="td-muted">${r.pno||'—'}</td>
+    <td>${r.item}</td>
+    <td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
+    <td class="td-cost">${rupee(r.costPrice)}</td>
+    <td style="font-family:var(--fm);font-weight:500">${rupee(r.sellingPrice)}</td>
+    <td class="td-muted">${r.discount?pct(r.discount):'—'}</td>
+    <td class="td-num">${rupee(r.total)}</td>
+    <td style="font-family:var(--fm);font-size:12px;color:var(--green);font-weight:500">${rupee(r.paidAmt||0)}</td>
+    <td style="font-family:var(--fm);font-size:12px;${Math.max(0,r.total-(r.paidAmt||0))>0?'color:var(--red);font-weight:700':'color:var(--muted2)'}">${Math.max(0,r.total-(r.paidAmt||0))>0?rupee(Math.max(0,r.total-(r.paidAmt||0))):'—'}</td>
+    <td class="${r.profit>=0?'profit-pos':'profit-neg'}">${rupee(r.profit)}</td>
+    <td>${payBadge(r.payment)}${r.payment!=='Cash'&&r.dueDate?`<br><span class="td-muted">Due: ${fmtDate(r.dueDate)}</span>`:''}</td>
+    <td><div class="td-act">
+      <button class="ic-btn" onclick="openEditSale(${r._id})" title="Edit">✏</button>
+      ${r.payment!=='Cash'?`<button class="ic-btn paid" onclick="markSalePaid(${r._id})" title="Mark fully paid">✓</button>`:''}
+      <button class="ic-btn del" onclick="deleteSale(${r._id})" title="Void">✕</button>
+    </div></td>
+  </tr>`).join('');
+}
+function clearSalesFilters(){['sl-from','sl-to','sl-cust'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-item').value='';document.getElementById('sl-pay').value='';renderSalesLog();}
+
+function markSalePaid(id){
+  const s=sales.find(x=>x._id===id);if(!s)return;
+  s.payment='Cash';s.paidAmt=s.total;s.dueDate='';s.balanceAmt=0;
+  showLoader('Updating…');
+  sbUpdate('sales_logs',id,{payment:'Cash',paid_amt:s.total,due_date:null,balance_amt:0}).then(()=>{
+    hideLoader();renderSalesLog();renderCreditLedger();updateCreditDot();toast('Marked as paid!');
+  }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
+}
+
+function openEditSale(id){
+  const s=sales.find(x=>x._id===id);if(!s)return;
+  document.getElementById('es-id').value=id;
+  document.getElementById('es-orig-qty').value=s.qty;
+  document.getElementById('es-inv-id').value=s.invId||'';
+  setCal('esale',s.date||todayISO());setCal('esaledue',s.dueDate||'');
+  document.getElementById('es-name').value=s.name||'';document.getElementById('es-pno').value=s.pno||'';
+  document.getElementById('es-item').value=s.item||'';document.getElementById('es-qty').value=s.qty||1;
+  document.getElementById('es-sprice').value=s.sellingPrice||0;document.getElementById('es-disc').value=s.discount||0;
+  document.getElementById('es-total').value=s.total||0;document.getElementById('es-pay').value=s.payment||'Cash';
+  document.getElementById('es-paid').value=s.paidAmt||0;
+  toggleEditSaleDue();
+  openModal('editSaleModal');
+}
+function toggleEditSaleDue(){
+  const p=document.getElementById('es-pay').value;
+  document.getElementById('es-due-wrap').style.display=(p==='Credit'||p==='Partial')?'':'none';
+  document.getElementById('es-paid-wrap').style.display=p==='Partial'?'':'none';
+}
+function recalcEditSale(){
+  const qty=parseFloat(document.getElementById('es-qty').value)||0;
+  const sp=parseFloat(document.getElementById('es-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('es-disc').value)||0;
+  document.getElementById('es-total').value=Math.max(0,qty*sp*(1-disc/100)).toFixed(2);
+}
+function saveSaleEdit(){
+  const id=parseFloat(document.getElementById('es-id').value);
+  const s=sales.find(x=>x._id===id);if(!s)return;
+  const origQty=parseFloat(document.getElementById('es-orig-qty').value)||0;
+  const newQty=parseFloat(document.getElementById('es-qty').value)||0;
+  if(newQty<=0){toast('QTY must be > 0',true);return;}
+  // Inventory qty is not adjusted on sale edit
+  const sp=parseFloat(document.getElementById('es-sprice').value)||0;
+  const disc=parseFloat(document.getElementById('es-disc').value)||0;
+  const total=parseFloat(document.getElementById('es-total').value)||0;
+  s.date=calState.esale.selected||s.date;s.name=document.getElementById('es-name').value.trim();
+  s.pno=document.getElementById('es-pno').value.trim();s.qty=newQty;s.sellingPrice=sp;s.discount=disc;s.total=total;
+  s.payment=document.getElementById('es-pay').value;s.dueDate=calState.esaledue.selected||'';
+  s.paidAmt=parseFloat(document.getElementById('es-paid').value)||0;
+  s.profit=total-(s.costPrice*newQty);
+  showLoader('Updating sale…');
+  sbUpdate('sales_logs',id,saleToDb(s)).then(()=>{
+    const idx=sales.findIndex(x=>x._id===id);if(idx>-1)sales[idx]={...s};
+    hideLoader();renderInventoryTable();renderSalesLog();populateSaleDropdown();updateCreditDot();
+    closeModal('editSaleModal');toast('Sale updated!');
+  }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
+}
+function deleteSale(id){
+  const s=sales.find(x=>x._id===id);if(!s)return;
+  if(!confirm(`Void sale of "${s.item}" ×${s.qty}?`))return;
+  showLoader('Deleting…');
+  sbDelete('sales_logs',id).then(()=>{
+    sales=sales.filter(x=>x._id!==id);
+    hideLoader();renderInventoryTable();renderSalesLog();populateSaleDropdown();updateCreditDot();toast('Sale voided.');
+  }).catch(e=>{hideLoader();toast('Delete failed: '+e.message,true);});
+}
+function exportSalesExcel(){
+  const from=document.getElementById('sl-from').value,to=document.getElementById('sl-to').value;
+  const cust=document.getElementById('sl-cust').value.toLowerCase().trim(),item=document.getElementById('sl-item').value;
+  const pay=document.getElementById('sl-pay').value;
+  let data=[...sales].filter(s=>(!from||s.date>=from)&&(!to||s.date<=to)&&(!cust||s.name?.toLowerCase().includes(cust))&&(!item||s.item===item)&&(!pay||s.payment===pay)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  if(!data.length){toast('No sales to export',true);return;}
+  const rows=data.map((r,i)=>({'S.NO':i+1,'DATE':fmtDate(r.date),'CUSTOMER':r.name,'PHONE':r.pno,'ITEM':r.item,'QTY':r.qty,'COST PRICE (₹)':r.costPrice,'SELLING PRICE (₹)':r.sellingPrice,'DISCOUNT (%)':r.discount,'TOTAL (₹)':r.total,'PROFIT (₹)':r.profit,'PAYMENT':r.payment,'PAID AMT (₹)':r.paidAmt||0,'BALANCE (₹)':Math.max(0,r.total-(r.paidAmt||0)),'DUE DATE':fmtDate(r.dueDate)}));
+  const ws=XLSX.utils.json_to_sheet(rows);ws['!cols']=[4,12,18,13,22,6,14,16,12,13,13,10,13,13,12].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Sales');
+  XLSX.writeFile(wb,'SBAS_Sales.xlsx');toast('Sales exported!');
+}
+
+// ══════════════════════════════════════════════════
+// CREDIT LEDGER
+// ══════════════════════════════════════════════════
+function renderCreditLedger(){
+  const today=todayISO();
+  // Payables: inv credits (you owe supplier)
+  const payables=inventory.filter(r=>r.payment!=='Cash').sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+  // Receivables: sales credits (customer owes you)
+  const receivables=sales.filter(r=>r.payment!=='Cash').sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+
+  const totalPayable=payables.reduce((s,r)=>s+(r.payment==='Partial'?r.balanceAmt||0:r.amount*r.qty),0);
+  const totalReceivable=receivables.reduce((s,r)=>s+Math.max(0,r.total-(r.paidAmt||0)),0);
+  document.getElementById('cr-payable').textContent=rupee(totalPayable);
+  document.getElementById('cr-payable-n').textContent=`${payables.length} entries`;
+  document.getElementById('cr-receivable').textContent=rupee(totalReceivable);
+  document.getElementById('cr-receivable-n').textContent=`${receivables.length} entries`;
+  document.getElementById('cr-pay-badge').textContent=payables.length;
+  document.getElementById('cr-rec-badge').textContent=receivables.length;
+
+  // Render payables
+  const pDiv=document.getElementById('cr-payables-list');
+  if(!payables.length){pDiv.innerHTML=`<div class="empty-state"><div>✅</div>No outstanding payables to suppliers.</div>`;} else {
+    pDiv.innerHTML=payables.map(r=>{
+      const d=daysUntil(r.dueDate);
+      const cls=!r.dueDate?'ok':d<0?'overdue':d<=7?'due-soon':'ok';
+      const dueTxt=!r.dueDate?'No due date set':d<0?`Overdue by ${Math.abs(d)} day(s)`:d===0?'Due Today':`Due in ${d} day(s) — ${fmtDate(r.dueDate)}`;
+      const owedAmt=r.payment==='Partial'?(r.balanceAmt||0):r.amount*r.qty;
+      const fullAmt=r.payment==='Partial'?(r.totalAmt||r.amount*r.qty):r.amount*r.qty;
+      const alreadyPaid=r.payment==='Partial'?(r.paidAmt||0):0;
+      return `<div class="credit-card ${cls}">
+        <div class="cc-icon" style="background:var(--red-bg)">💸</div>
+        <div class="cc-body">
+          <div class="cc-name">${r.name||'Unknown Supplier'} <span class="td-muted">${r.pno||''}</span></div>
+          <div class="cc-item">${r.item}${r.brand?' — '+r.brand:''}${r.partNo?' · #'+r.partNo:''} × ${r.qty} unit(s)</div>
+          <div class="cc-meta">
+            <span>Purchased: ${fmtDate(r.date)}</span>
+            ${r.payment==='Partial'?`<span>Order Total: <b>${rupee(fullAmt)}</b></span><span style="color:var(--green)">Paid: <b>${rupee(alreadyPaid)}</b></span><span style="color:var(--red);font-weight:700">Balance: <b>${rupee(owedAmt)}</b></span>`:''}
+            <span style="${cls==='overdue'?'color:var(--red);font-weight:700':cls==='due-soon'?'color:var(--amber);font-weight:600':''}">${dueTxt}</span>
+            ${payBadge(r.payment)}
+          </div>
+          <div class="cc-actions">
+            <button class="btn btn-green btn-sm" onclick="markInvPaid(${r._id})">✓ Mark Paid</button>
+            <button class="btn btn-outline btn-sm" onclick="openEditInv(${r._id})">Edit</button>
+          </div>
+        </div>
+        <div>
+          <div class="cc-amt">${rupee(owedAmt)}</div>
+          <div class="cc-due">${r.payment==='Partial'?'Balance owed':'Total owed'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Render receivables
+  const rDiv=document.getElementById('cr-receivables-list');
+  if(!receivables.length){rDiv.innerHTML=`<div class="empty-state"><div>✅</div>No outstanding receivables from customers.</div>`;} else {
+    rDiv.innerHTML=receivables.map(r=>{
+      const balance=Math.max(0,r.total-(r.paidAmt||0));
+      const d=daysUntil(r.dueDate);
+      const cls=!r.dueDate?'ok':d<0?'overdue':d<=7?'due-soon':'ok';
+      const dueTxt=!r.dueDate?'No due date set':d<0?`Overdue by ${Math.abs(d)} day(s)`:d===0?'Due Today':`Due in ${d} day(s) — ${fmtDate(r.dueDate)}`;
+      return `<div class="credit-card ${cls}">
+        <div class="cc-icon" style="background:var(--green-bg)">💰</div>
+        <div class="cc-body">
+          <div class="cc-name">${r.name} <span class="td-muted">${r.pno||''}</span></div>
+          <div class="cc-item">${r.item} × ${r.qty} — Sale date: ${fmtDate(r.date)}</div>
+          <div class="cc-meta">
+            <span>Total: ${rupee(r.total)}</span>
+            <span>Paid: ${rupee(r.paidAmt||0)}</span>
+            <span style="font-weight:700;color:var(--red)">Balance: ${rupee(balance)}</span>
+            <span style="${cls==='overdue'?'color:var(--red);font-weight:700':cls==='due-soon'?'color:var(--amber);font-weight:600':''}">${dueTxt}</span>
+            ${payBadge(r.payment)}
+          </div>
+          <div class="cc-actions">
+            <button class="btn btn-green btn-sm" onclick="markSalePaid(${r._id})">✓ Mark Fully Paid</button>
+            <button class="btn btn-outline btn-sm" onclick="openEditSale(${r._id})">Edit</button>
+          </div>
+        </div>
+        <div>
+          <div class="cc-amt">${rupee(balance)}</div>
+          <div class="cc-due">Balance due</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function markInvPaid(id){
+  const r=inventory.find(x=>x._id===id);if(!r)return;
+  r.payment='Cash';r.dueDate='';r.balanceAmt=0;r.paidAmt=r.totalAmt;
+  showLoader('Updating…');
+  sbUpdate('inventory',id,{payment:'Cash',due_date:null,balance_amt:0,paid_amt:r.totalAmt}).then(()=>{
+    hideLoader();renderInventoryTable();renderCreditLedger();updateCreditDot();toast('Supplier payment settled!');
+  }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
+}
+
+// ══════════════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════════════
+function runInvSearch(){
+  const q=document.getElementById('si-q').value.toLowerCase().trim();
+  const pay=document.getElementById('si-pay').value,from=document.getElementById('si-from').value,to=document.getElementById('si-to').value;
+  const res=inventory.filter(r=>(!q||[r.name,r.item,r.brand,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&(!pay||r.payment===pay)&&(!from||r.date>=from)&&(!to||r.date<=to));
+  document.getElementById('si-count').textContent=res.length;
+  const tb=document.getElementById('si-tbody');
+  tb.innerHTML=res.length?[...res].reverse().map((r,i)=>`<tr>
+    <td class="td-muted">${i+1}</td><td class="td-date">${fmtDate(r.date)}</td>
+    <td>${hl(r.name,q)||'—'}</td><td class="td-muted">${hl(r.pno,q)||'—'}</td>
+    <td style="color:var(--accent);font-size:12px">${hl(r.brand,q)||'—'}</td>
+    <td style="font-weight:500">${hl(r.item,q)}</td>
+    <td style="font-family:var(--fm);font-weight:700">${r.qty}</td>
+    <td class="td-cost">${rupee(r.amount)}</td>
+    <td>${payBadge(r.payment||'Cash')}</td><td class="td-date">${r.dueDate?fmtDate(r.dueDate):'—'}</td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="10">No matches</td></tr>`;
+}
+function clearInvSearch(){['si-q','si-from','si-to'].forEach(id=>document.getElementById(id).value='');document.getElementById('si-pay').value='';runInvSearch();}
+
+function runSalesSearch(){
+  const q=document.getElementById('ss-q').value.toLowerCase().trim();
+  const from=document.getElementById('ss-from').value,to=document.getElementById('ss-to').value;
+  const res=sales.filter(r=>(!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q)))&&(!from||r.date>=from)&&(!to||r.date<=to));
+  document.getElementById('ss-count').textContent=res.length;
+  const tb=document.getElementById('ss-tbody');
+  tb.innerHTML=res.length?[...res].reverse().map((r,i)=>`<tr>
+    <td class="td-muted">${i+1}</td><td class="td-date">${fmtDate(r.date)}</td>
+    <td style="font-weight:500">${hl(r.name,q)}</td><td class="td-muted">${hl(r.pno,q)||'—'}</td>
+    <td>${hl(r.item,q)}</td><td style="font-family:var(--fm);font-weight:600">${r.qty}</td>
+    <td style="font-family:var(--fm)">${rupee(r.sellingPrice)}</td>
+    <td class="td-num">${rupee(r.total)}</td>
+    <td class="${r.profit>=0?'profit-pos':'profit-neg'}">${rupee(r.profit)}</td>
+    <td>${payBadge(r.payment)}</td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="10">No matches</td></tr>`;
+}
+function clearSalesSearch(){['ss-q','ss-from','ss-to'].forEach(id=>document.getElementById(id).value='');runSalesSearch();}
+
+function exportCustomerPDF(scope){
+  const q=scope==='inv'?document.getElementById('si-q').value.trim():document.getElementById('ss-q').value.trim();
+  const data=scope==='inv'
+    ?inventory.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())))
+    :sales.filter(r=>!q||[r.name,r.item,r.pno].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase())));
+  if(!data.length){toast('No results to export as PDF',true);return;}
+  const title=scope==='inv'?'Inventory / Purchase Report':'Customer Sales Report';
+  const filterLabel=q||'All Records';
+  const totalAmt=scope==='inv'?data.reduce((s,r)=>s+r.amount*r.qty,0):data.reduce((s,r)=>s+r.total,0);
+  const totalProfit=scope==='sales'?data.reduce((s,r)=>s+r.profit,0):0;
+  const hdr=scope==='inv'
+    ?`<tr><th>#</th><th>Date</th><th>Supplier</th><th>Phone</th><th>Brand</th><th>Item</th><th>Qty</th><th>Cost ₹</th><th>Payment</th><th>Due Date</th></tr>`
+    :`<tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th>Item</th><th>Qty</th><th>Sell ₹</th><th>Disc%</th><th>Total ₹</th><th>Profit ₹</th><th>Payment</th></tr>`;
+  const body=data.map((r,i)=>scope==='inv'
+    ?`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name||'—'}</td><td>${r.pno||'—'}</td><td>${r.brand||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${rupee(r.amount)}</td><td>${r.payment||'Cash'}</td><td>${fmtDate(r.dueDate)||'—'}</td></tr>`
+    :`<tr><td>${i+1}</td><td>${fmtDate(r.date)}</td><td>${r.name}</td><td>${r.pno||'—'}</td><td>${r.item}</td><td>${r.qty}</td><td>${rupee(r.sellingPrice)}</td><td>${r.discount?pct(r.discount):'—'}</td><td>${rupee(r.total)}</td><td style="color:${r.profit>=0?'#16a34a':'#dc2626'}">${rupee(r.profit)}</td><td>${r.payment}</td></tr>`
+  ).join('');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${title}</title>
+  <style>body{font-family:Arial,sans-serif;padding:28px;color:#111;font-size:12px}
+  .hdr{display:flex;justify-content:space-between;border-bottom:2px solid #1e6ff1;margin-bottom:18px;padding-bottom:12px}
+  .co{font-size:20px;font-weight:800;color:#1e40af}.co-sub{font-size:9px;color:#888;letter-spacing:2px;text-transform:uppercase}
+  .meta{text-align:right;font-size:11px;color:#555}
+  .summary{display:flex;gap:24px;background:#eff4ff;border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:11px}
+  .sv{font-size:16px;font-weight:800;color:#1e3a8a}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  thead{background:#1e6ff1;color:#fff}thead th{padding:7px 9px;text-align:left;font-weight:700;font-size:10px;letter-spacing:.4px;text-transform:uppercase}
+  tbody tr:nth-child(even){background:#f8faff}tbody td{padding:6px 9px;border-bottom:1px solid #e5e7eb}
+  .footer{margin-top:16px;font-size:10px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:8px}
+  @media print{body{padding:12px}}</style></head><body>
+  <div class="hdr"><div><div class="co">🔧 SHREE BALAJEE AUTO SPARES</div><div class="co-sub">Automotive Parts &amp; Sales</div></div>
+  <div class="meta"><b>${title}</b><br>Filter: ${filterLabel}<br>Generated: ${fmtDate(todayISO())}</div></div>
+  <div class="summary">
+    <div>Records<div class="sv">${data.length}</div></div>
+    <div>Total Amount<div class="sv">${rupee(totalAmt)}</div></div>
+    ${scope==='sales'?`<div>Total Profit<div class="sv" style="color:#16a34a">${rupee(totalProfit)}</div></div>`:''}
+  </div>
+  <table><thead>${hdr}</thead><tbody>${body}</tbody></table>
+  <div class="footer">Shree Balajee Auto Spares · ${fmtDate(todayISO())}</div>
+  <script>window.onload=()=>window.print();<\/script></body></html>`;
   const w=window.open('','_blank','width=960,height=720');w.document.write(html);w.document.close();
 }
 
@@ -881,15 +1478,32 @@ function importExcel(e){
       const ws=wb.Sheets[wb.SheetNames[0]];
       const rows=XLSX.utils.sheet_to_json(ws,{raw:false});
       let n=0;
+      const insertPromises=[];
       rows.forEach(row=>{
-        inventory.push({_id:Date.now()+Math.random(),date:toISO(String(row['DATE']||row['Date']||''))||todayISO(),
-          name:String(row['NAME']||row['SUPPLIER']||'').trim(),pno:String(row['P. NO']||row['PHONE']||'').trim(),
-          brand:String(row['BRAND']||'').trim(),item:String(row['ITEM']||'').trim(),
-          qty:parseFloat(row['QTY']||0)||0,amount:parseFloat(row['AMOUNT']||row['COST PRICE (₹)']||0)||0,
-          payment:String(row['PAYMENT']||'Cash').trim(),dueDate:toISO(String(row['DUE DATE']||'')),sellPrice:parseFloat(row['SELLING PRICE (₹)']||0)||0});
+        const obj={
+          date:toISO(String(row['DATE']||row['Date']||''))||todayISO(),
+          name:String(row['NAME']||row['SUPPLIER']||'').trim(),
+          pno:String(row['P. NO']||row['PHONE']||'').trim(),
+          brand:String(row['BRAND']||'').trim(),
+          partNo:String(row['PART NO']||'').trim(),
+          item:String(row['ITEM']||'').trim(),
+          qty:parseFloat(row['QTY']||0)||0,
+          amount:parseFloat(row['AMOUNT']||row['COST PRICE (₹)']||0)||0,
+          payment:String(row['PAYMENT']||'Cash').trim(),
+          dueDate:toISO(String(row['DUE DATE']||'')),
+          totalAmt:parseFloat(row['TOTAL AMT']||0)||0,
+          paidAmt:parseFloat(row['PAID AMT (₹)']||0)||0,
+          balanceAmt:parseFloat(row['BALANCE (₹)']||0)||0
+        };
+        if(obj.item) insertPromises.push(sbInsert('inventory',invToDb(obj)).then(dbToInv));
         n++;
       });
-      saveAll();renderInventoryTable();populateSaleDropdown();updateCreditDot();toast(`Imported ${n} items!`);
+      showLoader(`Importing ${n} rows…`);
+      Promise.all(insertPromises).then(saved=>{
+        inventory.push(...saved);
+        hideLoader();renderInventoryTable();populateSaleDropdown();updateCreditDot();
+        toast(`Imported ${saved.length} item(s)!`,'info');
+      }).catch(e=>{hideLoader();toast('Import error: '+e.message,true);});
     }catch(err){toast('Import failed: '+err.message,true);}
     e.target.value='';
   };
@@ -1078,12 +1692,8 @@ document.addEventListener('click',e=>{if(!e.target.closest('.date-field')&&!e.ta
 // ══════════════════════════════════════════════════
 setCal('inv',todayISO());setCal('invdue','');setCal('sale',todayISO());setCal('saledue','');
 resetInvRows();
-renderInventoryTable();
-renderSalesLog();
-populateSalesLogFilters();
-populateSaleDropdown();
-runInvSearch();runSalesSearch();
-updateCreditDot();
+// Load data from Supabase — renders all tables after data arrives
+loadFromSupabase();
 </script>
 </body>
 </html>
