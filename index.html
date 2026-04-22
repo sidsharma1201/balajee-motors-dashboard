@@ -676,8 +676,8 @@ let inventory=[], sales=[];
 
 // ── Generic Supabase REST helpers ──
 async function sbGet(table,params=''){
-  const orderCol=table==='inventory_logs'?'serial_no':table==='sales_logs'?'S.NO':'id';
-  const r=await fetch(`${SB_URL}/${table}?${params}&order=${orderCol}.asc`,{headers:SB_HDR});
+  // Use select=* with no order for tables with special-char column names
+  const r=await fetch(`${SB_URL}/${table}?${params}&select=*`,{headers:SB_HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
 }
@@ -687,81 +687,86 @@ async function sbInsert(table,row){
   const data=await r.json();return Array.isArray(data)?data[0]:data;
 }
 async function sbUpdate(table,id,patch){
-  const pk=table==='inventory_logs'?'serial_no':table==='sales_logs'?'S.NO':'id';
-  const r=await fetch(`${SB_URL}/${table}?${pk}=eq.${id}`,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(patch)});
+  // serial_no is safe, "S.NO" needs quoting via column= param
+  const filter=table==='sales_logs'
+    ? `sno=eq.${id}`
+    : `serial_no=eq.${id}`;
+  const r=await fetch(`${SB_URL}/${table}?${filter}`,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(patch)});
   if(!r.ok)throw new Error(await r.text());
   const data=await r.json();return Array.isArray(data)?data[0]:data;
 }
 async function sbDelete(table,id){
-  const pk=table==='inventory_logs'?'serial_no':table==='sales_logs'?'S.NO':'id';
-  const r=await fetch(`${SB_URL}/${table}?${pk}=eq.${id}`,{method:'DELETE',headers:{...SB_HDR,'Prefer':'return=minimal'}});
+  const filter=table==='sales_logs'
+    ? `sno=eq.${id}`
+    : `serial_no=eq.${id}`;
+  const r=await fetch(`${SB_URL}/${table}?${filter}`,{method:'DELETE',headers:{...SB_HDR,'Prefer':'return=minimal'}});
   if(!r.ok)throw new Error(await r.text());
 }
 
 // ── Map between DB columns and app object fields ──
 function dbToInv(r){return{
-  _id:     r['serial_no'],
-  date:    r['DATE']||'',
-  name:    r['SUPPLIER']||'',
-  pno:     String(r['PHONE']||''),
-  brand:   r['BRAND']||'',
-  partNo:  String(r['PART NO']||''),
-  item:    r['ITEM']||'',
-  qty:     Number(r['QTY']||0),
-  amount:  Number(r['COST_PRICE']||0),
-  payment: r['PAYMENT']||'Cash',
-  dueDate: r['DUE DATE']||'',
-  totalAmt:  0,
-  paidAmt:   Number(r['PAID AMT']||0),
-  balanceAmt:Number(r['BALANCE']||0)
+  _id:        r.serial_no,
+  date:       r.date||'',
+  name:       r.supplier||'',
+  pno:        String(r.phone||''),
+  brand:      r.brand||'',
+  partNo:     String(r.part_no||''),
+  item:       r.item||'',
+  qty:        Number(r.qty||0),
+  amount:     Number(r.cost_price||0),
+  payment:    r.payment||'Cash',
+  dueDate:    r.due_date||'',
+  totalAmt:   0,
+  paidAmt:    Number(r.paid_amt||0),
+  balanceAmt: Number(r.balance||0)
 };}
 function invToDb(o){return{
-  'DATE':      o.date||null,
-  'SUPPLIER':  o.name||null,
-  'PHONE':     o.pno?Number(o.pno.replace(/\D/g,''))||null:null,
-  'BRAND':     o.brand||null,
-  'PART NO':   o.partNo?Number(o.partNo.replace(/\D/g,''))||null:null,
-  'ITEM':      o.item||null,
-  'QTY':       o.qty||0,
-  'COST_PRICE':o.amount||0,
-  'PAYMENT':   o.payment||'Cash',
-  'DUE DATE':  o.dueDate||null,
-  'PAID AMT':  o.paidAmt||0,
-  'BALANCE':   o.balanceAmt||0
+  date:       o.date||null,
+  supplier:   o.name||null,
+  phone:      o.pno||null,
+  brand:      o.brand||null,
+  part_no:    o.partNo||null,
+  item:       o.item||null,
+  qty:        o.qty||0,
+  cost_price: o.amount||0,
+  payment:    o.payment||'Cash',
+  due_date:   o.dueDate||null,
+  paid_amt:   o.paidAmt||0,
+  balance:    o.balanceAmt||0
 };}
 function dbToSale(r){return{
-  _id:          r['S.NO'],
-  date:         r['DATE']||'',
-  name:         r['CUSTOMER']||'',
-  pno:          String(r['PHONE']||''),
-  item:         r['ITEM']||'',
-  qty:          Number(r['QTY']||0),
-  costPrice:    Number(r['COST PRICE (₹)']||0),
-  sellingPrice: Number(r['SELLING PRICE (₹)']||0),
-  discount:     Number(r['DISCOUNT (%)']||0),
-  total:        Number(r['TOTAL (₹)']||0),
-  profit:       Number(r['PROFIT (₹)']||0),
-  payment:      r['PAYMENT']||'Cash',
-  dueDate:      r['DUE DATE']||'',
-  paidAmt:      Number(r['PAID AMT (₹)']||0),
-  balanceAmt:   Number(r['BALANCE (₹)']||0),
+  _id:          r.sno,
+  date:         r.date||'',
+  name:         r.customer||'',
+  pno:          String(r.phone||''),
+  item:         r.item||'',
+  qty:          Number(r.qty||0),
+  costPrice:    Number(r.cost_price||0),
+  sellingPrice: Number(r.selling_price||0),
+  discount:     Number(r.discount||0),
+  total:        Number(r.total||0),
+  profit:       Number(r.profit||0),
+  payment:      r.payment||'Cash',
+  dueDate:      r.due_date||'',
+  paidAmt:      Number(r.paid_amt||0),
+  balanceAmt:   Number(r.balance||0),
   invId:        null
 };}
 function saleToDb(o){return{
-  'DATE':               o.date||null,
-  'CUSTOMER':           o.name||null,
-  'PHONE':              o.pno?Number(o.pno.replace(/\D/g,''))||null:null,
-  'ITEM':               o.item||null,
-  'QTY':                o.qty||0,
-  'COST PRICE (₹)':     o.costPrice||0,
-  'SELLING PRICE (₹)':  o.sellingPrice||0,
-  'DISCOUNT (%)':       o.discount||0,
-  'TOTAL (₹)':          o.total||0,
-  'PROFIT (₹)':         o.profit||0,
-  'PAYMENT':            o.payment||'Cash',
-  'DUE DATE':           o.dueDate||null,
-  'PAID AMT (₹)':       o.paidAmt||0,
-  'BALANCE (₹)':        o.balanceAmt||0
+  date:          o.date||null,
+  customer:      o.name||null,
+  phone:         o.pno||null,
+  item:          o.item||null,
+  qty:           o.qty||0,
+  cost_price:    o.costPrice||0,
+  selling_price: o.sellingPrice||0,
+  discount:      o.discount||0,
+  total:         o.total||0,
+  profit:        o.profit||0,
+  payment:       o.payment||'Cash',
+  due_date:      o.dueDate||null,
+  paid_amt:      o.paidAmt||0,
+  balance:       o.balanceAmt||0
 };}
 
 // ── Loading overlay ──
@@ -1279,7 +1284,7 @@ function markSalePaid(id){
   const s=sales.find(x=>x._id===id);if(!s)return;
   s.payment='Cash';s.paidAmt=s.total;s.dueDate='';s.balanceAmt=0;
   showLoader('Updating…');
-  sbUpdate('sales_logs',id,{'PAYMENT':'Cash','PAID AMT (₹)':s.total,'DUE DATE':null,'BALANCE (₹)':0}).then(()=>{
+  sbUpdate('sales_logs',id,{payment:'Cash',paid_amt:s.total,due_date:null,balance:0}).then(()=>{
     hideLoader();renderSalesLog();renderCreditLedger();updateCreditDot();toast('Marked as paid!');
   }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
 }
@@ -1443,7 +1448,7 @@ function markInvPaid(id){
   const r=inventory.find(x=>x._id===id);if(!r)return;
   r.payment='Cash';r.dueDate='';r.balanceAmt=0;r.paidAmt=r.totalAmt;
   showLoader('Updating…');
-  sbUpdate('inventory_logs',id,{'PAYMENT':'Cash','DUE DATE':null,'BALANCE':0,'PAID AMT':r.paidAmt}).then(()=>{
+  sbUpdate('inventory_logs',id,{payment:'Cash',due_date:null,balance:0,paid_amt:r.paidAmt}).then(()=>{
     hideLoader();renderInventoryTable();renderCreditLedger();updateCreditDot();toast('Supplier payment settled!');
   }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
 }
