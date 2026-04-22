@@ -676,7 +676,8 @@ let inventory=[], sales=[];
 
 // ── Generic Supabase REST helpers ──
 async function sbGet(table,params=''){
-  const r=await fetch(`${SB_URL}/${table}?${params}&order=id.asc`,{headers:SB_HDR});
+  const orderCol=table==='inventory_logs'?'serial_no':table==='sales_logs'?'S.NO':'id';
+  const r=await fetch(`${SB_URL}/${table}?${params}&order=${orderCol}.asc`,{headers:SB_HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
 }
@@ -686,20 +687,82 @@ async function sbInsert(table,row){
   const data=await r.json();return Array.isArray(data)?data[0]:data;
 }
 async function sbUpdate(table,id,patch){
-  const r=await fetch(`${SB_URL}/${table}?id=eq.${id}`,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(patch)});
+  const pk=table==='inventory_logs'?'serial_no':table==='sales_logs'?'S.NO':'id';
+  const r=await fetch(`${SB_URL}/${table}?${pk}=eq.${id}`,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(patch)});
   if(!r.ok)throw new Error(await r.text());
   const data=await r.json();return Array.isArray(data)?data[0]:data;
 }
 async function sbDelete(table,id){
-  const r=await fetch(`${SB_URL}/${table}?id=eq.${id}`,{method:'DELETE',headers:{...SB_HDR,'Prefer':'return=minimal'}});
+  const pk=table==='inventory_logs'?'serial_no':table==='sales_logs'?'S.NO':'id';
+  const r=await fetch(`${SB_URL}/${table}?${pk}=eq.${id}`,{method:'DELETE',headers:{...SB_HDR,'Prefer':'return=minimal'}});
   if(!r.ok)throw new Error(await r.text());
 }
 
 // ── Map between DB columns and app object fields ──
-function dbToInv(r){return{_id:r.id,date:r.date||'',name:r.name||'',pno:r.pno||'',brand:r.brand||'',partNo:r.part_no||'',item:r.item||'',qty:Number(r.qty||0),amount:Number(r.amount||0),payment:r.payment||'Cash',dueDate:r.due_date||'',totalAmt:Number(r.total_amt||0),paidAmt:Number(r.paid_amt||0),balanceAmt:Number(r.balance_amt||0)};}
-function invToDb(o){return{date:o.date||null,name:o.name||null,pno:o.pno||null,brand:o.brand||null,part_no:o.partNo||null,item:o.item||null,qty:o.qty||0,amount:o.amount||0,payment:o.payment||'Cash',due_date:o.dueDate||null,total_amt:o.totalAmt||0,paid_amt:o.paidAmt||0,balance_amt:o.balanceAmt||0};}
-function dbToSale(r){return{_id:r.id,date:r.date||'',name:r.name||'',pno:r.pno||'',item:r.item||'',qty:Number(r.qty||0),costPrice:Number(r.cost_price||0),sellingPrice:Number(r.selling_price||0),discount:Number(r.discount||0),total:Number(r.total||0),profit:Number(r.profit||0),payment:r.payment||'Cash',dueDate:r.due_date||'',paidAmt:Number(r.paid_amt||0),balanceAmt:Number(r.balance_amt||0),invId:r.inv_id||null};}
-function saleToDb(o){return{date:o.date||null,name:o.name||null,pno:o.pno||null,item:o.item||null,qty:o.qty||0,cost_price:o.costPrice||0,selling_price:o.sellingPrice||0,discount:o.discount||0,total:o.total||0,profit:o.profit||0,payment:o.payment||'Cash',due_date:o.dueDate||null,paid_amt:o.paidAmt||0,balance_amt:o.balanceAmt||0,inv_id:o.invId||null};}
+function dbToInv(r){return{
+  _id:     r['serial_no'],
+  date:    r['DATE']||'',
+  name:    r['SUPPLIER']||'',
+  pno:     String(r['PHONE']||''),
+  brand:   r['BRAND']||'',
+  partNo:  String(r['PART NO']||''),
+  item:    r['ITEM']||'',
+  qty:     Number(r['QTY']||0),
+  amount:  Number(r['COST_PRICE']||0),
+  payment: r['PAYMENT']||'Cash',
+  dueDate: r['DUE DATE']||'',
+  totalAmt:  0,
+  paidAmt:   Number(r['PAID AMT']||0),
+  balanceAmt:Number(r['BALANCE']||0)
+};}
+function invToDb(o){return{
+  'DATE':      o.date||null,
+  'SUPPLIER':  o.name||null,
+  'PHONE':     o.pno?Number(o.pno.replace(/\D/g,''))||null:null,
+  'BRAND':     o.brand||null,
+  'PART NO':   o.partNo?Number(o.partNo.replace(/\D/g,''))||null:null,
+  'ITEM':      o.item||null,
+  'QTY':       o.qty||0,
+  'COST_PRICE':o.amount||0,
+  'PAYMENT':   o.payment||'Cash',
+  'DUE DATE':  o.dueDate||null,
+  'PAID AMT':  o.paidAmt||0,
+  'BALANCE':   o.balanceAmt||0
+};}
+function dbToSale(r){return{
+  _id:          r['S.NO'],
+  date:         r['DATE']||'',
+  name:         r['CUSTOMER']||'',
+  pno:          String(r['PHONE']||''),
+  item:         r['ITEM']||'',
+  qty:          Number(r['QTY']||0),
+  costPrice:    Number(r['COST PRICE (₹)']||0),
+  sellingPrice: Number(r['SELLING PRICE (₹)']||0),
+  discount:     Number(r['DISCOUNT (%)']||0),
+  total:        Number(r['TOTAL (₹)']||0),
+  profit:       Number(r['PROFIT (₹)']||0),
+  payment:      r['PAYMENT']||'Cash',
+  dueDate:      r['DUE DATE']||'',
+  paidAmt:      Number(r['PAID AMT (₹)']||0),
+  balanceAmt:   Number(r['BALANCE (₹)']||0),
+  invId:        null
+};}
+function saleToDb(o){return{
+  'DATE':               o.date||null,
+  'CUSTOMER':           o.name||null,
+  'PHONE':              o.pno?Number(o.pno.replace(/\D/g,''))||null:null,
+  'ITEM':               o.item||null,
+  'QTY':                o.qty||0,
+  'COST PRICE (₹)':     o.costPrice||0,
+  'SELLING PRICE (₹)':  o.sellingPrice||0,
+  'DISCOUNT (%)':       o.discount||0,
+  'TOTAL (₹)':          o.total||0,
+  'PROFIT (₹)':         o.profit||0,
+  'PAYMENT':            o.payment||'Cash',
+  'DUE DATE':           o.dueDate||null,
+  'PAID AMT (₹)':       o.paidAmt||0,
+  'BALANCE (₹)':        o.balanceAmt||0
+};}
 
 // ── Loading overlay ──
 function showLoader(msg){
@@ -721,7 +784,7 @@ async function loadFromSupabase(){
   showLoader('Connecting to database…');
   try{
     showLoader('Loading inventory…');
-    const invRows=await sbGet('inventory','select=*');
+    const invRows=await sbGet('inventory_logs','select=*');
     inventory=invRows.map(dbToInv);
     showLoader('Loading sales…');
     const saleRows=await sbGet('sales_logs','select=*');
@@ -851,7 +914,7 @@ function addInventory(){
           totalAmt:payment==='Partial'?parseFloat((totalAmt*share).toFixed(2)):0,
           paidAmt:payment==='Partial'?parseFloat((paidAmt*share).toFixed(2)):0,
           balanceAmt:payment==='Partial'?parseFloat((totalBalanceAmt*share).toFixed(2)):0});
-        const saved=await sbInsert('inventory',iRow);
+        const saved=await sbInsert('inventory_logs',iRow);
         inventory.push(dbToInv(saved));
       }
       hideLoader();
@@ -903,7 +966,7 @@ function deleteInvItem(id){
   const r=inventory.find(x=>x._id===id);if(!r)return;
   if(!confirm(`Delete "${r.item}" from inventory?`))return;
   showLoader('Deleting…');
-  sbDelete('inventory',id).then(()=>{
+  sbDelete('inventory_logs',id).then(()=>{
     inventory=inventory.filter(x=>x._id!==id);
     hideLoader();renderInventoryTable();populateSaleDropdown();updateCreditDot();toast('Item deleted');
   }).catch(e=>{hideLoader();toast('Delete failed: '+e.message,true);});
@@ -941,7 +1004,7 @@ function saveInvEdit(){
   r.paidAmt=parseFloat(document.getElementById('ei-paid-amt').value)||0;
   r.balanceAmt=Math.max(0,r.totalAmt-r.paidAmt);
   showLoader('Updating…');
-  sbUpdate('inventory',id,invToDb(r)).then(()=>{
+  sbUpdate('inventory_logs',id,invToDb(r)).then(()=>{
     const idx=inventory.findIndex(x=>x._id===id);if(idx>-1)inventory[idx]={...r};
     hideLoader();renderInventoryTable();populateSaleDropdown();updateCreditDot();
     closeModal('editInvModal');toast('Inventory updated!');
@@ -1216,7 +1279,7 @@ function markSalePaid(id){
   const s=sales.find(x=>x._id===id);if(!s)return;
   s.payment='Cash';s.paidAmt=s.total;s.dueDate='';s.balanceAmt=0;
   showLoader('Updating…');
-  sbUpdate('sales_logs',id,{payment:'Cash',paid_amt:s.total,due_date:null,balance_amt:0}).then(()=>{
+  sbUpdate('sales_logs',id,{'PAYMENT':'Cash','PAID AMT (₹)':s.total,'DUE DATE':null,'BALANCE (₹)':0}).then(()=>{
     hideLoader();renderSalesLog();renderCreditLedger();updateCreditDot();toast('Marked as paid!');
   }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
 }
@@ -1380,7 +1443,7 @@ function markInvPaid(id){
   const r=inventory.find(x=>x._id===id);if(!r)return;
   r.payment='Cash';r.dueDate='';r.balanceAmt=0;r.paidAmt=r.totalAmt;
   showLoader('Updating…');
-  sbUpdate('inventory',id,{payment:'Cash',due_date:null,balance_amt:0,paid_amt:r.totalAmt}).then(()=>{
+  sbUpdate('inventory_logs',id,{'PAYMENT':'Cash','DUE DATE':null,'BALANCE':0,'PAID AMT':r.paidAmt}).then(()=>{
     hideLoader();renderInventoryTable();renderCreditLedger();updateCreditDot();toast('Supplier payment settled!');
   }).catch(e=>{hideLoader();toast('Update failed: '+e.message,true);});
 }
@@ -1495,7 +1558,7 @@ function importExcel(e){
           paidAmt:parseFloat(row['PAID AMT (₹)']||0)||0,
           balanceAmt:parseFloat(row['BALANCE (₹)']||0)||0
         };
-        if(obj.item) insertPromises.push(sbInsert('inventory',invToDb(obj)).then(dbToInv));
+        if(obj.item) insertPromises.push(sbInsert('inventory_logs',invToDb(obj)).then(dbToInv));
         n++;
       });
       showLoader(`Importing ${n} rows…`);
