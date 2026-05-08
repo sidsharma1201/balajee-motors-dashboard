@@ -365,6 +365,7 @@ body.locked header,body.locked .shell{filter:blur(1px);pointer-events:none;user-
   <div class="hbtns">
     <button class="btn btn-outline btn-sm" onclick="document.getElementById('fileInput').click()">⬆ <span>Import Excel</span></button>
     <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="importExcel(event)"/>
+    <button class="btn btn-outline btn-sm" onclick="doLogout()" style="margin-left:4px">↩ <span>Logout</span></button>
   </div>
 </header>
 
@@ -787,7 +788,8 @@ let inventory=[], sales=[];
 
 // ── Generic Supabase REST helpers ──
 async function sbGet(table,params=''){
-  const r=await fetch(`${SB_URL}/${table}?${params}&select=*`,{headers:SB_HDR});
+  const qs=params?params+'&select=*':'select=*';
+  const r=await fetch(`${SB_URL}/${table}?${qs}`,{headers:SB_HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
 }
@@ -852,10 +854,10 @@ async function loadFromSupabase(){
   showLoader('Connecting to database…');
   try{
     showLoader('Loading inventory…');
-    const invRows=await sbGet('inventory_logs','select=*');
+    const invRows=await sbGet('inventory_logs');
     inventory=invRows.map(dbToInv);
     showLoader('Loading sales…');
-    const saleRows=await sbGet('sales_logs','select=*');
+    const saleRows=await sbGet('sales_logs');
     sales=saleRows.map(dbToSale);
     hideLoader();
     renderInventoryTable();renderSalesLog();populateSalesLogFilters();
@@ -1967,25 +1969,62 @@ document.addEventListener('click',e=>{
   }
 });
 
+// ══════════════════════════════════════════════════
+// AUTH — Login persists for 24 hours via localStorage
+// ══════════════════════════════════════════════════
+const AUTH_KEY = 'sbas_auth_v1';
+
+function isSessionValid(){
+  try{
+    const s = JSON.parse(localStorage.getItem(AUTH_KEY)||'null');
+    if(!s) return false;
+    // Session valid for 24 hours
+    return (Date.now() - s.ts) < 24*60*60*1000;
+  }catch(e){ return false; }
+}
+
+function saveSession(){
+  localStorage.setItem(AUTH_KEY, JSON.stringify({ts: Date.now()}));
+}
+
+function clearSession(){
+  localStorage.removeItem(AUTH_KEY);
+}
+
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.body.classList.remove('locked');
+}
+
+function hideApp(){
+  document.getElementById('loginScreen').style.display='flex';
+  document.body.classList.add('locked');
+}
+
 function doLogin(){
-  const user=document.getElementById('ln-user').value.trim();
-  const pass=document.getElementById('ln-pass').value;
-  const errBox=document.getElementById('login-err');
-  if(user==='varun'&&pass==='123456'){
+  const user = document.getElementById('ln-user').value.trim();
+  const pass = document.getElementById('ln-pass').value;
+  const errBox = document.getElementById('login-err');
+  if(user==='varun' && pass==='123456'){
     errBox.style.display='none';
-    document.getElementById('loginScreen').style.display='none';
-    document.body.classList.remove('locked');
-    alert('Login successful!');
+    saveSession();
+    showApp();
+    // Load data only after successful login
+    loadFromSupabase();
   } else {
     errBox.style.display='block';
     errBox.textContent='Invalid username or password';
+    setTimeout(()=>errBox.style.display='none', 3000);
   }
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-  document.body.classList.add('locked');
-  document.getElementById('ln-user')?.focus();
-});
+function doLogout(){
+  clearSession();
+  hideApp();
+  document.getElementById('ln-user').value='';
+  document.getElementById('ln-pass').value='';
+  toast('Logged out successfully');
+}
 
 // ══════════════════════════════════════════════════
 // INIT
@@ -1994,7 +2033,17 @@ setCal('inv',todayISO());setCal('invdue','');
 setCal('sale',todayISO());setCal('saledue','');
 resetInvRows();
 resetSaleRows();
-loadFromSupabase();
+
+// On page load: check session — show app or show login
+document.addEventListener('DOMContentLoaded',()=>{
+  if(isSessionValid()){
+    showApp();
+    loadFromSupabase();
+  } else {
+    hideApp();
+    document.getElementById('ln-user')?.focus();
+  }
+});
 </script>
 </body>
 </html>
